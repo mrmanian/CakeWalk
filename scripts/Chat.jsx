@@ -1,44 +1,47 @@
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { Socket } from './Socket';
+import  Content from './Content';
 
-
-export default function Chat() {
+export default function Chat({user}) {
   const [list, setList] = useState([]);
-  const [name, setName] = useState("");
+  const [text, setText  ] = useState("");
 
   function handleChange(event) {
-    setName(event.target.value);
+    setText(event.target.value);
   }
 
   function handleAdd() {
-    const newList = list.concat({ name, id: uuidv4() });
+    const newList = list.concat({ text, id: uuidv4() });
     setList(newList);
-    setName("");
+    setText("");
+    Socket.emit('newmessage', {'txt': text});
+  
   }
   const handleKeypress = (event) => {
     if (event.keyCode === 13) {
-      console.log("check2");
       handleAdd();
     }
   };
+  
 
   return (
-    <div>
-      <div>
+    <div className="d-flex flex-column flex-grow-1">
+      <div className="flex-grow-1 overflow-auto">
         <input
           id="msg"
           type="text"
-          value={name}
+          value={text}
           onChange={handleChange}
           onKeyDown={handleKeypress}
         />
         <button type="button" onClick={handleAdd}>
-          Add
+          Enter
         </button>
       </div>
       <ul>
         {list.map((item) => (
-          <li key={item.id}>{item.name}</li>
+          <li key={item.id}>{user} : {item.text}</li>
         ))}
       </ul>
     </div>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Login from './Login';
-import {Chat} from './Chat';
+import  Chat  from './Chat';
 import {Socket} from './Socket';
 
 export default function Content() {
@@ -17,9 +17,7 @@ export default function Content() {
   
   newUser();
   return (
-    <div>
-    <Login />
-    <span> Welcome {user}</span>
-    </div>
+    user ? <Chat user = {user} /> : <Login />
+  
   );
 }

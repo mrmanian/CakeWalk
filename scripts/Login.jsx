@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import { Socket } from './Socket';
+import {Redirect} from 'react-router-dom';
 
 export default function Login() {
   const [uname, setUName] = useState("");
@@ -14,6 +15,8 @@ export default function Login() {
     console.log("submitted");
     Socket.emit('newlogin', {'uname': uname , 'password': password});
     event.preventDefault();
+    return <Redirect to="/chat/"/>;
+    
     
   }
 
@@ -40,6 +43,9 @@ export default function Login() {
         </FormGroup>
         <Button block bsSize="large" disabled={!validateForm()} type="submit">
           Login
+        </Button>
+        <Button block bsSize="large" disabled={!validateForm()} type="submit">
+          Register New User
         </Button>
       </form>
     </div>

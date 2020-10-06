@@ -29,7 +29,17 @@ def on_newlogin(data):
     socketio.emit('new user', {
         'user': uname
     })
-
+    
+@socketio.on('newmessage')
+def on_newmessage(data):
+    print("Got new message")
+    message=data['txt']
+    answer = ''
+    #if message[0:2] == '!!': answer = botmessage(message)
+    #else 
+    socketio.emit('newmessage', {
+        'answer':answer
+    })
 if __name__ == '__main__': 
     socketio.run(
         app,
