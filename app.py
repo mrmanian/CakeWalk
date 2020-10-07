@@ -6,6 +6,8 @@ app = flask.Flask(__name__)
 socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
+
+message_list = []
 @app.route('/')
 def hello():
     return flask.render_template('index.html')
@@ -33,16 +35,20 @@ def on_newlogin(data):
 @socketio.on('newmessage')
 def on_newmessage(data):
     print("Got new message")
-    message=data['txt']
-    answer = ''
+    message=data['text']
+    answer = message
     if(message[0:2] == '!!'): 
         print("Got here to bot")
         answer = botmessage(message)
         #print(answer)
-    socketio.emit('newresponse', {
-        'answer':answer
+    message_list.append(answer)
+    emit_message_list(message_list)
+   
+
+def emit_message_list(message_list):
+     socketio.emit('newmessagetolist', {
+        'mlist': message_list
     })
-    
 def botmessage(message):
     answer = ''
     if(message.replace(" ","") == "!!about"):
