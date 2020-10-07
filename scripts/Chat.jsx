@@ -6,16 +6,30 @@ import  Content from './Content';
 export default function Chat({user}) {
   const [list, setList] = useState([]);
   const [text, setText  ] = useState("");
+  const [chatUser, setChatUser] = useState({user});
 
   function handleChange(event) {
     setText(event.target.value);
   }
 
+  function handleBotIntervention(){
+    Socket.on('newresponse', (data) => {
+        if(data['answer']){
+          console.log(data["answer"]);
+          return(<li> Spock_bot: {data['answer']} </li>);
+        }
+      });
+  }
   function handleAdd() {
+      Socket.emit('newmessage', {'txt': text});
+      
+    
+    //botResponse();
     const newList = list.concat({ text, id: uuidv4() });
     setList(newList);
+    console.log(list);
     setText("");
-    Socket.emit('newmessage', {'txt': text});
+    
   
   }
   const handleKeypress = (event) => {
@@ -23,6 +37,21 @@ export default function Chat({user}) {
       handleAdd();
     }
   };
+  function botResponse() {
+    console.log("Got in botresponse");
+    React.useEffect(() => {
+      Socket.on('new message', (data) => {
+        console.log("Recieved bot response "+ data['answer']);
+        if(data['answer']){
+          return;
+        }
+        else{
+          setText(data['answer']);
+          user("Spock_bot");
+        }
+      });
+    });
+  }
   
 
   return (
@@ -43,6 +72,7 @@ export default function Chat({user}) {
         {list.map((item) => (
           <li key={item.id}>{user} : {item.text}</li>
         ))}
+        {handleBotIntervention()}
       </ul>
     </div>
   );

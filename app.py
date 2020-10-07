@@ -35,11 +35,26 @@ def on_newmessage(data):
     print("Got new message")
     message=data['txt']
     answer = ''
-    #if message[0:2] == '!!': answer = botmessage(message)
-    #else 
-    socketio.emit('newmessage', {
+    if(message[0:2] == '!!'): 
+        print("Got here to bot")
+        answer = botmessage(message)
+        #print(answer)
+    socketio.emit('newresponse', {
         'answer':answer
     })
+    
+def botmessage(message):
+    answer = ''
+    if(message.replace(" ","") == "!!about"):
+        answer = "Live long and prosper this is Spock_bot \nI am a Vulcan stuck in this mediocre machine \nI might as well be useful type '!!help' to see what I can do"
+        return answer
+    if(message.replace(" ","") == "!!help"):
+        answer = "Type !!funtranslate <message> to translate to perfect Vulcan, a much more efficient language"
+        return answer
+    if(message == "!!funtranslate"):
+        #API calls TODO
+        return answer
+        
 if __name__ == '__main__': 
     socketio.run(
         app,
