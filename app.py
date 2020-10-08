@@ -1,6 +1,11 @@
+from os.path import join, dirname
+from dotenv import load_dotenv
 import os
 import flask
+import flask_sqlalchemy
 import flask_socketio
+import models 
+
 
 app = flask.Flask(__name__)
 socketio = flask_socketio.SocketIO(app)
