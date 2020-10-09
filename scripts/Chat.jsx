@@ -6,7 +6,7 @@ import { ChatButton } from './ChatButton';
 
 export default function Chat({user}) {
   const [list, setList] = useState([]);
-  
+  //const [user, setUser] = useState('');
   function getNewMessageList() {
         React.useEffect(() => {
             Socket.on('newmessagetolist', (data) => {
@@ -22,10 +22,10 @@ export default function Chat({user}) {
     console.log(typeof list);
      return (
         <div>
-            <ChatButton />
+            <ChatButton user = {user} />
                 <ol>
                     {
-                    list.map((text, index) => <li key={index}>{user} : {text}</li>)
+                    list.map((text, index) => <li key={index}>{text}</li>)
                     }
                 </ol>
             

@@ -5,14 +5,46 @@ import flask
 import flask_sqlalchemy
 import flask_socketio
 import models 
-
+import requests
+from random import randint 
 
 app = flask.Flask(__name__)
+
 socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
+dotenv_path = join(dirname(__file__), 'sql.env')
+load_dotenv(dotenv_path)
 
-message_list = []
+sql_user = os.environ['SQL_USER']
+sql_pwd = os.environ['SQL_PASSWORD']
+
+database_uri = 'postgresql://{}:{}@localhost/chatlog'.format(
+    sql_user, sql_pwd)
+
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
+
+db = flask_sqlalchemy.SQLAlchemy(app)
+db.init_app(app)
+db.app = app
+
+#message_list = []
+channel = 'newmessagetolist'
+
+db.create_all()
+db.session.commit()
+
+def emit_message_list(channel):
+    all_messages = [ \
+        db_messages.message for db_messages in \
+        db.session.query(models.Chatlog).all()]
+        
+    socketio.emit(channel, {
+        'mlist': all_messages
+    })
+    
+    
 @app.route('/')
 def hello():
     return flask.render_template('index.html')
@@ -23,6 +55,7 @@ def on_connect():
     socketio.emit('connected', {
         'test': 'Connected'
     })
+    emit_message_list(channel)
 
 @socketio.on('disconnect')
 def on_disconnect():
@@ -41,29 +74,47 @@ def on_newlogin(data):
 def on_newmessage(data):
     print("Got new message")
     message=data['text']
+    username = data['username']
+    print(username)
     answer = message
     if(message[0:2] == '!!'): 
         print("Got here to bot")
         answer = botmessage(message)
+        username = "Spock_bot"
         #print(answer)
-    message_list.append(answer)
-    emit_message_list(message_list)
-   
-
-def emit_message_list(message_list):
-     socketio.emit('newmessagetolist', {
-        'mlist': message_list
-    })
+    db.session.add(models.Chatlog(username, answer));
+    db.session.commit();
+    
 def botmessage(message):
     answer = ''
-    if(message.replace(" ","") == "!!about"):
+    if(message == "!!about"):
         answer = "Live long and prosper this is Spock_bot \nI am a Vulcan stuck in this mediocre machine \nI might as well be useful type '!!help' to see what I can do"
         return answer
-    if(message.replace(" ","") == "!!help"):
+    elif(message == "!!help"):
         answer = "Type !!funtranslate <message> to translate to perfect Vulcan, a much more efficient language"
         return answer
-    if(message == "!!funtranslate"):
-        #API calls TODO
+    elif(message.split()[0] == "!!funtranslate"):
+        words = message[15:]
+        link = f"https://api.funtranslations.com/translate/vulcan.json?text={words}"
+        vulcan_json = requests.get(link)
+        vulcan = vulcan_json.json()
+        translate = vulcan['contents']['translated']
+        answer = translate
+        return answer
+    elif(message == "!!performace"):
+        choices = ["Unacceptable", "Ordinary", "Disappointing", "Phenomenal", "Pathetic", "Adequate", "Mediocre"]
+        choice_num = randint(0,6)
+        answer = choices[choice_num]
+        return answer
+    elif(message == "!!history"):
+        link = "http://numbersapi.com/random/year?json"
+        get_ans = requests.get(link)
+        total = get_ans.json()
+        fact = total["text"]
+        answer = fact
+        return answer
+    else:
+        answer = "This is nonsense please do not waste my time"
         return answer
         
 if __name__ == '__main__': 

@@ -1,19 +1,26 @@
 import * as React from 'react';
 import { Socket } from './Socket';
+import Chat from './Chat';
 
-function handleSubmit(event) {
-    let newMessage = document.getElementById("message_input");
-    Socket.emit('newmessage', {
-        'text': newMessage.value,
-    })
+
+export function ChatButton({user}) {
     
-    console.log('Sent the message ' + newMessage.value + ' to server!');
-    newMessage.value = ''
+    function handleSubmit(event) {
+    const u = 'jake';
+    let newMessage = document.getElementById("message_input");
+    console.log(user);
+    Socket.emit('newmessage', {
+        'text': newMessage.value, 'username': user
+    });
+    
+    console.log('Sent the message ' + newMessage.value+ ' to server!');
+    newMessage.value = '';
     
     event.preventDefault();
 }
 
-export function ChatButton() {
+
+    
     return (
         <form onSubmit={handleSubmit}>
             <input id="message_input" placeholder="Enter your Cosmos Chat Here!"></input>
