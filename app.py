@@ -35,6 +35,9 @@ channel = 'newmessagetolist'
 db.create_all()
 db.session.commit()
 
+
+connected = 0
+
 def emit_message_list(channel):
     all_messages = [ \
         (db_messages.message, db_messages.username) for db_messages in \
@@ -52,15 +55,20 @@ def hello():
 
 @socketio.on('connect')
 def on_connect():
+    global connected
     print('Someone connected!')
+    connected+=1
     socketio.emit('connected', {
-        'test': 'Connected'
+        'test': connected
     })
     emit_message_list(channel)
 
 @socketio.on('disconnect')
 def on_disconnect():
+    global connected
+    connected -= 1
     print ('Someone disconnected!')
+    socketio.emit('disconnect', {'num': connected})
 
 @socketio.on('newlogin')
 def on_newlogin(data):
