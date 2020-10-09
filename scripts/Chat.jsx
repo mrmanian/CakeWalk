@@ -25,7 +25,7 @@ export default function Chat({user}) {
             <ChatButton user = {user} />
                 <ol>
                     {
-                    list.map((text, index) => <li key={index}>{text}</li>)
+                    list.map((text, index) => <li key={index}>{text[1]}: {text[0]}</li>)
                     }
                 </ol>
             

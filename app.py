@@ -37,9 +37,9 @@ db.session.commit()
 
 def emit_message_list(channel):
     all_messages = [ \
-        db_messages.message for db_messages in \
+        (db_messages.message, db_messages.username) for db_messages in \
         db.session.query(models.Chatlog).all()]
-        
+    print(all_messages)
     socketio.emit(channel, {
         'mlist': all_messages
     })
@@ -47,6 +47,7 @@ def emit_message_list(channel):
     
 @app.route('/')
 def hello():
+    emit_message_list(channel)
     return flask.render_template('index.html')
 
 @socketio.on('connect')
@@ -69,7 +70,7 @@ def on_newlogin(data):
     socketio.emit('new user', {
         'user': uname
     })
-    
+    emit_message_list(channel)
 @socketio.on('newmessage')
 def on_newmessage(data):
     print("Got new message")
@@ -84,6 +85,8 @@ def on_newmessage(data):
         #print(answer)
     db.session.add(models.Chatlog(username, answer));
     db.session.commit();
+    emit_message_list(channel)
+
     
 def botmessage(message):
     answer = ''
@@ -91,7 +94,7 @@ def botmessage(message):
         answer = "Live long and prosper this is Spock_bot \nI am a Vulcan stuck in this mediocre machine \nI might as well be useful type '!!help' to see what I can do"
         return answer
     elif(message == "!!help"):
-        answer = "Type !!funtranslate <message> to translate to perfect Vulcan, a much more efficient language"
+        answer = "Type !!funtranslate <message> to translate to perfect Vulcan, a much more efficient language.\n!!about is to learn about me.\n !!performance is an honest review of you as a user \n !!history is for a fascinating fact about a random earth year"
         return answer
     elif(message.split()[0] == "!!funtranslate"):
         words = message[15:]
