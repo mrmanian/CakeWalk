@@ -42,7 +42,7 @@ def emit_message_list(channel):
     all_messages = [ \
         (db_messages.message, db_messages.username) for db_messages in \
         db.session.query(models.Chatlog).all()]
-    print(all_messages)
+    #print(all_messages)
     socketio.emit(channel, {
         'mlist': all_messages
     })
@@ -58,6 +58,7 @@ def on_connect():
     global connected
     print('Someone connected!')
     connected+=1
+    print("CONNECTED NUMBER:" + str(connected))
     socketio.emit('connected', {
         'test': connected
     })

@@ -4,10 +4,12 @@ import { Socket } from './Socket';
 import  Content from './Content';
 import { ChatButton } from './ChatButton';
 import { Style } from "radium";
+import ScrollToBottom from 'react-scroll-to-bottom';
+import { useEffect } from 'react';
 
 export default function Chat({user}) {
   const [list, setList] = useState([]);
-  var connectCount = 0;
+  const [userCount, setUserCount] = useState(0);
   
   function getNewMessageList() {
         React.useEffect(() => {
@@ -20,13 +22,20 @@ export default function Chat({user}) {
         });
        
     }
+    useEffect(() => {
+        Socket.on('connect', (data) => {
+            console.log(data['test']);
+            setUserCount(data['test']);
+        });
+    });
     
-    Socket.on('connect', (data) => {
-       connectCount = data['test']
-    });
-    Socket.on('disconnect', (data) => {
-       connectCount = data['num']
-    });
+    useEffect(() => {
+        Socket.on('disconnect', (data) => {
+            setUserCount(data['num']);
+        });
+     });
+     
+     
     getNewMessageList();
     console.log(typeof list);
      return (
@@ -41,12 +50,17 @@ export default function Chat({user}) {
             }}
         />
             <ChatButton user = {user} />
-                <ol style={{width: "500px"}}>
+            <h2 align="right">Conncection Count: {userCount} </h2>
+            <div>
+                <ScrollToBottom>
+                    <ol style={{width: "500px"}}>
                     {
-                    list.map((text, index) => <li style={{width: 200}} key={index}>{text[1]}: {text[0]}</li>)
+                        list.map((text, index) => <li style={{width: 200}} key={index}>{text[1]}: {text[0]}</li>)
                     }
-                </ol>
-            <h2 align="right">Conncection Count: {connectCount} </h2>
+                    </ol>
+                </ScrollToBottom>
+            </div>
+            
         </div>
     );
 }

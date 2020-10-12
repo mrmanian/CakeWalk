@@ -6,7 +6,7 @@ import Chat from './Chat';
 export function ChatButton({user}) {
     
     function handleSubmit(event) {
-    const u = 'jake';
+    
     let newMessage = document.getElementById("message_input");
     console.log(user);
     Socket.emit('newmessage', {
