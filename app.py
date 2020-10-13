@@ -19,8 +19,7 @@ load_dotenv(dotenv_path)
 sql_user = os.environ['SQL_USER']
 sql_pwd = os.environ['SQL_PASSWORD']
 
-database_uri = 'postgresql://{}:{}@localhost/chatlog'.format(
-    sql_user, sql_pwd)
+database_uri = os.environ('DATABASE_URL') 
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
@@ -29,7 +28,7 @@ db = flask_sqlalchemy.SQLAlchemy(app)
 db.init_app(app)
 db.app = app
 
-#message_list = []
+
 channel = 'newmessagetolist'
 
 db.create_all()
