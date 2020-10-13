@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { Socket } from './Socket';
 import  Content from './Content';
 import { ChatButton } from './ChatButton';
@@ -20,7 +19,7 @@ const chats = {
 
 export default function Chat({user}) {
   const [list, setList] = useState([]);
-  const [userCount, setUserCount] = useState(0);
+  const [userCount, setUserCount] = useState(1);
   
   function getNewMessageList() {
         React.useEffect(() => {
@@ -29,13 +28,13 @@ export default function Chat({user}) {
                  
                  setList(data['mlist']);
             
-        })
+        });
         });
        
     }
     useEffect(() => {
-        Socket.on('connect', (data) => {
-            console.log(data['test']);
+        Socket.on('connected', (data) => {
+            console.log("Got number of users : " + data['test']);
             setUserCount(data['test']);
         });
     });
@@ -48,7 +47,7 @@ export default function Chat({user}) {
      
      
     getNewMessageList();
-    console.log(typeof list);
+    
      return (
         <div style = {{textAlign: "center"}} >
          <Style
