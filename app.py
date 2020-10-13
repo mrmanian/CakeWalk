@@ -69,7 +69,7 @@ def on_disconnect():
     global connected
     connected -= 1
     print ('Someone disconnected!')
-    socketio.emit('disconnect', {'num': connected})
+    socketio.emit('disconnected', {'num': connected})
 
 @socketio.on('newlogin')
 def on_newlogin(data):
@@ -80,6 +80,7 @@ def on_newlogin(data):
         'user': uname
     })
     emit_message_list(channel)
+    
 @socketio.on('newmessage')
 def on_newmessage(data):
     print("Got new message")

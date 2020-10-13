@@ -7,6 +7,17 @@ import { Style } from "radium";
 import ScrollToBottom from 'react-scroll-to-bottom';
 import { useEffect } from 'react';
 
+
+const chats = {
+    width: '100%',
+    height: '800px',
+    textAlign: 'right',
+    padding: '5px',
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    flex: 'row-reverse'
+};
+
 export default function Chat({user}) {
   const [list, setList] = useState([]);
   const [userCount, setUserCount] = useState(0);
@@ -30,7 +41,7 @@ export default function Chat({user}) {
     });
     
     useEffect(() => {
-        Socket.on('disconnect', (data) => {
+        Socket.on('disconnected', (data) => {
             setUserCount(data['num']);
         });
      });
@@ -49,13 +60,15 @@ export default function Chat({user}) {
                 paddingTop: "100px",
             }}
         />
+        <div>
             <ChatButton user = {user} />
+        </div>
             <h2 align="right">Conncection Count: {userCount} </h2>
-            <div>
+            <div style = {chats} >
                 <ScrollToBottom>
-                    <ol style={{width: "500px"}}>
+                    <ol style={{width: '100%'}}>
                     {
-                        list.map((text, index) => <li style={{width: 200}} key={index}>{text[1]}: {text[0]}</li>)
+                        list.map((text, index) => <li style={{width: '100%', color: text[1] === 'Spock_bot'? 'green' : 'blue'}} key={index}>{text[1]}: {text[0]}</li>)
                     }
                     </ol>
                 </ScrollToBottom>
