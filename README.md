@@ -9,67 +9,59 @@ App that implements chat functionality with database persistance and a simple ch
 
 ```$ nvm install 7```
 
-## 2. Install initial `npm` dependencies from `package.json`
+## 2. Install initial `npm` and `flask`:
+a) npm install
+b) pip install flask-socketio
+c) pip install eventlet
+d) npm install -g webpack
+e) npm install --save-dev webpack
+f) npm install socket.io-client --save
 
-This command runs `npm`, which looks inside our `package.json` file, 
-retrieves a list of packages, and installs them to the `node_modules` folder
-inside your repository. `node_modules` folder **does not** need to be pushed
-to Heroku or GitHub.
+If you see any error messages, make sure you use sudo pip or sudo npm. If it says "pip cannot be found", run which pip and use sudo [path to pip from which pip] install
 
-```$ npm install```
+## 3. Install parts for PostgreSQL:
+a) Update yum: sudo yum update, and enter yes to all prompts
+b) Upgrade pip: sudo /usr/local/bin/pip install --upgrade pip
+c) Get psycopg2: sudo /usr/local/bin/pip install psycopg2-binary
+d) Get SQLAlchemy: sudo /usr/local/bin/pip install Flask-SQLAlchemy==2.1
+e) Install PostGreSQL: sudo yum install postgresql postgresql-server postgresql-devel postgresql-contrib postgresql-docs
+    Enter yes to all prompts.
+f) Initialize PSQL database: sudo service postgresql initdb
+g) Start PSQL: sudo service postgresql start
+h) Make a new superuser: sudo -u postgres createuser --superuser $USER
+      ⚠️ ⚠️ ⚠️ If you get an error saying "could not change directory", that's okay! It worked! ⚠️ ⚠️ ⚠️
+i) Make a new database: sudo -u postgres createdb $USER
+    ⚠️ ⚠️ ⚠️ If you get an error saying "could not change directory", that's okay! It worked! ⚠️ ⚠️ ⚠️
+      Make sure your user shows up:
+          1a) psql
+          1b) \du look for ec2-user as a user
+          1c) \l look for ec2-user as a database
+      Make a new user:
+          2a) psql (if you already quit out of psql)
+          2b) I recommend 4-5 characters - it doesn't have to be very secure. Remember this password!
+              create user [some_username_here] superuser password '[some_unique_new_password_here]';
+          2c) \q to quit out of sql
+ j) Make a new file called sql.env and add SQL_USER= and SQL_PASSWORD= in it. Fill in those values with the values you put in i) 2b)
+ 
+ ## 4. SQLAlchemy config:
+a) Open the file in vim: sudo vim /var/lib/pgsql9/data/pg_hba.conf If that doesn't work: sudo vim $(psql -c "show hba_file;" | grep pg_hba.conf)
+b) Replace all values of ident with md5 in Vim: :%s/ident/md5/g
+c) After changing those lines, run sudo service postgresql restart
+      Ensure that sql.env has the username/password of the superuser you created!
+d) Run your code!
+    a) npm run watch. If prompted to install webpack-cli, type "yes"
+    b) In a new terminal, python app.py
+    c) Preview Running Application (might have to clear your cache by doing a hard refresh)
+## 5. Miscellenous installations:
+a) If after running npm run watch  there are errors with not recognizing a dependency npm install that dependency.
 
-## 3. Add files to your .gitignore
+## 6. Heroku Deployment:
 
-```$ touch .gitignore; echo "node_modules/" >> .gitignore; ```
-```$ echo "static/script.js" >> .gitignore```
-```$ echo "package-lock.json" >> .gitignore```
 
-## 4. Install Webpack
 
-This command installs Webpack on your Cloud9 workspace.
 
-**Note: This command MUST be run from the folder that contains package.json!**
-**You will get an error if you are in a different folder!**
 
-```$ npm install --save-dev webpack ```
 
-## 5. Compile Javascript using Webpack
+## 5 Problems and Solutions in this Project:
 
-This line starts up Webpack, which looks inside `webpack.config.js`, loads
-configuration options, and starts transpiling your JS code into 
-`static/script.js`. You may be asked to also install webpack-cli. Type **yes**.
-
-```$ npm run watch```
-
-(The program should not stop running. Leave it running.)
-
-If this step fails for whatever reason, please close your terminal and restart it,
-and re-run the command.
-
-## 6. Run the web app
-
-Open a new terminal in your AWS Cloud9 environment (click the little green + 
-button near your current terminal and choose 'New Terminal'). Run `app.py` 
-(from the same folder, but new terminal), then preview the running application,
-and verify that the React renders. You should see "Hello World from React!" in
-the preview.
-
-**Do not manually edit `static/script.js`! It will update when you make changes.**
-**You do need to push this file to Heroku and GitHub, which is why we put it in**
-**our .gitignore files**
-
-## 7. Edit HTML
-
-Find the text that says "Hello World from React!" Make a change. Your webpack 
-should still be running in the other terminal (and some logs will spit out). 
-Try previewing the changes in the Preview Window in AWS. Notice that nothing 
-is updating. You need to click 'Pop out to New Window', and hard refresh the
-browser (see command below). 
-
-PS This is a known problem for a bunch of people. Unfortunately, there is no 
-known fix besides turning off the cache option for the whole browser (which 
-we don't want to do).
-
-**You will always need to do a hard refresh (Ctrl+R/Cmd+Shift+R) of an external**
-**tab in your browser (while Webpack is running) to see changes**
-# project2-m1-jbk26
+1) One major problem I encountered was a git hub related issue, 
