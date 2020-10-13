@@ -1,12 +1,9 @@
-# Lecture 8 - React
+# Project 2 Milestone 1 
 
-Let's get React up and running with Flask. If you try to run the python file, 
-we will get a blank page in our browser preview. We want the browser to 
-display **Hello World from React!!!**. In order to do that, we need to install
-some libraries to get our client-side code up and running!
+App that implements chat functionality with database persistance and a simple chat bot function. This App has a Star Trek theme so follow the instructions bellow to see how it is done.
 
 ## 0. Clone this repo
-```$ git clone https://github.com/Sresht/lect8-react```
+```$ git clone https://github.com/NJIT-CS490/project2-m1-jbk26```
 
 ## 1. Upgrade Node version to 7
 
