@@ -3,14 +3,15 @@ import { Socket } from './Socket';
 import Chat from './Chat';
 
 
-export function ChatButton({user}) {
+export function ChatButton({user, img}) {
     
     function handleSubmit(event) {
     
     let newMessage = document.getElementById("message_input");
     console.log(user);
+    console.log(img);
     Socket.emit('newmessage', {
-        'text': newMessage.value, 'username': user
+        'text': newMessage.value, 'username': user, 'imageurl': img,
     });
     
     console.log('Sent the message ' + newMessage.value+ ' to server!');

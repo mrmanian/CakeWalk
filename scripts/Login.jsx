@@ -2,52 +2,39 @@ import React, { useState } from "react";
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import { Socket } from './Socket';
 import {Redirect} from 'react-router-dom';
+import {GoogleLogin} from 'react-google-login';
+
 
 export default function Login() {
-  const [uname, setUName] = useState("");
-  const [password, setPassword] = useState("");
 
-  function validateForm() {
-    return uname.length > 0 && password.length > 0;
-  }
-
-  function handleSubmit(event) {
+  function handleSubmit(response) {
     console.log("submitted");
-    Socket.emit('newlogin', {'uname': uname , 'password': password});
+    console.log(response.profileObj.name);
+    console.log(response.profileObj.imageUrl);
+    Socket.emit('newlogin', {'uname': response.profileObj.name , 'imageurl': response.profileObj.imageUrl});
     event.preventDefault();
     return <Redirect to="/chat/"/>;
     
     
   }
+   function handleFail(){
+        console.log("Fail");
+    }
 
   return (
-    <div className="Login" style={{ height: '100vh'}}>
-    <h1> Welcome to Cosmos Chat!</h1>
-      <form onSubmit={handleSubmit}>
-        <FormGroup controlId="email" bsSize="large">
-          <ControlLabel>Username</ControlLabel>
-          <FormControl
-            autoFocus
-            type="text"
-            value={uname}
-            onChange={e => setUName(e.target.value)}
-          />
-        </FormGroup>
-        <FormGroup controlId="password" bsSize="large">
-          <ControlLabel>Password</ControlLabel>
-          <FormControl
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            type="password"
-          />
-        </FormGroup>
-        <Button block bsSize="large" disabled={!validateForm()} type="submit">
-          Login
-        </Button>
-        <Button block bsSize="large" disabled={!validateForm()} type="submit">
-          Register New User
-        </Button>
-      </form>
+    <div>
+    <h1> Please sign on with Google. </h1>
+    
+    <div>
+        <GoogleLogin
+            clientId="820684354318-tlcrjakf8qm4o0ln9e9r0qqoh0kq2tc6.apps.googleusercontent.com"
+            buttonText="Login"
+            onSuccess={handleSubmit}
+            onFailure={handleFail}
+            cookiePolicy={'single_host_origin'}
+        />
+   
+    </div>
     </div>
   );
 }

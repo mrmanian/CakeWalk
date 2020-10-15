@@ -38,7 +38,7 @@ connected = 0
 
 def emit_message_list(channel):
     all_messages = [ \
-        (db_messages.message, db_messages.username) for db_messages in \
+        (db_messages.message, db_messages.username, db_messages.imageurl) for db_messages in \
         db.session.query(models.Chatlog).all()]
     #print(all_messages)
     socketio.emit(channel, {
@@ -73,9 +73,9 @@ def on_disconnect():
 def on_newlogin(data):
     print("Got an event for new user", data['uname'])
     uname = data['uname']
-    password = data['password']
+    img = data['imageurl']
     socketio.emit('new user', {
-        'user': uname
+        'user': uname, 'imageurl' : img
     })
     emit_message_list(channel)
     
@@ -84,6 +84,7 @@ def on_newmessage(data):
     print("Got new message")
     message=data['text']
     username = data['username']
+    imgurl = data['imageurl']
     print(username)
     answer = message
     if(message[0:2] == '!!'): 
@@ -91,7 +92,7 @@ def on_newmessage(data):
         answer = botmessage(message)
         username = "Spock_bot"
         #print(answer)
-    db.session.add(models.Chatlog(username, answer));
+    db.session.add(models.Chatlog(username, answer, imgurl));
     db.session.commit();
     emit_message_list(channel)
 

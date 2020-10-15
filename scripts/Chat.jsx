@@ -16,8 +16,13 @@ const chats = {
     overflowX: 'hidden',
     flex: 'row-reverse'
 };
+const imgs = {
+      width: '10%',
+      height: '10%',
+      borderRadius: '8px',
+};
 
-export default function Chat({user}) {
+export default function Chat({user, img}) {
   const [list, setList] = useState([]);
   const [userCount, setUserCount] = useState(1);
   
@@ -60,14 +65,16 @@ export default function Chat({user}) {
             }}
         />
         <div>
-            <ChatButton user = {user} />
+            <ChatButton user = {user} img = {img} />
         </div>
             <h2 align="right">Conncection Count: {userCount} </h2>
             <div style = {chats} >
                 <ScrollToBottom>
                     <ol style={{width: '100%'}}>
                     {
-                        list.map((text, index) => <li style={{width: '100%', color: text[1] === 'Spock_bot'? 'green' : 'blue'}} key={index}>{text[1]}: {text[0]}</li>)
+                        list.map((text, index) => <li style={{width: '100%', color: text[1] === 'Spock_bot'? 'green' : 'blue'}} key={index}>
+                        <img style = {imgs} src={text[2]}/>
+                        {text[1]}: {text[0]}</li>)
                     }
                     </ol>
                 </ScrollToBottom>
