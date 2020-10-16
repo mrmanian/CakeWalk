@@ -6,6 +6,7 @@ import flask_sqlalchemy
 import flask_socketio
 import models 
 import requests
+from rfc3987 import parse
 from random import randint 
 
 app = flask.Flask(__name__)
@@ -38,7 +39,7 @@ connected = 0
 
 def emit_message_list(channel):
     all_messages = [ \
-        (db_messages.message, db_messages.username, db_messages.imageurl) for db_messages in \
+        (db_messages.message, db_messages.username, db_messages.imageurl, db_messages.urltype) for db_messages in \
         db.session.query(models.Chatlog).all()]
     #print(all_messages)
     socketio.emit(channel, {
@@ -87,14 +88,28 @@ def on_newmessage(data):
     imgurl = data['imageurl']
     print(username)
     answer = message
+    typ = urlcheck(message)
     if(message[0:2] == '!!'): 
         print("Got here to bot")
         answer = botmessage(message)
         username = "Spock_bot"
         #print(answer)
-    db.session.add(models.Chatlog(username, answer, imgurl));
+    db.session.add(models.Chatlog(username, answer, imgurl, typ));
     db.session.commit();
     emit_message_list(channel)
+
+def urlcheck(message):
+    try:
+        d = parse(message,rule='URI')
+        path = d['path']
+        if(path.endswith('.jpg') or path.endswith('.png') or path.endswith('.gif')):
+            typ = 'i'
+        else:
+            typ = 'u'
+    except:
+        typ = ''
+    print(typ)
+    return typ
 
     
 def botmessage(message):
