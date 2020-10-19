@@ -128,7 +128,7 @@ def botmessage(message):
         translate = vulcan['contents']['translated']
         answer = translate
         return answer
-    elif(message == "!!performace"):
+    elif(message == "!!performance"):
         choices = ["Unacceptable", "Ordinary", "Disappointing", "Phenomenal", "Pathetic", "Adequate", "Mediocre"]
         choice_num = randint(0,6)
         answer = choices[choice_num]

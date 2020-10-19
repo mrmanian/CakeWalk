@@ -21,6 +21,12 @@ const imgs = {
       height: '10%',
       borderRadius: '8px',
 };
+const imgs2 = {
+      width: '20%',
+      height: '20%',
+      borderRadius: '8px',
+};
+const hStyle = { color: 'white' };
 
 export default function Chat({user, img}) {
   const [list, setList] = useState([]);
@@ -40,7 +46,7 @@ export default function Chat({user, img}) {
     function Condition(props) {
         console.log(props.mark);
         if(props.mark === 'i'){
-            return <img style= {imgs} src= {props.text} alt="pic" />;
+            return <img style= {imgs2} src= {props.text} alt="pic" />;
         }
         else if(props.mark === 'u'){
             return <a href={props.text}> {props.text}</a>;
@@ -66,7 +72,7 @@ export default function Chat({user, img}) {
     getNewMessageList();
     
      return (
-        <div style = {{textAlign: "center"}} >
+        <div style = {{textAlign: "center", backgroundImage:`url(https://media.npr.org/assets/img/2020/08/27/nasa-goods-real_wide-9168d715c2d4c488d7a0e594b397d7abdd969d9d.png)`, backgroundSize:"cover", backgroundRepeat: "no-repeat"}} >
          <Style
             scopeSelector="li"
             rules={{
@@ -79,20 +85,22 @@ export default function Chat({user, img}) {
         <div>
             <ChatButton user = {user} img = {img} />
         </div>
-            <h2 align="right">Conncection Count: {userCount} </h2>
+            <div style = {hStyle}>
+                <h2 align="right">Conncection Count: {userCount} </h2>
+                <h2 align = "left"> {user} </h2>
+            </div>
             <div style = {chats} >
                 <ScrollToBottom>
                     <ol style={{width: '100%'}}>
                     {
-                        list.map((text, index) => <li style={{width: '100%', color: text[1] === 'Spock_bot'? 'green' : 'blue'}} key={index}>
-                        <img style = {imgs} src={text[2]}/>
+                        list.map((text, index) => <li style={{width: '100%', color: text[1] === 'Spock_bot'? 'Chartreuse' : 'Cyan'}} key={index}>
+                        {text[1] === 'Spock_bot' ? <img style={imgs} src= 'https://media.tenor.com/images/5b5b5aa2bbac9eeb562c5377898b313b/tenor.gif'/>: <img style = {imgs} src={text[2]}/>}
                         {text[3] ? <Condition mark={text[3]} text={text[0]} /> : <span>{text[1]}: {text[0]}</span> }</li> 
                         )
                     }
                     </ol>
                 </ScrollToBottom>
-            </div>
-            
+            </div> 
         </div>
     );
 }

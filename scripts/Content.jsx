@@ -12,14 +12,14 @@ export default function Content() {
       Socket.on('new user', (data) => {
         console.log("Recieved info of new user "+ data['user']);
         setUser(data['user']);
-        setImg(data['imageurl']);
-      });
+        setImg(data['imageurl'])
+      })
     });
   }
   
   newUser();
   return (
-    user ? <Chat user = {user} img = {img}/> : <Login />
+    user ? <Chat user = {user} img = {img} /> : <Login />
   
   );
 }

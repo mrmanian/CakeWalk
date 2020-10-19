@@ -23,7 +23,7 @@ export default function Login() {
 
   return (
     <div>
-    <h1> Please sign on with Google. </h1>
+    <h1> Welcome to Cosmos Chat. Please sign on with Google. </h1>
     
     <div>
         <GoogleLogin
