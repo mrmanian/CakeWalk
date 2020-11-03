@@ -3,15 +3,28 @@ from dotenv import load_dotenv
 import os
 import flask
 import flask_socketio
+import flask_sqlalchemy
 import requests
+import models
 from random import randint 
 
 app = flask.Flask(__name__)
+
+dotenv_path = join(dirname(__file__), 'sql.env')
+load_dotenv(dotenv_path)
 
 socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
 
+
+
+database_uri = os.environ['DATABASE_URL'] 
+app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
+
+db = flask_sqlalchemy.SQLAlchemy(app)
+db.init_app(app)
+db.app = app
 
 connected = 0
 
@@ -44,6 +57,9 @@ def on_newlogin(data):
     uname = data['uname']
     email = data['email']
     img = data['imageurl']
+    gc = ''
+    db.session.add(models.users(uname, email, img, gc));
+    db.session.commit();
     
     
 
