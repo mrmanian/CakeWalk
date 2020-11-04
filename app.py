@@ -29,6 +29,14 @@ db.app = app
 connected = 0
 
     
+#Emit's list of users from users table    
+def emit_user_list():
+    all_users = [ \
+        (db_messages.username, db_messages.profile_img) for db_messages in \
+        db.session.query(models.users).all()]
+    socketio.emit('get_user_list', {
+        'user_list': all_users
+    })
     
 @app.route('/')
 def hello():
@@ -51,6 +59,7 @@ def on_disconnect():
     print ('Someone disconnected!')
     socketio.emit('disconnected', {'num': connected})
 
+#Adds user data to user table on login
 @socketio.on('newlogin')
 def on_newlogin(data):
     print("Got an event for new user", data['uname'])
