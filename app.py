@@ -16,15 +16,14 @@ load_dotenv(dotenv_path)
 socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
-
-
-
 database_uri = os.environ['DATABASE_URL'] 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
 
 db = flask_sqlalchemy.SQLAlchemy(app)
 db.init_app(app)
 db.app = app
+db.create_all()
+db.session.commit()
 
 connected = 0
 
@@ -70,9 +69,14 @@ def on_newlogin(data):
     db.session.add(models.users(uname, email, img, gc));
     db.session.commit();
     
-    
+# Gets information from create project page
+@socketio.on("create project")
+def on_create_project(data):
+    project_name = data['projectName']
+    project_description = data['projectDescription']
+    print(project_name)
+    print(project_description)
 
-        
 if __name__ == '__main__': 
     socketio.run(
         app,
