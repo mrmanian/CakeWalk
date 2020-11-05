@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import flask
 import flask_socketio
 import flask_sqlalchemy
-import models
+
 
 app = flask.Flask(__name__)
 
@@ -25,6 +25,8 @@ db.session.commit()
 
 CONNECTED = 0
 
+import models
+
 # Emit's list of users from users table
 def emit_user_list():
     all_users = [
@@ -44,6 +46,7 @@ def on_connect():
     global CONNECTED
     print("Someone connected!")
     print("CONNECTED NUMBER: " + str(CONNECTED))
+    return CONNECTED
 
 
 @socketio.on("disconnect")
