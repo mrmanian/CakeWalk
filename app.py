@@ -75,7 +75,11 @@ def on_create_project(data):
     print(project_name)
     print(project_description)
     print(group_code)
-
+    
+@socketio.on("create task")
+def new_input(data):
+    """Get values from task form"""
+    print("Got an input with data:", data)
 
 if __name__ == "__main__":
     socketio.run(

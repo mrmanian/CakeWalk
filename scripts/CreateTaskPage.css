@@ -1,0 +1,29 @@
+html {
+  background: #561B1F;
+}
+
+#form{
+  background: #561B1F;
+  font-size: 55px;
+  padding-top: 5px;
+  padding-left: 30px;
+  color: #BEB07B;
+}
+.textarea { font-size: 14px; }
+
+#submit {
+  background-color: #193b53;
+  border: none;
+  color:  #BEB07B;
+  border-radius: 5px;
+  padding: 15px 42px;
+  text-align: center;
+  text-decoration: none;
+  
+  font-size: 16px;
+  margin-left: 1020px;
+}
+
+#deadline{
+  font-size: 14px; 
+}
