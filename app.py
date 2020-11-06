@@ -35,6 +35,10 @@ def emit_user_list():
     ]
     socketio.emit("get_user_list", {"user_list": all_users})
 
+# Emits list of     
+# def emit_task_list():
+    # return
+
 
 @app.route("/")
 def index():
@@ -61,12 +65,16 @@ def on_disconnect():
 @socketio.on("newlogin")
 def on_newlogin(data):
     print("Got an event for new user", data["uname"])
+    login_status = True
     uname = data["uname"]
     email = data["email"]
     img = data["imageurl"]
     gc = ""
     db.session.add(models.users(uname, email, img, gc))
     db.session.commit()
+    socketio.emit('login_status', {
+        'loginStatus': login_status
+    })
 
 
 # Gets information from create project page
