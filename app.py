@@ -5,6 +5,7 @@ import flask
 import flask_socketio
 import flask_sqlalchemy
 import models
+import smtplib, ssl
 
 app = flask.Flask(__name__)
 
@@ -15,6 +16,7 @@ socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
 database_uri = os.environ["DATABASE_URL"]
+email_password = os.environ["EMAIL_PASSWORD"]
 app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
 
 db = flask_sqlalchemy.SQLAlchemy(app)
@@ -33,6 +35,19 @@ def emit_user_list():
     ]
     socketio.emit("get_user_list", {"user_list": all_users})
 
+def create_and_send_email():
+    port = 465  # For SSL
+    # Create a secure SSL context
+    """
+    context = ssl.create_default_context()
+    sender_email = "cs490.projectmanager@gmail.com"
+    receiver_email = "cs490.projectmanager@gmail.com"
+    message = "Test123"
+    with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+        server.login(sender_email, email_password)
+        server.sendmail(sender_email, receiver_email, message)
+    """
+    
 
 @app.route("/")
 def index():
@@ -80,6 +95,7 @@ def on_create_project(data):
 def new_input(data):
     """Get values from task form"""
     print("Got an input with data:", data)
+    create_and_send_email()
 
 if __name__ == "__main__":
     socketio.run(
