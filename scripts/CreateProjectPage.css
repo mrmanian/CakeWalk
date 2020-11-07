@@ -1,0 +1,46 @@
+#form{
+    background: #561B1F;
+    padding-top: 5vh;
+    padding-left: 80px;
+    color: #BEB07B;
+    height: 100vh;
+    width: 100vw;
+}
+
+.textarea { 
+    font-size: 17px;
+    resize: none;
+}
+
+#submit {
+    background-color: #193b53;
+    border: none;
+    color:  #BEB07B;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 19px;
+    float: right;
+    margin-right: 100px;
+    height: 9vh;
+    width: 14vw;
+}
+
+#name {
+    height: 6vh;
+    width: 40vw;
+}
+
+#description {
+    height: 50vh;
+    width: 40vw;
+}
+
+.size {
+    font-size: 3vw;
+}
+.right {
+    float: right;
+    font-size: 2vw;
+    padding-right: 80px;
+}
