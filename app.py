@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import flask
 import flask_socketio
 import flask_sqlalchemy
+
 import models
 import smtplib, ssl
 
@@ -27,11 +28,13 @@ db.session.commit()
 
 CONNECTED = 0
 
+import models
+
 # Emit's list of users from users table
 def emit_user_list():
     all_users = [
         (db_messages.username, db_messages.profile_img)
-        for db_messages in db.session.query(models.users).all()
+        for db_messages in db.session.query(models.Users).all()
     ]
     socketio.emit("get_user_list", {"user_list": all_users})
 
@@ -59,6 +62,7 @@ def on_connect():
     global CONNECTED
     print("Someone connected!")
     print("CONNECTED NUMBER: " + str(CONNECTED))
+    return CONNECTED
 
 
 @socketio.on("disconnect")
@@ -77,16 +81,21 @@ def on_newlogin(data):
     email = data["email"]
     img = data["imageurl"]
     gc = ""
-    db.session.add(models.users(uname, email, img, gc))
+    db.session.add(models.Users(uname, email, img, gc))
     db.session.commit()
 
 
 # Gets information from create project page
 @socketio.on("create project")
 def on_create_project(data):
+    print("Received project information for code: ", data["groupCode"])
     project_name = data["projectName"]
     project_description = data["projectDescription"]
     group_code = data["groupCode"]
+    
+    db.session.add(models.Projects(group_code, project_name, project_description))
+    db.session.commit()
+
     print(project_name)
     print(project_description)
     print(group_code)
