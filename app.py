@@ -26,16 +26,28 @@ db.create_all()
 db.session.commit()
 
 CONNECTED = 0
+CHANNEL = "get user list"
 
 import models
 
 # Emit's list of users from users table
-def emit_user_list():
+def emit_user_list(channel):
     all_users = [
-        (db_messages.username, db_messages.profile_img)
-        for db_messages in db.session.query(models.Users).all()
+        db_username.username for db_username in db.session.query(models.Users).all()
     ]
-    socketio.emit("get_user_list", {"user_list": all_users})
+
+    all_profile_pics = [
+        db_profile_img.profile_img
+        for db_profile_img in db.session.query(models.Users).all()
+    ]
+
+    socketio.emit(
+        channel,
+        {
+            "all_users": all_users,
+            "all_profile_pics": all_profile_pics,
+        },
+    )
 
 def create_and_send_email():
     port = 465  # For SSL
@@ -53,6 +65,7 @@ def create_and_send_email():
 
 @app.route("/")
 def index():
+    emit_user_list(CHANNEL)
     return flask.render_template("index.html")
 
 
@@ -61,6 +74,7 @@ def on_connect():
     global CONNECTED
     print("Someone connected!")
     print("CONNECTED NUMBER: " + str(CONNECTED))
+    emit_user_list(CHANNEL)
     return CONNECTED
 
 
@@ -83,15 +97,19 @@ def on_newlogin(data):
     db.session.add(models.Users(uname, email, img, gc))
     db.session.commit()
 
+    emit_user_list(CHANNEL)
+
 
 # Gets information from create project page
 @socketio.on("create project")
 def on_create_project(data):
-    print("Received project information for code: ", data["groupCode"])
+    print("Received project information for group code: ", data["groupCode"])
     project_name = data["projectName"]
     project_description = data["projectDescription"]
     group_code = data["groupCode"]
-    
+    project_users = data["selectedUsers"]
+    print(project_users)
+
     db.session.add(models.Projects(group_code, project_name, project_description))
     db.session.commit()
 

@@ -1,0 +1,62 @@
+#form{
+    background: #561B1F;
+    padding-top: 5vh;
+    padding-left: 80px;
+    color: #BEB07B;
+    height: 100vh;
+    width: 100vw;
+}
+
+#submit {
+    background-color: #193b53;
+    border: none;
+    color: #BEB07B;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 19px;
+    float: right;
+    margin-right: 11.5vw;
+    height: 8vh;
+    width: 12vw;
+}
+
+#name {
+    height: 6vh;
+    width: 40vw;
+}
+
+#description {
+    height: 50vh;
+    width: 40vw;
+}
+
+.textarea { 
+    font-size: 17px;
+    resize: none;
+}
+
+.size {
+    font-size: 3vw;
+}
+
+.right {
+    float: right;
+    font-size: 2vw;
+    padding-right: 6vw;
+    padding-top: 10px;
+}
+
+.pad {
+    padding-right: 11vw;
+    font-size: 1.5vw;
+}
+
+.list {
+    list-style-type: none;
+}
+
+.profilePic {
+    height: 40px;
+    width: 40px;
+}
