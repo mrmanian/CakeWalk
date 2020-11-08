@@ -1,11 +1,11 @@
 from os.path import join, dirname
 import os
+import smtplib
+import ssl
 from dotenv import load_dotenv
 import flask
 import flask_socketio
 import flask_sqlalchemy
-
-import smtplib, ssl
 
 app = flask.Flask(__name__)
 
@@ -40,7 +40,7 @@ def emit_user_list(channel):
         db_profile_img.profile_img
         for db_profile_img in db.session.query(models.Users).all()
     ]
-    
+
     socketio.emit(
         channel,
         {
@@ -49,9 +49,12 @@ def emit_user_list(channel):
         },
     )
 
+
 def create_and_send_email():
     print("Sending email")
-    result = db.session.query(models.Users).filter(models.Users.username =="CS490 ProjectManager")
+    result = db.session.query(models.Users).filter(
+        models.Users.username == "CS490 ProjectManager"
+    )
     receiver_email = result[0].email
     user = result[0].username
     sender_email = "cs490.projectmanager@gmail.com"
@@ -63,10 +66,10 @@ def create_and_send_email():
     
     You have created a task on the Project Manager app!
     """.format(user)
-    with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-        server.login(sender_email, email_password)
-        server.sendmail(sender_email, receiver_email, message)
-    
+    server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
+    server.login(sender_email, email_password)
+    server.sendmail(sender_email, receiver_email, message)
+
 
 @app.route("/")
 def index():
@@ -121,13 +124,15 @@ def on_create_project(data):
     print(project_name)
     print(project_description)
     print(group_code)
-    
+
+
 @socketio.on("create task")
 def new_input(data):
     """Get values from task form"""
     print("Got an input with data:", data)
-    
+
     create_and_send_email()
+
 
 if __name__ == "__main__":
     socketio.run(
