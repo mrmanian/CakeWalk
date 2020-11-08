@@ -5,7 +5,6 @@ import flask
 import flask_socketio
 import flask_sqlalchemy
 
-import models
 import smtplib, ssl
 
 app = flask.Flask(__name__)
@@ -104,6 +103,7 @@ def on_create_project(data):
 def new_input(data):
     """Get values from task form"""
     print("Got an input with data:", data)
+    
     create_and_send_email()
 
 if __name__ == "__main__":
