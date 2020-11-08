@@ -25,7 +25,7 @@ export default function Content() {
     getLogin();
     
     if (login) {
-        return (<CreateProjectPage />);   
+        return (<Dash />);   
     }
     
     return (<Login />);

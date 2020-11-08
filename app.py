@@ -36,8 +36,16 @@ def emit_user_list():
     socketio.emit("get_user_list", {"user_list": all_users})
 
 # Emits list of     
-# def emit_task_list():
-    # return
+def emit_task_list(channel, user_gc):
+    user_projs = [
+        (db_projs.proj_name, db_projs.proj_id)
+        for db_projs in db.session.query(models.Projects).filter(models.Projects.group_code == user_gc)
+    ]
+    
+    user_projs = [
+        (db_tasks.title, db_tasks.proj_id)
+        for db_tasks in db.session.query(models.Tasks).filter(models.Tasks.proj_id in user_projs[i] for i in range(len(user_projs)))
+    ]
 
 
 @app.route("/")
