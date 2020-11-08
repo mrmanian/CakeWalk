@@ -40,7 +40,7 @@ def emit_user_list(channel):
         db_profile_img.profile_img
         for db_profile_img in db.session.query(models.Users).all()
     ]
-
+    
     socketio.emit(
         channel,
         {
@@ -50,17 +50,22 @@ def emit_user_list(channel):
     )
 
 def create_and_send_email():
+    print("Sending email")
+    result = db.session.query(models.Users).filter(models.Users.username =="CS490 ProjectManager")
+    receiver_email = result[0].email
+    user = result[0].username
+    sender_email = "cs490.projectmanager@gmail.com"
     port = 465  # For SSL
     # Create a secure SSL context
-    """
     context = ssl.create_default_context()
-    sender_email = "cs490.projectmanager@gmail.com"
-    receiver_email = "cs490.projectmanager@gmail.com"
-    message = "Test123"
+    message = """
+    Hello {},
+    
+    You have created a task on the Project Manager app!
+    """.format(user)
     with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
         server.login(sender_email, email_password)
         server.sendmail(sender_email, receiver_email, message)
-    """
     
 
 @app.route("/")
