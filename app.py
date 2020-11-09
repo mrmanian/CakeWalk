@@ -36,16 +36,21 @@ def emit_user_list():
     socketio.emit("get_user_list", {"user_list": all_users})
 
 # Emits list of     
-def emit_task_list(channel, user_gc):
+def emit_task_list(user_gc):
     user_projs = [
         (db_projs.proj_name, db_projs.proj_id)
         for db_projs in db.session.query(models.Projects).filter(models.Projects.group_code == user_gc)
     ]
     
-    user_projs = [
+    user_tasks = [
         (db_tasks.title, db_tasks.proj_id)
         for db_tasks in db.session.query(models.Tasks).filter(models.Tasks.proj_id in user_projs[i] for i in range(len(user_projs)))
     ]
+    
+    socketio.emit('task list', {
+        'projects': user_projs,
+        'tasks': user_tasks
+    })
 
 
 @app.route("/")
@@ -83,6 +88,7 @@ def on_newlogin(data):
     socketio.emit('login_status', {
         'loginStatus': login_status
     })
+    emit_task_list(gc)
 
 
 # Gets information from create project page
