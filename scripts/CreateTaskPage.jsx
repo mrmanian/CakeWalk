@@ -6,6 +6,17 @@ export function Forms() {
   const [titleValue, updateTitleValue] = useState(() => '');
   const [descriptionValue, updateDescriptionValue] = useState(() => '');
   const [deadlineValue, updateDeadlineValue] = useState(() => '');
+  let email = '';
+
+  function serverData() {
+    React.useEffect(() => {
+      Socket.on('connected', (data) => {
+      /* eslint no-console: ["error", { allow: ["log"] }] */
+        console.log(`Received user's email from server: ${data.email}`);
+        email = data.email;
+      });
+    }, []);
+  }
 
   function handleSubmit(event) {
     updateTitleValue('');
@@ -13,12 +24,13 @@ export function Forms() {
     updateDescriptionValue('');
     updateDeadlineValue('');
     Socket.emit('create task', {
+      email: 'cs490.projectmanager@gmail.com', // change to email once put together
       title: titleValue,
       description: descriptionValue,
       deadline: deadlineValue,
     });
   }
-
+  serverData();
   return (
 
     <div id="form">

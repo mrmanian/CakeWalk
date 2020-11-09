@@ -15,8 +15,14 @@ import models
 KEY_INPUT = "input"
 KEY_EXPECTED = "expected"
 
+class RequestObj:
+    def __init__(self):
+        return
+    def sid(self):
+        return "test_sid"
 class Unit_TestCase_Mock(unittest.TestCase):
     """Unit Tests for app.py"""
+    
     def mocked_emit_user_list(self, channel):
         return
 
@@ -36,11 +42,12 @@ class Unit_TestCase_Mock(unittest.TestCase):
             "imageurl": "https://google.com",
         }
         with mock.patch("app.db.session", session):
-            app.on_newlogin(data)
-            query = session.query(models.Users).first()
-            self.assertEqual(query.username, "Jake")
-            self.assertEqual(query.email, "jake@gmail.com")
-            self.assertEqual(query.profile_img, "https://google.com")
+            with mock.patch("app.request", RequestObj()):
+                app.on_newlogin(data)
+                query = session.query(models.Users).first()
+                self.assertEqual(query.username, "Jake")
+                self.assertEqual(query.email, "jake@gmail.com")
+                self.assertEqual(query.profile_img, "https://google.com")
 
     @mock.patch("app.socketio")
     def test_emit_user_list(self, mocked_socket):
@@ -49,12 +56,6 @@ class Unit_TestCase_Mock(unittest.TestCase):
             app.emit_user_list(CHANNEL)
             self.assertEqual(mocked_socket.emit.call_count, 1)
 #______________________________________________________________________________________________________
-
-class MockSSLContext:
-        def __init__(self, wrap_socket, status_code):
-            self.wrap_socket = wrap_socket
-            self.status_code = status_code
-            
 class sslObj:
     def __init__(self):
         return None
@@ -74,22 +75,22 @@ class smtp_sslObj:
         return None
     def sendmail(self, sender_email, receiver_email, message):
         return None
-        
-class sendMailObj:
-    def __init__(self):
-        return None
-    def sendmail(self):
-        return None
-    def login(self):
-        return None
-        
-    
+
 class test_create_task(unittest.TestCase):
+    """
     def test_create_and_send_email_success(self):
         session = UnifiedAlchemyMagicMock()
         with mock.patch("app.db.session", session):
             with mock.patch("app.smtplib", smtplibObj()):
-                app.create_and_send_email()
+                app.create_and_send_email("email")
+    """
+                
+    def test_new_input_success(self):
+        session = UnifiedAlchemyMagicMock()
+        with mock.patch("app.db.session", session):
+            with mock.patch("app.smtplib", smtplibObj()):
+                app.new_input({"email" : "testEmail.edu","title": "Create HomePage", "description": "Create HomePage using React, HTML, and CSS", "deadline": "2020-11-06", } )
+            
      
 if __name__ == "__main__":
     unittest.main()

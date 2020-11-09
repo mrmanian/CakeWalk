@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import flask
 import flask_socketio
 import flask_sqlalchemy
+from flask import request
 
 app = flask.Flask(__name__)
 
@@ -50,12 +51,11 @@ def emit_user_list(channel):
     )
 
 
-def create_and_send_email():
+def create_and_send_email(receiver_email):
     print("Sending email")
     result = db.session.query(models.Users).filter(
         models.Users.username == "CS490 ProjectManager"
     )
-    receiver_email = result[0].email
     user = result[0].username
     sender_email = "cs490.projectmanager@gmail.com"
     port = 465  # For SSL
@@ -65,7 +65,10 @@ def create_and_send_email():
     Hello {},
     
     You have created a task on the Project Manager app!
-    """.format(user)
+    """.format(
+        user
+    )
+
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
     server.login(sender_email, email_password)
     server.sendmail(sender_email, receiver_email, message)
@@ -104,7 +107,8 @@ def on_newlogin(data):
     gc = ""
     db.session.add(models.Users(uname, email, img, gc))
     db.session.commit()
-
+    sid = request.sid
+    socketio.emit("connected", {"email": email}, sid)
     emit_user_list(CHANNEL)
 
 
@@ -130,8 +134,8 @@ def on_create_project(data):
 def new_input(data):
     """Get values from task form"""
     print("Got an input with data:", data)
-
-    create_and_send_email()
+    email = data["email"]
+    create_and_send_email(email)
 
 
 if __name__ == "__main__":
