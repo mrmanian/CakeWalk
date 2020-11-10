@@ -34,14 +34,14 @@ export default function Tasks() {
                 {
                     projects.map((project, index) => {
                         return(
-                            <tr>
+                            <tr key={index}>
                                 <td>{project}</td>
                                 <td>
                                     <ul>
                                     {
                                         tasks.map((task, index2) => {
                                             return(
-                                                <li>{task}</li>
+                                                <li key={index2}>{task}</li>
                                             );
                                         })    
                                     }

@@ -76,18 +76,16 @@ def create_and_send_email(receiver_email):
 
 
 # Emits list of
-def emit_task_list(channel, user_gc):
+def emit_task_list(channel, user_gc = 'abc'):
     proj_names = [
-        db_proj.proj_name for db_proj in db.session.query(models.Projects).filter(models.Projects.group_code == 'abc')    
+        db_proj.proj_name for db_proj in db.session.query(models.Projects).filter(models.Projects.group_code == user_gc)    
     ]
     
     user_tasks = [
-        db_task.title for db_task in db.session.query(models.Tasks).filter(models.Tasks.group_code == 'abc')    
+        db_task.title for db_task in db.session.query(models.Tasks).filter(models.Tasks.group_code == user_gc)    
     ]
     
     print('Extracting user projects and tasks')
-    print(proj_names)
-    print(user_tasks)
     
     socketio.emit(channel, {
         'projects': proj_names,
@@ -97,20 +95,18 @@ def emit_task_list(channel, user_gc):
 
 @app.route("/")
 def index():
-    gc = ''
     emit_user_list(CHANNEL)
-    emit_task_list(TASK_CHANNEL, gc)
+    emit_task_list(TASK_CHANNEL)
     return flask.render_template("index.html")
 
 
 @socketio.on("connect")
 def on_connect():
     global CONNECTED
-    gc = ''
     print("Someone connected!")
     print("CONNECTED NUMBER: " + str(CONNECTED))
     emit_user_list(CHANNEL)
-    emit_task_list(TASK_CHANNEL, gc)
+    emit_task_list(TASK_CHANNEL)
     return CONNECTED
 
 
@@ -137,7 +133,7 @@ def on_newlogin(data):
     socketio.emit("connected", {"email": email}, sid)
     emit_user_list(CHANNEL)
     socketio.emit("login_status", {"loginStatus": login_status})
-    emit_task_list(TASK_CHANNEL, gc)
+    emit_task_list(TASK_CHANNEL)
 
 
 # Gets information from create project page
