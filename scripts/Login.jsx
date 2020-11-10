@@ -48,7 +48,8 @@ export default function Login() {
       <br />
       <div style={button}>
         <GoogleLogin
-          clientId="820684354318-tlcrjakf8qm4o0ln9e9r0qqoh0kq2tc6.apps.googleusercontent.com"
+          // clientId="820684354318-tlcrjakf8qm4o0ln9e9r0qqoh0kq2tc6.apps.googleusercontent.com"
+          clientId="823906096287-sipiq3ca0pv0ghg4de0mi0jhovjvmva6.apps.googleusercontent.com"
           buttonText="Login"
           onSuccess={handleSubmit}
           onFailure={handleFail}

@@ -17,7 +17,7 @@ socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
 database_uri = os.environ["DATABASE_URL"]
-email_password = os.environ["EMAIL_PASSWORD"]
+# email_password = os.environ["EMAIL_PASSWORD"]
 app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
 
 db = flask_sqlalchemy.SQLAlchemy(app)
@@ -71,41 +71,46 @@ def create_and_send_email(receiver_email):
     )
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
-    server.login(sender_email, email_password)
+    # server.login(sender_email, email_password)
     server.sendmail(sender_email, receiver_email, message)
 
 
 # Emits list of
 def emit_task_list(channel, user_gc):
-    user_projs = [
-        (db_projs.proj_name, db_projs.proj_id)
-        for db_projs in db.session.query(models.Projects).filter(
-            models.Projects.group_code == user_gc
-        )
+    proj_names = [
+        db_proj.proj_name for db_proj in db.session.query(models.Projects).filter(models.Projects.group_code == 'abc')    
     ]
-
+    
     user_tasks = [
-        (db_tasks.title, db_tasks.proj_id)
-        for db_tasks in db.session.query(models.Tasks).filter(
-            models.Tasks.proj_id in user_projs[i] for i in range(len(user_projs))
-        )
+        db_task.title for db_task in db.session.query(models.Tasks).filter(models.Tasks.group_code == 'abc')    
     ]
-
-    socketio.emit(channel, {"projects": user_projs, "tasks": user_tasks})
+    
+    print('Extracting user projects and tasks')
+    print(proj_names)
+    print(user_tasks)
+    
+    socketio.emit(channel, {
+        'projects': proj_names,
+        'tasks': user_tasks,
+    })
 
 
 @app.route("/")
 def index():
+    gc = ''
     emit_user_list(CHANNEL)
+    emit_task_list(TASK_CHANNEL, gc)
     return flask.render_template("index.html")
 
 
 @socketio.on("connect")
 def on_connect():
     global CONNECTED
+    gc = ''
     print("Someone connected!")
     print("CONNECTED NUMBER: " + str(CONNECTED))
     emit_user_list(CHANNEL)
+    emit_task_list(TASK_CHANNEL, gc)
     return CONNECTED
 
 
@@ -155,7 +160,7 @@ def on_create_task(data):
     title = data["title"]
     description = data["description"]
     deadline = data["deadline"]
-    db.session.add(models.Tasks(title, description, deadline))
+    db.session.add(models.Tasks(title, description, deadline, "abc"))
     db.session.commit()
     create_and_send_email(email)
 

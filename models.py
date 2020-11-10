@@ -47,11 +47,13 @@ class Tasks(db.Model):
     title = db.Column(db.String(255))
     t_description = db.Column(db.String(10000))
     date = db.Column(db.String(255))
+    group_code = db.Column(db.String(10))
 
-    def __init__(self, t, td, d):
+    def __init__(self, t, td, d, gc):
         self.title = t
         self.t_description = td
         self.date = d
+        self.group_code = gc
 
     def __repr__(self):
         return "< %s : %s : %s >" % (

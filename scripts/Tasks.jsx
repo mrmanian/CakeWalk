@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Socket } from './Socket';
 
 export default function Tasks() {
-    const [projects, setProjects] = React.useState();
-    const [tasks, setTasks] = React.useState();
+    const [projects, setProjects] = React.useState([]);
+    const [tasks, setTasks] = React.useState([]);
     
     function getTasks() {
         React.useEffect(() => {
@@ -15,9 +15,8 @@ export default function Tasks() {
     }
 
     function updateTasks(data) {
-        console.log(`Received projects and tasks from the server`);
-        setProjects(data.projects)
-        setTasks(data.tasks)
+        setProjects(data.projects);
+        setTasks(data.tasks);
     }
 
     getTasks();
@@ -25,24 +24,25 @@ export default function Tasks() {
     return(
         <div>
             <table>
-                <tr>
-                    <th>Projects</th>
-                    <th>Tasks</th>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>Projects</th>
+                        <th>Tasks</th>
+                    </tr>
+                </thead>
+                <tbody>
                 {
                     projects.map((project, index) => {
                         return(
                             <tr>
-                                <td>{project[0]}</td>
+                                <td>{project}</td>
                                 <td>
                                     <ul>
                                     {
                                         tasks.map((task, index2) => {
-                                            if (project[1] == task[1]) {
-                                                return(
-                                                    <li>{task[0]}</li>
-                                                );
-                                            }
+                                            return(
+                                                <li>{task}</li>
+                                            );
                                         })    
                                     }
                                     </ul>
@@ -51,6 +51,7 @@ export default function Tasks() {
                         );
                     })
                 }
+                </tbody>
             </table>
         </div>
     );
