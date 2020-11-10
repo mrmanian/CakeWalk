@@ -1,28 +1,57 @@
 import unittest
 import unittest.mock as mock
-from unittest.mock import patch, Mock
 import os
 import sys
 import inspect
+
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
-import json
 from alchemy_mock.mocking import UnifiedAlchemyMagicMock
 import app
 from app import CHANNEL
 import models
+
 KEY_INPUT = "input"
 KEY_EXPECTED = "expected"
+
 
 class RequestObj:
     def __init__(self):
         return
+
     def sid(self):
         return "test_sid"
+
+
+class sslObj:
+    def __init__(self):
+        return None
+
+    def create_default_context(self):
+        return 0
+
+
+class smtplibObj:
+    def __init__(self):
+        return None
+
+    def SMTP_SSL(self, email, port, context):
+        return smtp_sslObj(email, port, context)
+
+
+class smtp_sslObj:
+    def __init__(self, email, port, context):
+        return None
+
+    def login(self, sender_email, email_password):
+        return None
+
+    def sendmail(self, sender_email, receiver_email, message):
+        return None
+
+
 class Unit_TestCase_Mock(unittest.TestCase):
-    """Unit Tests for app.py"""
-    
     def mocked_emit_user_list(self, channel):
         return
 
@@ -55,28 +84,7 @@ class Unit_TestCase_Mock(unittest.TestCase):
         with mock.patch("app.db.session", session):
             app.emit_user_list(CHANNEL)
             self.assertEqual(mocked_socket.emit.call_count, 1)
-#______________________________________________________________________________________________________
-class sslObj:
-    def __init__(self):
-        return None
-    def create_default_context(self):
-        return 0
-        
-class smtplibObj:
-    def __init__(self):
-        return None
-    def SMTP_SSL(self, email, port, context):
-        return smtp_sslObj(email, port, context)
-        
-class smtp_sslObj:
-    def __init__(self, email, port, context):
-        return None
-    def login(self, sender_email, email_password):
-        return None
-    def sendmail(self, sender_email, receiver_email, message):
-        return None
 
-class test_create_task(unittest.TestCase):
     """
     def test_create_and_send_email_success(self):
         session = UnifiedAlchemyMagicMock()
@@ -84,13 +92,36 @@ class test_create_task(unittest.TestCase):
             with mock.patch("app.smtplib", smtplibObj()):
                 app.create_and_send_email("email")
     """
-                
-    def test_new_input_success(self):
+
+    def test_on_create_task_success(self):
         session = UnifiedAlchemyMagicMock()
         with mock.patch("app.db.session", session):
             with mock.patch("app.smtplib", smtplibObj()):
-                app.new_input({"email" : "testEmail.edu","title": "Create HomePage", "description": "Create HomePage using React, HTML, and CSS", "deadline": "2020-11-06", } )
-            
-     
+                app.on_create_task(
+                    {
+                        "email": "testEmail.edu",
+                        "title": "Create HomePage",
+                        "description": "Create HomePage using React, HTML, and CSS",
+                        "deadline": "2020-11-06",
+                    }
+                )
+
+    def test_on_create_project_success(self):
+        session = UnifiedAlchemyMagicMock()
+        data = {
+            "projectName": "Mike",
+            "projectDescription": "This is a description",
+            "groupCode": "38n5hHdk35",
+            "selectedUsers": ["Mike", "Jake", "Aarati", "Devin"],
+        }
+        with mock.patch("app.db.session", session):
+            with mock.patch("app.request", RequestObj()):
+                app.on_create_project(data)
+                query = session.query(models.Projects).first()
+                self.assertEqual(query.proj_name, "Mike")
+                self.assertEqual(query.p_description, "This is a description")
+                self.assertEqual(query.group_code, "38n5hHdk35")
+
+
 if __name__ == "__main__":
     unittest.main()

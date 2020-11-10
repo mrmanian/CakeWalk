@@ -54,7 +54,6 @@ export default function Login() {
           onFailure={handleFail}
           cookiePolicy="single_host_origin"
         />
-
       </div>
     </div>
   );

@@ -28,6 +28,7 @@ db.session.commit()
 
 CONNECTED = 0
 CHANNEL = "get user list"
+TASK_CHANNEL = "task list"
 
 import models
 
@@ -74,6 +75,25 @@ def create_and_send_email(receiver_email):
     server.sendmail(sender_email, receiver_email, message)
 
 
+# Emits list of
+def emit_task_list(channel, user_gc):
+    user_projs = [
+        (db_projs.proj_name, db_projs.proj_id)
+        for db_projs in db.session.query(models.Projects).filter(
+            models.Projects.group_code == user_gc
+        )
+    ]
+
+    user_tasks = [
+        (db_tasks.title, db_tasks.proj_id)
+        for db_tasks in db.session.query(models.Tasks).filter(
+            models.Tasks.proj_id in user_projs[i] for i in range(len(user_projs))
+        )
+    ]
+
+    socketio.emit(channel, {"projects": user_projs, "tasks": user_tasks})
+
+
 @app.route("/")
 def index():
     emit_user_list(CHANNEL)
@@ -101,6 +121,7 @@ def on_disconnect():
 @socketio.on("newlogin")
 def on_newlogin(data):
     print("Got an event for new user", data["uname"])
+    login_status = True
     uname = data["uname"]
     email = data["email"]
     img = data["imageurl"]
@@ -110,31 +131,32 @@ def on_newlogin(data):
     sid = request.sid
     socketio.emit("connected", {"email": email}, sid)
     emit_user_list(CHANNEL)
+    socketio.emit("login_status", {"loginStatus": login_status})
+    emit_task_list(TASK_CHANNEL, gc)
 
 
 # Gets information from create project page
 @socketio.on("create project")
 def on_create_project(data):
-    print("Received project information for group code: ", data["groupCode"])
+    print("Received new project data: ", data)
     project_name = data["projectName"]
     project_description = data["projectDescription"]
     group_code = data["groupCode"]
     project_users = data["selectedUsers"]
-    print(project_users)
-
     db.session.add(models.Projects(group_code, project_name, project_description))
     db.session.commit()
 
-    print(project_name)
-    print(project_description)
-    print(group_code)
 
-
+# Gets information from create task page
 @socketio.on("create task")
-def new_input(data):
-    """Get values from task form"""
-    print("Got an input with data:", data)
+def on_create_task(data):
+    print("Received new task data: ", data)
     email = data["email"]
+    title = data["title"]
+    description = data["description"]
+    deadline = data["deadline"]
+    db.session.add(models.Tasks(title, description, deadline))
+    db.session.commit()
     create_and_send_email(email)
 
 
