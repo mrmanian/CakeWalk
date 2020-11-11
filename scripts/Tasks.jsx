@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Socket } from './Socket';
-import CreateTaskPage from './CreateTaskPage';
 
 export default function Tasks({email}) {
-    const [projects, setProjects] = React.useState([]);
-    const [tasks, setTasks] = React.useState([]);
+    const [projects, setProjects] = useState([]);
+    const [tasks, setTasks] = useState([]);
     const selectedTask = [];
     
+    useEffect(() => {
+        Socket.emit('emit');
+    }, []); 
+    
     function getTasks() {
-        React.useEffect(() => {
+        useEffect(() => {
         Socket.on('task list', updateTasks);
             return () => {
                 Socket.off('task list', updateTasks);
@@ -37,20 +40,12 @@ export default function Tasks({email}) {
     }
     
     function handleSubmit(event) {
-        
         Socket.emit('task selection', {
-        selectedTask,
-        email
+            selectedTask,
+            email
         });
-         
     }
-    
-    function createTask(e) {
-        e.preventDefault();
-        console.log('The createTask button link was clicked.');
-        return(<CreateTaskPage />);
-    }
-    
+
     return(
         <div>
             <table>
@@ -67,7 +62,6 @@ export default function Tasks({email}) {
                             <tr key={index}>
                                 <td>
                                     {project}
-                                    <button onClick={createTask}>Create Task</button>
                                 </td>
                                 <td>
                                 <form onSubmit={handleSubmit} autoComplete="off">
