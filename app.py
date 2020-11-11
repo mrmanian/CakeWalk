@@ -129,8 +129,7 @@ def on_newlogin(data):
         db.session.add(models.Users(uname, email, img, gc))
         db.session.commit()
     sid = request.sid
-    socketio.emit("connected", {"email": email}, sid)
-    socketio.emit("login_status", {"loginStatus": login_status})
+    socketio.emit("login_status", {"loginStatus": login_status, "email": email}, sid)
    
 @socketio.on("emit")
 def emit():
@@ -164,10 +163,14 @@ def on_create_task(data):
 @socketio.on("task selection")
 def on_select_task(data):
     print("User selected tasks")
-    titles = data["titles"]
-    owner = data["owner"]
+    print(data)
+    titles = data["selectedTask"]
+    owner = data["email"]
+    print(titles)
+    print(owner)
     for task in titles:
         db.session.query(models.Tasks).filter(models.Tasks.title == task).update({models.Tasks.task_owner: owner})
+        db.session.commit()
     
 
 

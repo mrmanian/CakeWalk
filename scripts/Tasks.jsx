@@ -37,13 +37,15 @@ export default function Tasks({email}) {
                 }
             }
         }
+        // event.preventDefault();
     }
     
     function handleSubmit(event) {
         Socket.emit('task selection', {
-            selectedTask,
-            email
+            'selectedTask': selectedTask,
+            'email': email,
         });
+        event.preventDefault();
     }
 
     return(
