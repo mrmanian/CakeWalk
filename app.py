@@ -127,8 +127,10 @@ def on_newlogin(data):
     email = data["email"]
     img = data["imageurl"]
     gc = ""
-    db.session.add(models.Users(uname, email, img, gc))
-    db.session.commit()
+    exists = db.session.query(db.exists().where(models.Users.email == email)).scalar()
+    if(exists == False):
+        db.session.add(models.Users(uname, email, img, gc))
+        db.session.commit()
     sid = request.sid
     socketio.emit("connected", {"email": email}, sid)
     emit_user_list(CHANNEL)
@@ -156,9 +158,19 @@ def on_create_task(data):
     title = data["title"]
     description = data["description"]
     deadline = data["deadline"]
-    db.session.add(models.Tasks(title, description, deadline, "abc"))
+    owner = ""
+    db.session.add(models.Tasks(title, description, deadline, "abc", owner))
     db.session.commit()
     create_and_send_email(email)
+    
+@socketio.on("task selection")
+def on_select_task(data):
+    print("User selected tasks")
+    titles = data["titles"]
+    owner = data["owner"]
+    for task in titles:
+        db.session.query(models.Tasks).filter(models.Tasks.title == task).update({models.Tasks.task_owner: owner})
+    
 
 
 if __name__ == "__main__":
