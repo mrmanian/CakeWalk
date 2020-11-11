@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Socket } from './Socket';
 
-export default function Tasks() {
-    const [projects, setProjects] = React.useState();
-    const [tasks, setTasks] = React.useState();
+export default function Tasks({email}) {
+    const [projects, setProjects] = React.useState([]);
+    const [tasks, setTasks] = React.useState([]);
+    const selectedTask = [];
     
     function getTasks() {
         React.useEffect(() => {
@@ -15,42 +16,70 @@ export default function Tasks() {
     }
 
     function updateTasks(data) {
-        console.log(`Received projects and tasks from the server`);
-        setProjects(data.projects)
-        setTasks(data.tasks)
+        setProjects(data.projects);
+        setTasks(data.tasks);
     }
 
     getTasks();
     
+    function handleClick(event){
+        const { checked, value } = event.target;
+        if (checked) {
+            selectedTask.push(value);
+        } else {
+            for (let i = 0; i < selectedTask.length; i += 1) {
+                if (selectedTask[i] === value) {
+                    selectedTask.splice(i, 1);
+                }
+            }
+        }
+    }
+     function handleSubmit(event) {
+        
+        Socket.emit('task selection', {
+        selectedTask,
+        email
+        });
+         
+     }
     return(
         <div>
             <table>
-                <tr>
-                    <th>Projects</th>
-                    <th>Tasks</th>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>Projects</th>
+                        <th>Tasks</th>
+                    </tr>
+                </thead>
+                <tbody>
                 {
                     projects.map((project, index) => {
                         return(
-                            <tr>
-                                <td>{project[0]}</td>
+                            <tr key={index}>
+                                <td>{project}</td>
                                 <td>
+                                <form onSubmit={handleSubmit} autoComplete="off">
                                     <ul>
                                     {
                                         tasks.map((task, index2) => {
-                                            if (project[1] == task[1]) {
-                                                return(
-                                                    <li>{task[0]}</li>
-                                                );
-                                            }
+                                            return(
+                                                <li key={index2}>
+                                                <input type="checkbox" value={task} onClick={handleClick}/>
+                                                {' '}
+                                                {task}
+                                                </li>
+                                            );
                                         })    
                                     }
                                     </ul>
+                                    <button id="submit" type="submit">Select Tasks</button>
+                                 </form>
                                 </td>
                             </tr>
                         );
                     })
                 }
+                </tbody>
             </table>
         </div>
     );

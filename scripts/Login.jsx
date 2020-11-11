@@ -26,6 +26,7 @@ export default function Login() {
     console.log(response.profileObj.imageUrl);
     console.log(response.profileObj.email);
     Socket.emit('newlogin', { uname: response.profileObj.name, imageurl: response.profileObj.imageUrl, email: response.profileObj.email });
+    Socket.emit('user email', {email: response.profileObj.email});
     event.preventDefault();
   }
   function handleFail() {

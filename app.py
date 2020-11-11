@@ -17,7 +17,7 @@ socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
 database_uri = os.environ["DATABASE_URL"]
-email_password = os.environ["EMAIL_PASSWORD"]
+# email_password = os.environ["EMAIL_PASSWORD"]
 app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
 
 db = flask_sqlalchemy.SQLAlchemy(app)
@@ -71,32 +71,32 @@ def create_and_send_email(receiver_email):
     )
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
-    server.login(sender_email, email_password)
+    # server.login(sender_email, email_password)
     server.sendmail(sender_email, receiver_email, message)
 
 
 # Emits list of
-def emit_task_list(channel, user_gc):
-    user_projs = [
-        (db_projs.proj_name, db_projs.proj_id)
-        for db_projs in db.session.query(models.Projects).filter(
-            models.Projects.group_code == user_gc
-        )
+def emit_task_list(channel, user_gc = 'abc'):
+    proj_names = [
+        db_proj.proj_name for db_proj in db.session.query(models.Projects).filter(models.Projects.group_code == user_gc)    
     ]
-
+    
     user_tasks = [
-        (db_tasks.title, db_tasks.proj_id)
-        for db_tasks in db.session.query(models.Tasks).filter(
-            models.Tasks.proj_id in user_projs[i] for i in range(len(user_projs))
-        )
+        db_task.title for db_task in db.session.query(models.Tasks).filter(models.Tasks.group_code == user_gc)    
     ]
-
-    socketio.emit(channel, {"projects": user_projs, "tasks": user_tasks})
+    
+    print('Extracting user projects and tasks')
+    
+    socketio.emit(channel, {
+        'projects': proj_names,
+        'tasks': user_tasks,
+    })
 
 
 @app.route("/")
 def index():
     emit_user_list(CHANNEL)
+    emit_task_list(TASK_CHANNEL)
     return flask.render_template("index.html")
 
 
@@ -106,6 +106,7 @@ def on_connect():
     print("Someone connected!")
     print("CONNECTED NUMBER: " + str(CONNECTED))
     emit_user_list(CHANNEL)
+    emit_task_list(TASK_CHANNEL)
     return CONNECTED
 
 
@@ -126,13 +127,15 @@ def on_newlogin(data):
     email = data["email"]
     img = data["imageurl"]
     gc = ""
-    db.session.add(models.Users(uname, email, img, gc))
-    db.session.commit()
+    exists = db.session.query(db.exists().where(models.Users.email == email)).scalar()
+    if(exists == False):
+        db.session.add(models.Users(uname, email, img, gc))
+        db.session.commit()
     sid = request.sid
     socketio.emit("connected", {"email": email}, sid)
     emit_user_list(CHANNEL)
     socketio.emit("login_status", {"loginStatus": login_status})
-    emit_task_list(TASK_CHANNEL, gc)
+    emit_task_list(TASK_CHANNEL)
 
 
 # Gets information from create project page
@@ -155,9 +158,19 @@ def on_create_task(data):
     title = data["title"]
     description = data["description"]
     deadline = data["deadline"]
-    db.session.add(models.Tasks(title, description, deadline))
+    owner = ""
+    db.session.add(models.Tasks(title, description, deadline, "abc", owner))
     db.session.commit()
     create_and_send_email(email)
+    
+@socketio.on("task selection")
+def on_select_task(data):
+    print("User selected tasks")
+    titles = data["titles"]
+    owner = data["owner"]
+    for task in titles:
+        db.session.query(models.Tasks).filter(models.Tasks.title == task).update({models.Tasks.task_owner: owner})
+    
 
 
 if __name__ == "__main__":
