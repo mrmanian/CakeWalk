@@ -9,12 +9,14 @@ export default function CreateProjectPage() {
     const [profilePic, setProfilePic] = useState([]);
     let groupCode = '';
     const selectedUsers = [];
-
+    Socket.emit('emit')
     // Gets all authenticated users from login page
     useEffect(() => {
         Socket.on('get user list', (data) => {
+            console.log("getting user list");
             setUsers(data.all_users);
             setProfilePic(data.all_profile_pics);
+            groupCode = createCode();
         });
         return () => {
             Socket.off('get user list', (data) => {
@@ -78,7 +80,7 @@ export default function CreateProjectPage() {
                 <span className="right">
                     Group Code:
                     {' '}
-                    {createCode()}
+                    {groupCode}
                 </span>
             </h1>
             <h1 className="right pad">

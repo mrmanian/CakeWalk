@@ -42,7 +42,8 @@ def emit_user_list(channel):
         db_profile_img.profile_img
         for db_profile_img in db.session.query(models.Users).all()
     ]
-
+    
+    print(all_users)
     socketio.emit(
         channel,
         {
@@ -50,8 +51,8 @@ def emit_user_list(channel):
             "all_profile_pics": all_profile_pics,
         },
     )
-
-
+    
+    
 def create_and_send_email(receiver_email):
     print("Sending email")
     result = db.session.query(models.Users).filter(
@@ -95,8 +96,6 @@ def emit_task_list(channel, user_gc = 'abc'):
 
 @app.route("/")
 def index():
-    emit_user_list(CHANNEL)
-    emit_task_list(TASK_CHANNEL)
     return flask.render_template("index.html")
 
 
@@ -105,8 +104,6 @@ def on_connect():
     global CONNECTED
     print("Someone connected!")
     print("CONNECTED NUMBER: " + str(CONNECTED))
-    emit_user_list(CHANNEL)
-    emit_task_list(TASK_CHANNEL)
     return CONNECTED
 
 
@@ -133,10 +130,12 @@ def on_newlogin(data):
         db.session.commit()
     sid = request.sid
     socketio.emit("connected", {"email": email}, sid)
-    emit_user_list(CHANNEL)
     socketio.emit("login_status", {"loginStatus": login_status})
+   
+@socketio.on("emit")
+def emit():
+    emit_user_list(CHANNEL) 
     emit_task_list(TASK_CHANNEL)
-
 
 # Gets information from create project page
 @socketio.on("create project")
@@ -148,7 +147,6 @@ def on_create_project(data):
     project_users = data["selectedUsers"]
     db.session.add(models.Projects(group_code, project_name, project_description))
     db.session.commit()
-
 
 # Gets information from create task page
 @socketio.on("create task")
