@@ -33,7 +33,24 @@ export default function CreateProjectPage() {
     }, []);
 
     // Generate random 10 digit group code
-   
+    // function createCode() {
+    //     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    //     for (let i = 0; i < 10; i += 1) {
+    //         groupCode += characters.charAt(Math.floor(Math.random() * 62));
+    //     }
+
+    //     return groupCode;
+    // }
+    
+    useEffect(() => {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (let i = 0; i < 10; i += 1) {
+            groupCode += characters.charAt(Math.floor(Math.random() * 62));
+        }
+        
+        setCode(groupCode);
+    }, []);
+
     // Gathers submitted information and sends to server
     function handleSubmit(event) {
         const projectName = document.getElementById('name').value;
