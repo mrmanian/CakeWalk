@@ -37,12 +37,10 @@ def emit_user_list(channel):
     all_users = [
         db_username.username for db_username in db.session.query(models.Users).all()
     ]
-
     all_profile_pics = [
         db_profile_img.profile_img
         for db_profile_img in db.session.query(models.Users).all()
     ]
-    
     print(all_users)
     socketio.emit(
         channel,
@@ -51,6 +49,22 @@ def emit_user_list(channel):
             "all_profile_pics": all_profile_pics,
         },
     )
+
+# Emits list of
+def emit_task_list(channel, user_gc = 'abc'):
+    proj_names = [
+        db_proj.proj_name for db_proj in db.session.query(models.Projects).filter(models.Projects.group_code == user_gc)    
+    ]
+    
+    user_tasks = [
+        db_task.title for db_task in db.session.query(models.Tasks).filter(models.Tasks.group_code == user_gc)    
+    ]
+    
+    print('Extracting user projects and tasks')
+    socketio.emit(channel, {
+        'projects': proj_names,
+        'tasks': user_tasks,
+    })
     
     
 def create_and_send_email(receiver_email):
@@ -76,29 +90,15 @@ def create_and_send_email(receiver_email):
     server.sendmail(sender_email, receiver_email, message)
 
 
-# Emits list of
-def emit_task_list(channel, user_gc = 'abc'):
-    proj_names = [
-        db_proj.proj_name for db_proj in db.session.query(models.Projects).filter(models.Projects.group_code == user_gc)    
-    ]
-    
-    user_tasks = [
-        db_task.title for db_task in db.session.query(models.Tasks).filter(models.Tasks.group_code == user_gc)    
-    ]
-    
-    print('Extracting user projects and tasks')
-    
-    socketio.emit(channel, {
-        'projects': proj_names,
-        'tasks': user_tasks,
-    })
-
-
 @app.route("/")
 def index():
     return flask.render_template("index.html")
 
-
+@socketio.on("get users")
+def on_get_users():
+    print("got request for get users")
+    emit_user_list(CHANNEL)
+    
 @socketio.on("connect")
 def on_connect():
     global CONNECTED
@@ -125,7 +125,7 @@ def on_newlogin(data):
     img = data["imageurl"]
     gc = ""
     exists = db.session.query(db.exists().where(models.Users.email == email)).scalar()
-    if(exists == False):
+    if not exists:
         db.session.add(models.Users(uname, email, img, gc))
         db.session.commit()
     sid = request.sid
@@ -143,7 +143,7 @@ def on_create_project(data):
     print("Received new project data: ", data)
     project_name = data["projectName"]
     project_description = data["projectDescription"]
-    group_code = data["groupCode"]
+    group_code = data["code"]
     project_users = data["selectedUsers"]
     db.session.add(models.Projects(group_code, project_name, project_description))
     db.session.commit()

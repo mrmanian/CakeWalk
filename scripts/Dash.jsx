@@ -8,11 +8,12 @@ export default function Dash({email}) {
     
     function createsProject(e) {
     e.preventDefault();
-    console.log('The createProject button link was clicked.');
+    console.log('The create Project button link was clicked.');
     updateCreateProject(true);
     
   }
   if(createProject){
+    Socket.emit('get users')
     return(<CreateProjectPage />)
   }
     return(

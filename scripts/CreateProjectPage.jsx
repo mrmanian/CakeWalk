@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from 'react';
-
 import { Socket } from './Socket';
 
 import './CreateProjectPage.css';
 
 export default function CreateProjectPage() {
+    const [code, setCode] = useState('');
     const [users, setUsers] = useState([]);
     const [profilePic, setProfilePic] = useState([]);
     let groupCode = '';
     const selectedUsers = [];
-    Socket.emit('emit')
     // Gets all authenticated users from login page
+    useEffect(() => {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (let i = 0; i < 10; i += 1) {
+            groupCode += characters.charAt(Math.floor(Math.random() * 62));
+        }
+        setCode(groupCode);
+    }, []); 
+    
     useEffect(() => {
         Socket.on('get user list', (data) => {
             console.log("getting user list");
             setUsers(data.all_users);
             setProfilePic(data.all_profile_pics);
-            groupCode = createCode();
         });
         return () => {
             Socket.off('get user list', (data) => {
@@ -27,36 +33,23 @@ export default function CreateProjectPage() {
     }, []);
 
     // Generate random 10 digit group code
-    function createCode() {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        for (let i = 0; i < 10; i += 1) {
-            groupCode += characters.charAt(Math.floor(Math.random() * 62));
-        }
-
-        return groupCode;
-    }
-
+   
     // Gathers submitted information and sends to server
     function handleSubmit(event) {
         const projectName = document.getElementById('name').value;
         const projectDescription = document.getElementById('description').value;
-
         Socket.emit('create project', {
             projectName,
             projectDescription,
-            groupCode,
+            code,
             selectedUsers,
         });
 
-    Socket.emit('create project', {
-      projectName,
-      projectDescription,
-      groupCode,
-    });
 
     document.getElementById('name').value = '';
     document.getElementById('description').value = '';
     event.preventDefault();
+    
   }
 
     // Handles user selection checkboxes
@@ -80,7 +73,7 @@ export default function CreateProjectPage() {
                 <span className="right">
                     Group Code:
                     {' '}
-                    {groupCode}
+                    {code}
                 </span>
             </h1>
             <h1 className="right pad">
