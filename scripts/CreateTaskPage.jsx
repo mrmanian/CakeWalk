@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Socket } from './Socket';
+import Dash from './Dash';
 import './CreateTaskPage.css';
 
-export function Forms() {
-  const [titleValue, updateTitleValue] = useState(() => '');
-  const [descriptionValue, updateDescriptionValue] = useState(() => '');
-  const [deadlineValue, updateDeadlineValue] = useState(() => '');
+export default function CreateTaskPage() {
+  const [titleValue, updateTitleValue] = useState('');
+  const [descriptionValue, updateDescriptionValue] = useState('');
+  const [deadlineValue, updateDeadlineValue] = useState('');
+  const [formSent, setFormSent] = useState(false);
   let email = '';
 
   function serverData() {
-    React.useEffect(() => {
+    useEffect(() => {
       Socket.on('connected', (data) => {
       /* eslint no-console: ["error", { allow: ["log"] }] */
         console.log(`Received user's email from server: ${data.email}`);
@@ -29,8 +31,14 @@ export function Forms() {
       description: descriptionValue,
       deadline: deadlineValue,
     });
+    setFormSent(true);
   }
+
   serverData();
+    if (formSent){
+      return(<Dash />)
+  }
+
   return (
 
     <div id="form">
@@ -53,4 +61,3 @@ export function Forms() {
 
   );
 }
-export default Forms;
