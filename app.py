@@ -17,7 +17,7 @@ socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
 database_uri = os.environ["DATABASE_URL"]
-# email_password = os.environ["EMAIL_PASSWORD"]
+email_password = os.environ["EMAIL_PASSWORD"]
 app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
 
 db = flask_sqlalchemy.SQLAlchemy(app)
@@ -68,11 +68,14 @@ def emit_task_list(channel, user_gc = 'abc'):
     
     
 def create_and_send_email(receiver_email):
+    
     print("Sending email")
-    result = db.session.query(models.Users).filter(
-        models.Users.username == "CS490 ProjectManager"
-    )
-    user = result[0].username
+    user = [
+        db_username.username for db_username in db.session.query(models.Users).filter(models.Users.email == receiver_email)
+    ]
+   
+    user = user[0]
+    
     sender_email = "cs490.projectmanager@gmail.com"
     port = 465  # For SSL
     # Create a secure SSL context
@@ -81,13 +84,11 @@ def create_and_send_email(receiver_email):
     Hello {},
     
     You have created a task on the Project Manager app!
-    """.format(
-        user
-    )
+    """.format(user)
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
-    # server.login(sender_email, email_password)
-    server.sendmail(sender_email, receiver_email, message)
+    server.login(sender_email, email_password)
+    server.sendmail(sender_email,receiver_email , message)
 
 
 @app.route("/")
@@ -114,7 +115,7 @@ def on_disconnect():
     print("Someone disconnected!")
     socketio.emit("disconnected", {"num": CONNECTED})
 
-
+user_email = ''
 # Adds user data to user table on login
 @socketio.on("newlogin")
 def on_newlogin(data):
@@ -128,8 +129,9 @@ def on_newlogin(data):
     if not exists:
         db.session.add(models.Users(uname, email, img, gc))
         db.session.commit()
-    sid = request.sid
-    socketio.emit("connected", {"email": email}, sid)
+    print("Email is " +email)
+    global user_email
+    user_email = email
     socketio.emit("login_status", {"loginStatus": login_status})
    
 @socketio.on("emit")
@@ -148,6 +150,13 @@ def on_create_project(data):
     db.session.add(models.Projects(group_code, project_name, project_description))
     db.session.commit()
 
+# @socketio.on("get email")
+# def emit_email():
+#     sid = request.sid
+#     global user_email
+#     print("in get email "+user_email)
+#     #socketio.emit("connected", {"email": email}, sid)
+
 # Gets information from create task page
 @socketio.on("create task")
 def on_create_task(data):
@@ -159,7 +168,8 @@ def on_create_task(data):
     owner = ""
     db.session.add(models.Tasks(title, description, deadline, "abc", owner))
     db.session.commit()
-    create_and_send_email(email)
+    global user_email
+    create_and_send_email(user_email)
     
 @socketio.on("task selection")
 def on_select_task(data):
