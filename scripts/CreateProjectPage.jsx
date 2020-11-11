@@ -7,6 +7,7 @@ export default function CreateProjectPage() {
     const [code, setCode] = useState('');
     const [users, setUsers] = useState([]);
     const [profilePic, setProfilePic] = useState([]);
+    const [formSent, setFormSent] = useState(false);
     let groupCode = '';
     const selectedUsers = [];
     // Gets all authenticated users from login page
@@ -49,8 +50,8 @@ export default function CreateProjectPage() {
     document.getElementById('description').value = '';
     event.preventDefault();
     console.log("here")
-    return(<Dash />)
-    
+    setFormSent(true);
+   
   }
 
     // Handles user selection checkboxes
@@ -66,7 +67,9 @@ export default function CreateProjectPage() {
             }
         }
     }
-
+    if (formSent){
+        return(<Dash />)
+    }
     return (
         <div id="form">
             <h1 className="size">

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Socket } from './Socket';
 import Tasks from './Tasks';
-import  CreateProjectPage from './CreateProjectPage';
+import CreateProjectPage from './CreateProjectPage';
+//add styling here
 
 export default function Dash({email}) {
     const [createProject, updateCreateProject] = React.useState(false);
