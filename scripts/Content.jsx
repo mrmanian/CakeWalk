@@ -6,6 +6,7 @@ import CreateProjectPage from './CreateProjectPage';
 
 export default function Content() {
     const [login, setLogin] = React.useState(false);
+    let email = '';
      
     function getLogin() {
         React.useEffect(() => {
@@ -24,7 +25,14 @@ export default function Content() {
     getLogin();
     
     if (login) {
-        return (<Dash />);   
+        React.useEffect(() => {
+            Socket.on('connected', (data) => {
+             /* eslint no-console: ["error", { allow: ["log"] }] */
+            console.log(`Received user's email from server: ${data.email}`);
+            email = data.email;
+            });
+        }, []);
+        return (<Dash email = {email}/>);   
     }
     
     return (<Login />);

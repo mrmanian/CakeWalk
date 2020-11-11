@@ -121,7 +121,18 @@ class Unit_TestCase_Mock(unittest.TestCase):
                 self.assertEqual(query.proj_name, "Mike")
                 self.assertEqual(query.p_description, "This is a description")
                 self.assertEqual(query.group_code, "38n5hHdk35")
-
+                
+    def test_on_select_task(self):
+        session = UnifiedAlchemyMagicMock()
+        data = {
+            "titles": ["Landing Page"],
+            "owner" : "jake",
+        }
+        with mock.patch("app.db.session", session):
+            app.on_select_task(data)
+            query = session.query(models.Tasks).first()
+            self.assertEqual(query.task_owner, "jake")
+            self.assertEqual(query.title, "Landing Page")
 
 if __name__ == "__main__":
     unittest.main()
