@@ -6,7 +6,6 @@ export default function Tasks({email}) {
     const [projects, setProjects] = React.useState([]);
     const [tasks, setTasks] = React.useState([]);
     const selectedTask = [];
-    Socket.emit('emit')
     
     function getTasks() {
         React.useEffect(() => {

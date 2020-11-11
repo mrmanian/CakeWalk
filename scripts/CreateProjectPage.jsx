@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Socket } from './Socket';
-
+import Dash from './Dash';
 import './CreateProjectPage.css';
 
 export default function CreateProjectPage() {
@@ -32,24 +32,6 @@ export default function CreateProjectPage() {
         };
     }, []);
 
-    // Generate random 10 digit group code
-    // function createCode() {
-    //     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    //     for (let i = 0; i < 10; i += 1) {
-    //         groupCode += characters.charAt(Math.floor(Math.random() * 62));
-    //     }
-
-    //     return groupCode;
-    // }
-    
-    useEffect(() => {
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        for (let i = 0; i < 10; i += 1) {
-            groupCode += characters.charAt(Math.floor(Math.random() * 62));
-        }
-        
-        setCode(groupCode);
-    }, []);
 
     // Gathers submitted information and sends to server
     function handleSubmit(event) {
@@ -66,6 +48,8 @@ export default function CreateProjectPage() {
     document.getElementById('name').value = '';
     document.getElementById('description').value = '';
     event.preventDefault();
+    console.log("here")
+    return(<Dash />)
     
   }
 
