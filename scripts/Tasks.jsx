@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Socket } from './Socket';
+import CreateTaskPage from './CreateTaskPage';
 
 export default function Tasks({email}) {
     const [projects, setProjects] = React.useState([]);
     const [tasks, setTasks] = React.useState([]);
     const selectedTask = [];
+    Socket.emit('emit')
     
     function getTasks() {
         React.useEffect(() => {
@@ -34,14 +36,22 @@ export default function Tasks({email}) {
             }
         }
     }
-     function handleSubmit(event) {
+    
+    function handleSubmit(event) {
         
         Socket.emit('task selection', {
         selectedTask,
         email
         });
          
-     }
+    }
+    
+    function createTask(e) {
+        e.preventDefault();
+        console.log('The createTask button link was clicked.');
+        return(<CreateTaskPage />);
+    }
+    
     return(
         <div>
             <table>
@@ -56,7 +66,10 @@ export default function Tasks({email}) {
                     projects.map((project, index) => {
                         return(
                             <tr key={index}>
-                                <td>{project}</td>
+                                <td>
+                                    {project}
+                                    <button onClick={createTask}>Create Task</button>
+                                </td>
                                 <td>
                                 <form onSubmit={handleSubmit} autoComplete="off">
                                     <ul>

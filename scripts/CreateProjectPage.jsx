@@ -5,6 +5,7 @@ import { Socket } from './Socket';
 import './CreateProjectPage.css';
 
 export default function CreateProjectPage() {
+    const [code, setCode] = useState('');
     const [users, setUsers] = useState([]);
     const [profilePic, setProfilePic] = useState([]);
     let groupCode = '';
@@ -27,14 +28,23 @@ export default function CreateProjectPage() {
     }, []);
 
     // Generate random 10 digit group code
-    function createCode() {
+    // function createCode() {
+    //     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    //     for (let i = 0; i < 10; i += 1) {
+    //         groupCode += characters.charAt(Math.floor(Math.random() * 62));
+    //     }
+
+    //     return groupCode;
+    // }
+    
+    useEffect(() => {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         for (let i = 0; i < 10; i += 1) {
             groupCode += characters.charAt(Math.floor(Math.random() * 62));
         }
-
-        return groupCode;
-    }
+        
+        setCode(groupCode);
+    }, []);
 
     // Gathers submitted information and sends to server
     function handleSubmit(event) {
@@ -80,7 +90,7 @@ export default function CreateProjectPage() {
                 <span className="right">
                     Group Code:
                     {' '}
-                    {groupCode}
+                    {code}
                 </span>
             </h1>
             <h1 className="right pad">
