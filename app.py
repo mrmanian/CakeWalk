@@ -85,7 +85,6 @@ def create_and_send_project_email(receiver_email):
             models.Users.email == receiver_email
         )
     ]
-
     user = user[0]
 
     sender_email = "cs490.projectmanager@gmail.com"
@@ -113,7 +112,6 @@ def create_and_send_task_email(receiver_email):
             models.Users.email == receiver_email
         )
     ]
-
     user = user[0]
 
     sender_email = "cs490.projectmanager@gmail.com"
