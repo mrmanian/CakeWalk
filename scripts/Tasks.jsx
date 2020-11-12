@@ -1,4 +1,3 @@
-
 /* eslint import/no-extraneous-dependencies: */
 import React, { useState, useEffect } from 'react';
 import { Socket } from './Socket';
@@ -7,12 +6,12 @@ import { Socket } from './Socket';
 export default function Tasks({email}) {
     const [projects, setProjects] = useState([]);
     const [tasks, setTasks] = useState([]);
-    const [ownerStatus, setOwnerStatus] = useState("Open");
     const selectedTask = [];
     
     useEffect(() => {
         Socket.emit('emit');
     }, []);
+    
     function getTasks() {
         useEffect(() => {
             Socket.on('task list', updateTasks);
@@ -28,33 +27,19 @@ export default function Tasks({email}) {
     }
   
 
-  getTasks();
+    getTasks();
 
-  function handleClick(event) {
-    const { checked, value } = event.target;
-    if (checked) {
-      selectedTask.push(value);
-    } else {
-      for (let i = 0; i < selectedTask.length; i += 1) {
-        if (selectedTask[i] === value) {
-          selectedTask.splice(i, 1);
+    function handleClick(event) {
+        const { checked, value } = event.target;
+        if (checked) {
+            selectedTask.push(value);
+        } else {
+            for (let i = 0; i < selectedTask.length; i += 1) {
+                if (selectedTask[i] === value) {
+                    selectedTask.splice(i, 1);
+                }
+            }
         }
-      }
-    }
-  }
-
-  function handleSubmit(event) {
-        Socket.emit('task selection', {
-            'selectedTask': selectedTask ,
-            'email': email
-        });
-        document.getElementById("selectTaskForm").reset();
-        
-        
-        event.preventDefault();
-       
-        Socket.emit('emit');
-    
     }
 
     function handleSubmit(event) {
