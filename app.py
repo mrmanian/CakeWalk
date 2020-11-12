@@ -53,7 +53,7 @@ def emit_user_list(channel):
 
 
 # Emits list of tasks from tasks table
-def emit_task_list(channel, user_gc="abc"):
+def emit_task_list(channel, user_gc="NKo5WU7eFR"):
     proj_names = [
         db_proj.proj_name
         for db_proj in db.session.query(models.Projects).filter(
@@ -196,6 +196,11 @@ def on_create_project(data):
     project_users = data["selectedUsers"]
     db.session.add(models.Projects(group_code, project_name, project_description))
     db.session.commit()
+    for user in project_users:
+        db.session.query(models.Users).filter(models.Users.email == user).update(
+            {models.Users.group_code: group_code}
+        )
+        db.session.commit()
     global user_email
     create_and_send_project_email(user_email)
 
@@ -216,7 +221,7 @@ def on_create_task(data):
     description = data["description"]
     deadline = data["deadline"]
     owner = ""
-    db.session.add(models.Tasks(title, description, deadline, "abc", owner))
+    db.session.add(models.Tasks(title, description, deadline, "NKo5WU7eFR", owner))
     db.session.commit()
     global user_email
     create_and_send_task_email(user_email)
