@@ -29,7 +29,7 @@ db.session.commit()
 CONNECTED = 0
 CHANNEL = "get user list"
 TASK_CHANNEL = "task list"
-user_email = ""
+
 
 import models
 
@@ -174,11 +174,7 @@ def on_newlogin(data):
         db.session.commit()
     sid = request.sid
     socketio.emit("login_status", {"loginStatus": login_status, "email": email}, sid)
-    print("Email is " + email)
-    global user_email
-    user_email = email
-    print(email)
-
+    
 
 @socketio.on("emit")
 def emit():
@@ -194,6 +190,7 @@ def on_create_project(data):
     project_description = data["projectDescription"]
     group_code = data["code"]
     project_users = data["selectedUsers"]
+    email = data["email"]
     db.session.add(models.Projects(group_code, project_name, project_description))
     db.session.commit()
     for user in project_users:
@@ -201,16 +198,9 @@ def on_create_project(data):
             {models.Users.group_code: group_code}
         )
         db.session.commit()
-    global user_email
-    create_and_send_project_email(user_email)
+    print(email)
+    create_and_send_project_email(email)
 
-
-# @socketio.on("get email")
-# def emit_email():
-#     sid = request.sid
-#     global user_email
-#     print("in get email "+user_email)
-#     #socketio.emit("connected", {"email": email}, sid)
 
 # Gets information from create task page
 @socketio.on("create task")
@@ -223,8 +213,7 @@ def on_create_task(data):
     owner = ""
     db.session.add(models.Tasks(title, description, deadline, "NKo5WU7eFR", owner))
     db.session.commit()
-    global user_email
-    create_and_send_task_email(user_email)
+    create_and_send_task_email(email)
 
 
 @socketio.on("task selection")

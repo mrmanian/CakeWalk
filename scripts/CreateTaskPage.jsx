@@ -3,19 +3,19 @@ import { Socket } from './Socket';
 import Dash from './Dash';
 import './CreateTaskPage.css';
 
-export default function CreateTaskPage() {
+export default function CreateTaskPage({email}) {
     const [titleValue, updateTitleValue] = useState('');
     const [descriptionValue, updateDescriptionValue] = useState('');
     const [deadlineValue, updateDeadlineValue] = useState('');
     const [formSent, setFormSent] = useState(false);
-    let email = '';
+    
 
     function serverData() {
         useEffect(() => {
             Socket.on('connected', (data) => {
                 /* eslint no-console: ["error", { allow: ["log"] }] */
                 console.log(`Received user's email from server: ${data.email}`);
-                email = data.email;
+                //email = data.email;
             });
         }, []);
     }
@@ -27,7 +27,7 @@ export default function CreateTaskPage() {
         updateDescriptionValue('');
         updateDeadlineValue('');
         Socket.emit('create task', {
-            email: 'cs490.projectmanager@gmail.com',
+            email: email,
             title: titleValue,
             description: descriptionValue,
             deadline: deadlineValue,
