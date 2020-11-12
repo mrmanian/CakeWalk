@@ -26,7 +26,6 @@ db.app = app
 db.create_all()
 db.session.commit()
 
-CONNECTED = 0
 CHANNEL = "get user list"
 TASK_CHANNEL = "task list"
 
@@ -77,7 +76,8 @@ def emit_task_list(channel, user_gc="NKo5WU7eFR"):
         },
     )
 
-def create_and_send_email(receiver_email,message):
+
+def create_and_send_email(receiver_email, message):
     user = [
         db_username.username
         for db_username in db.session.query(models.Users).filter(
@@ -89,7 +89,7 @@ def create_and_send_email(receiver_email,message):
     port = 465  # For SSL
     # Create a secure SSL context
     context = ssl.create_default_context()
-    message.format(user)
+    message = message.format(user)
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
     server.login(sender_email, email_password)
@@ -97,31 +97,15 @@ def create_and_send_email(receiver_email,message):
     print("Sent email to user.")
 
 
-@app.route("/")
-def index():
-    return flask.render_template("index.html")
-
-
 @socketio.on("get users")
 def on_get_users():
-    print("got request for get users")
     emit_user_list(CHANNEL)
 
 
-@socketio.on("connect")
-def on_connect():
-    global CONNECTED
-    print("Someone connected!")
-    print("CONNECTED NUMBER: " + str(CONNECTED))
-    return CONNECTED
-
-
-@socketio.on("disconnect")
-def on_disconnect():
-    global CONNECTED
-    CONNECTED -= 1
-    print("Someone disconnected!")
-    socketio.emit("disconnected", {"num": CONNECTED})
+@socketio.on("emit")
+def emit():
+    emit_user_list(CHANNEL)
+    emit_task_list(TASK_CHANNEL)
 
 
 # Adds user data to user table on login
@@ -132,19 +116,13 @@ def on_newlogin(data):
     uname = data["uname"]
     email = data["email"]
     img = data["imageurl"]
-    gc = ""
+    group_code = ""
     exists = db.session.query(db.exists().where(models.Users.email == email)).scalar()
     if not exists:
-        db.session.add(models.Users(uname, email, img, gc))
+        db.session.add(models.Users(uname, email, img, group_code))
         db.session.commit()
     sid = request.sid
     socketio.emit("login_status", {"loginStatus": login_status, "email": email}, sid)
-    
-
-@socketio.on("emit")
-def emit():
-    emit_user_list(CHANNEL)
-    emit_task_list(TASK_CHANNEL)
 
 
 # Gets information from create project page
@@ -168,7 +146,7 @@ def on_create_project(data):
     
     You have created a project on the Project Manager app!
     """
-    create_and_send_email(email,message)
+    create_and_send_email(email, message)
 
 
 # Gets information from create task page
@@ -187,22 +165,34 @@ def on_create_task(data):
     
     You have created a task on the Project Manager app!
     """
-    create_and_send_email(email,message)
+    create_and_send_email(email, message)
 
 
 @socketio.on("task selection")
 def on_select_task(data):
-    print("User selected tasks")
-    print(data)
+    print("User selected tasks: ", data)
     titles = data["selectedTask"]
     owner = data["email"]
-    print(titles)
-    print(owner)
     for task in titles:
         db.session.query(models.Tasks).filter(models.Tasks.title == task).update(
             {models.Tasks.task_owner: owner}
         )
         db.session.commit()
+
+
+@app.route("/")
+def index():
+    return flask.render_template("index.html")
+
+
+@socketio.on("connect")
+def on_connect():
+    print("Someone connected!")
+
+
+@socketio.on("disconnect")
+def on_disconnect():
+    print("Someone disconnected!")
 
 
 if __name__ == "__main__":
