@@ -52,7 +52,7 @@ def emit_user_list(channel):
 
 
 # Emits list of tasks from tasks table
-def emit_task_list(channel, user_gc="NKo5WU7eFR"):
+def emit_task_list(channel, user_gc="UT3JuAdepJ"):
     proj_names = [
         db_proj.proj_name
         for db_proj in db.session.query(models.Projects).filter(
@@ -61,12 +61,12 @@ def emit_task_list(channel, user_gc="NKo5WU7eFR"):
     ]
 
     user_tasks = [
-        db_task.title
+        (db_task.title, db_task.task_owner)
         for db_task in db.session.query(models.Tasks).filter(
             models.Tasks.group_code == user_gc
         )
     ]
-
+    print(user_tasks)
     print("Extracting user projects and tasks.")
     socketio.emit(
         channel,
@@ -153,7 +153,7 @@ def on_create_task(data):
     description = data["description"]
     deadline = data["deadline"]
     owner = ""
-    db.session.add(models.Tasks(title, description, deadline, "NKo5WU7eFR", owner))
+    db.session.add(models.Tasks(title, description, deadline, "UT3JuAdepJ", owner))
     db.session.commit()
     message = """
     Hello {},
