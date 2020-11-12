@@ -95,14 +95,12 @@ def create_and_send_project_email(receiver_email):
     Hello {},
     
     You have created a project on the Project Manager app!
-    """.format(
-        user
-    )
+    """.format(user)
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
     server.login(sender_email, email_password)
     server.sendmail(sender_email, receiver_email, message)
-    print("Sent email to user.")
+    print("Sent project email to user.")
 
 
 def create_and_send_task_email(receiver_email):
@@ -122,14 +120,12 @@ def create_and_send_task_email(receiver_email):
     Hello {},
     
     You have created a task on the Project Manager app!
-    """.format(
-        user
-    )
+    """.format(user)
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
     server.login(sender_email, email_password)
     server.sendmail(sender_email, receiver_email, message)
-    print("Sent email to user.")
+    print("Sent task email to user.")
 
 
 @app.route("/")
