@@ -3,7 +3,7 @@ import { Socket } from './Socket';
 import Tasks from './Tasks';
 import CreateProjectPage from './CreateProjectPage';
 import CreateTaskPage from './CreateTaskPage';
-//add styling here
+import './Dash.css';
 
 export default function Dash({email}) {
     const [createProject, updateCreateProject] = useState(false);
@@ -30,14 +30,17 @@ export default function Dash({email}) {
     }
     
     return(
-        <div>
-            <h1>Task Manager</h1>
+        <div id='head'>
+            <h1 id='title'>Task Manager</h1>
             <br />
             <br />
-            <button onClick={createsProject}>Create Project</button> 
+            <div id='btn'>
+                <button className='create' onClick={createsProject}>Create Project</button>
+                <div id='divider' />
+                <button className='create' onClick={createsTasks}>Create Task</button>
+            </div>
             <br />
             <br />
-            <button onClick={createsTasks}>Create Task</button> 
             <br />
             <br />
             <Tasks email = {email}/>

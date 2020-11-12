@@ -1,0 +1,32 @@
+#btn {
+    text-align: center;
+}
+
+#divider {
+    display: inline-block;
+    height: auto;
+    width: 2vw;
+}
+
+#id {
+    margin: auto;
+}
+
+#title {
+    background-color: #561B1F;
+    color: white;
+    text-align: center;
+}
+
+.create {
+    background-color: #BEB07B;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    padding: .33vw .66vh;
+    text-align: center;
+}
+
+.create:hover {
+    background-color: #A3945F;
+}

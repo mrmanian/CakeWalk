@@ -17,7 +17,7 @@ socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
 database_uri = os.environ["DATABASE_URL"]
-email_password = os.environ["EMAIL_PASSWORD"]
+#email_password = os.environ["EMAIL_PASSWORD"]
 app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
 
 db = flask_sqlalchemy.SQLAlchemy(app)
@@ -87,7 +87,7 @@ def create_and_send_email(receiver_email):
     """.format(user)
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
-    server.login(sender_email, email_password)
+    #server.login(sender_email, email_password)
     server.sendmail(sender_email,receiver_email , message)
 
 
