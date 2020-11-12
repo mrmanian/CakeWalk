@@ -73,10 +73,8 @@ class Unit_TestCase_Mock(unittest.TestCase):
         with mock.patch("app.db.session", session):
             with mock.patch("app.request", RequestObj()):
                 app.on_newlogin(data)
-                query = session.query(models.Users).first()
-                self.assertEqual(query.username, "Jake")
-                self.assertEqual(query.email, "jake@gmail.com")
-                self.assertEqual(query.profile_img, "https://google.com")
+                session.query.assert_called_once()
+                
 
     @mock.patch("app.socketio")
     def test_emit_user_list(self, mocked_socket):
@@ -111,7 +109,7 @@ class Unit_TestCase_Mock(unittest.TestCase):
         data = {
             "projectName": "Mike",
             "projectDescription": "This is a description",
-            "groupCode": "38n5hHdk35",
+            "code": "38n5hHdk35",
             "selectedUsers": ["Mike", "Jake", "Aarati", "Devin"],
         }
         with mock.patch("app.db.session", session):
@@ -125,14 +123,13 @@ class Unit_TestCase_Mock(unittest.TestCase):
     def test_on_select_task(self):
         session = UnifiedAlchemyMagicMock()
         data = {
-            "titles": ["Landing Page"],
-            "owner" : "jake",
+            "selectedTask": ["Landing Page"],
+            "email" : "jake",
         }
         with mock.patch("app.db.session", session):
             app.on_select_task(data)
-            query = session.query(models.Tasks).first()
-            self.assertEqual(query.task_owner, "jake")
-            self.assertEqual(query.title, "Landing Page")
+            
+            session.query.assert_called_once()
 
 if __name__ == "__main__":
     unittest.main()
