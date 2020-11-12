@@ -39,7 +39,7 @@ export default function CreateTaskPage({email}) {
 
     // Redirect page back to dashboard after form submit
     if (formSent) {
-        return (<Dash />);
+        return (<Dash email = {email}/>);
     }
 
     return (
