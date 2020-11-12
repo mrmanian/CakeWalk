@@ -5,7 +5,6 @@ import { Socket } from './Socket';
 
 export default function Content() {
     const [login, setLogin] = React.useState(false);
-    // let email = '';
     const [email, setEmail] = React.useState('');
      
     function getLogin() {
@@ -26,11 +25,6 @@ export default function Content() {
     getLogin();
     
     if (login) {
-            // Socket.on('connected', (data) => {
-            //  /* eslint no-console: ["error", { allow: ["log"] }] */
-            // console.log(`Received user's email from server: ${data.email}`);
-            // email = data.email;
-            // });
         return (<Dash email = {email}/>);   
     }
     

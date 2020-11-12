@@ -40,7 +40,7 @@ export default function Dash({email}) {
             <button onClick={createsTasks}>Create Task</button> 
             <br />
             <br />
-            <Tasks email={email}/>
+            <Tasks email = {email}/>
         </div>
     );
 }
