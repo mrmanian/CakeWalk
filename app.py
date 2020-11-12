@@ -97,11 +97,6 @@ def create_and_send_email(receiver_email, message):
     print("Sent email to user.")
 
 
-@socketio.on("get users")
-def on_get_users():
-    emit_user_list(CHANNEL)
-
-
 @socketio.on("emit")
 def emit():
     emit_user_list(CHANNEL)
