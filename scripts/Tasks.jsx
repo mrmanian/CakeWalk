@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import { Socket } from './Socket';
 
 export default function Tasks({email}) {
     const [projects, setProjects] = useState([]);
     const [tasks, setTasks] = useState([]);
+    const [ownerStatus, setOwnerStatus] = useState("Open");
     const selectedTask = [];
     
     useEffect(() => {
@@ -41,11 +42,16 @@ export default function Tasks({email}) {
     
     function handleSubmit(event) {
         Socket.emit('task selection', {
-            'selectedTask': selectedTask,
+            'selectedTask': selectedTask ,
             'email': email
         });
         document.getElementById("selectTaskForm").reset();
+        
+        
         event.preventDefault();
+       
+        Socket.emit('emit');
+    
     }
 
     return(
@@ -72,9 +78,9 @@ export default function Tasks({email}) {
                                         tasks.map((task, index2) => {
                                             return(
                                                 <li key={index2}>
-                                                <input type="checkbox" value={task} onClick={handleClick}/>
+                                                <input type="checkbox" value={task[0]} onClick={handleClick}/>
                                                 {' '}
-                                                {task}
+                                                {task[0]}  :  {task[1] === "" ? 'Open' : task[1]}
                                                 </li>
                                             );
                                         })    
