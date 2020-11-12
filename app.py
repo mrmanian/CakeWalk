@@ -85,7 +85,6 @@ def create_and_send_email(receiver_email,message):
         )
     ]
     user = user[0]
-
     sender_email = "cs490.projectmanager@gmail.com"
     port = 465  # For SSL
     # Create a secure SSL context

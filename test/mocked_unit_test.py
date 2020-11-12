@@ -96,26 +96,27 @@ class Unit_TestCase_Mock(unittest.TestCase):
                     }
                 )
     
-    
     def test_on_create_project_success(self):
         session = UnifiedAlchemyMagicMock()
-        session.add(models.Users("Mike","mike.email","","38n5hHdk35"))
+        #session.add(models.Users("mike","mike@gmail.com","",""))
+        session.add(models.Projects("38n5hHdk35","Mike","This is a description"))
+        session.commit()
         data = {
             "projectName": "Mike",
             "projectDescription": "This is a description",
             "code": "38n5hHdk35",
             "selectedUsers": ["Mike", "Jake", "Aarati", "Devin"],
-            "email": "mike.email",
+            "email": "mike@gmail.com"
         }
         with mock.patch("app.db.session", session):
             with mock.patch("app.request", RequestObj()):
-                with mock.patch("app.smtplib", smtplibObj()):
-                    app.on_create_project(data)
-                    query = session.query(models.Projects).first()
-                    self.assertEqual(query.proj_name, "Mike")
-                    self.assertEqual(query.p_description, "This is a description")
-                    self.assertEqual(query.group_code, "38n5hHdk35")
-              
+                app.on_create_project(data)
+                query = session.query(models.Projects).first()
+                self.assertEqual(query.proj_name, "Mike")
+                self.assertEqual(query.p_description, "This is a description")
+                self.assertEqual(query.group_code, "38n5hHdk35")
+                
+            
     def test_on_select_task(self):
         session = UnifiedAlchemyMagicMock()
         data = {
