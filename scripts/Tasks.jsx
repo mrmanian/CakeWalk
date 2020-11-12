@@ -1,7 +1,7 @@
 /* eslint import/no-extraneous-dependencies: */
 import React, { useState, useEffect } from 'react';
 import { Socket } from './Socket';
-/* eslint-disable react/prop-types */
+/* eslint-disable react/prop-types */ 
 export default function Tasks({ email }) {
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -47,6 +47,8 @@ export default function Tasks({ email }) {
     document.getElementById('selectTaskForm').reset();
     event.preventDefault();
   }
+  
+  //id="submit"
 
   return (
     <div>
@@ -77,7 +79,7 @@ export default function Tasks({ email }) {
                                         ))
                                     }
                             </ul>
-                            <button id="submit" type="submit">Select Tasks</button>
+                            <button  className='create' type="submit">Select Tasks</button>
                           </form>
                         </td>
                       </tr>
