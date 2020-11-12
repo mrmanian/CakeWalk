@@ -44,6 +44,8 @@ export default function Tasks({email}) {
             'selectedTask': selectedTask,
             'email': email
         });
+        document.getElementById("selectTaskForm").reset();
+        event.preventDefault();
     }
 
     return(
@@ -64,7 +66,7 @@ export default function Tasks({email}) {
                                     {project}
                                 </td>
                                 <td>
-                                <form onSubmit={handleSubmit} autoComplete="off">
+                                <form onSubmit={handleSubmit} id="selectTaskForm" autoComplete="off">
                                     <ul>
                                     {
                                         tasks.map((task, index2) => {
