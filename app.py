@@ -29,19 +29,20 @@ db.session.commit()
 CONNECTED = 0
 CHANNEL = "get user list"
 TASK_CHANNEL = "task list"
+user_email = ""
 
 import models
 
 # Emit's list of users from users table
 def emit_user_list(channel):
     all_users = [
-        db_username.username for db_username in db.session.query(models.Users).all()
+        db_username.email for db_username in db.session.query(models.Users).all()
     ]
     all_profile_pics = [
         db_profile_img.profile_img
         for db_profile_img in db.session.query(models.Users).all()
     ]
-    print(all_users)
+    print("Extracting user information.")
     socketio.emit(
         channel,
         {
@@ -50,32 +51,69 @@ def emit_user_list(channel):
         },
     )
 
-# Emits list of
-def emit_task_list(channel, user_gc = 'abc'):
+
+# Emits list of tasks from tasks table
+def emit_task_list(channel, user_gc="abc"):
     proj_names = [
-        db_proj.proj_name for db_proj in db.session.query(models.Projects).filter(models.Projects.group_code == user_gc)    
+        db_proj.proj_name
+        for db_proj in db.session.query(models.Projects).filter(
+            models.Projects.group_code == user_gc
+        )
     ]
-    
+
     user_tasks = [
-        db_task.title for db_task in db.session.query(models.Tasks).filter(models.Tasks.group_code == user_gc)    
+        db_task.title
+        for db_task in db.session.query(models.Tasks).filter(
+            models.Tasks.group_code == user_gc
+        )
     ]
-    
-    print('Extracting user projects and tasks')
-    socketio.emit(channel, {
-        'projects': proj_names,
-        'tasks': user_tasks,
-    })
-    
-    
-def create_and_send_email(receiver_email):
-    
-    print("Sending email")
+
+    print("Extracting user projects and tasks.")
+    socketio.emit(
+        channel,
+        {
+            "projects": proj_names,
+            "tasks": user_tasks,
+        },
+    )
+
+
+def create_and_send_project_email(receiver_email):
     user = [
-        db_username.username for db_username in db.session.query(models.Users).filter(models.Users.email == receiver_email)
+        db_username.username
+        for db_username in db.session.query(models.Users).filter(
+            models.Users.email == receiver_email
+        )
     ]
-   
     user = user[0]
+
+    sender_email = "cs490.projectmanager@gmail.com"
+    port = 465  # For SSL
+    # Create a secure SSL context
+    context = ssl.create_default_context()
+    message = """
+    Hello {},
     
+    You have created a project on the Project Manager app!
+    """.format(
+        user
+    )
+
+    server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
+    server.login(sender_email, email_password)
+    server.sendmail(sender_email, receiver_email, message)
+    print("Sent email to user.")
+
+
+def create_and_send_task_email(receiver_email):
+    user = [
+        db_username.username
+        for db_username in db.session.query(models.Users).filter(
+            models.Users.email == receiver_email
+        )
+    ]
+    user = user[0]
+
     sender_email = "cs490.projectmanager@gmail.com"
     port = 465  # For SSL
     # Create a secure SSL context
@@ -84,22 +122,27 @@ def create_and_send_email(receiver_email):
     Hello {},
     
     You have created a task on the Project Manager app!
-    """.format(user)
+    """.format(
+        user
+    )
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
     server.login(sender_email, email_password)
-    server.sendmail(sender_email,receiver_email , message)
+    server.sendmail(sender_email, receiver_email, message)
+    print("Sent email to user.")
 
 
 @app.route("/")
 def index():
     return flask.render_template("index.html")
 
+
 @socketio.on("get users")
 def on_get_users():
     print("got request for get users")
     emit_user_list(CHANNEL)
-    
+
+
 @socketio.on("connect")
 def on_connect():
     global CONNECTED
@@ -115,7 +158,7 @@ def on_disconnect():
     print("Someone disconnected!")
     socketio.emit("disconnected", {"num": CONNECTED})
 
-user_email = ''
+
 # Adds user data to user table on login
 @socketio.on("newlogin")
 def on_newlogin(data):
@@ -129,15 +172,19 @@ def on_newlogin(data):
     if not exists:
         db.session.add(models.Users(uname, email, img, gc))
         db.session.commit()
-    print("Email is " +email)
+    sid = request.sid
+    socketio.emit("login_status", {"loginStatus": login_status, "email": email}, sid)
+    print("Email is " + email)
     global user_email
     user_email = email
-    socketio.emit("login_status", {"loginStatus": login_status})
-   
+    print(email)
+
+
 @socketio.on("emit")
 def emit():
-    emit_user_list(CHANNEL) 
+    emit_user_list(CHANNEL)
     emit_task_list(TASK_CHANNEL)
+
 
 # Gets information from create project page
 @socketio.on("create project")
@@ -149,6 +196,9 @@ def on_create_project(data):
     project_users = data["selectedUsers"]
     db.session.add(models.Projects(group_code, project_name, project_description))
     db.session.commit()
+    global user_email
+    create_and_send_project_email(user_email)
+
 
 # @socketio.on("get email")
 # def emit_email():
@@ -169,16 +219,22 @@ def on_create_task(data):
     db.session.add(models.Tasks(title, description, deadline, "abc", owner))
     db.session.commit()
     global user_email
-    create_and_send_email(user_email)
-    
+    create_and_send_task_email(user_email)
+
+
 @socketio.on("task selection")
 def on_select_task(data):
     print("User selected tasks")
-    titles = data["titles"]
-    owner = data["owner"]
+    print(data)
+    titles = data["selectedTask"]
+    owner = data["email"]
+    print(titles)
+    print(owner)
     for task in titles:
-        db.session.query(models.Tasks).filter(models.Tasks.title == task).update({models.Tasks.task_owner: owner})
-    
+        db.session.query(models.Tasks).filter(models.Tasks.title == task).update(
+            {models.Tasks.task_owner: owner}
+        )
+        db.session.commit()
 
 
 if __name__ == "__main__":

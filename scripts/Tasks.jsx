@@ -41,8 +41,8 @@ export default function Tasks({email}) {
     
     function handleSubmit(event) {
         Socket.emit('task selection', {
-            selectedTask,
-            email
+            'selectedTask': selectedTask,
+            'email': email
         });
     }
 

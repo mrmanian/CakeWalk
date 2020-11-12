@@ -14,9 +14,9 @@
     border-radius: 5px;
     text-align: center;
     text-decoration: none;
-    font-size: 19px;
+    font-size: 17px;
     float: right;
-    margin-right: 11.5vw;
+    margin-right: 13vw;
     height: 8vh;
     width: 12vw;
 }
@@ -38,6 +38,8 @@
 
 .size {
     font-size: 3vw;
+    margin-bottom: -3vh;
+    margin-top: 2vh;
 }
 
 .right {
@@ -50,6 +52,7 @@
 .pad {
     padding-right: 11vw;
     font-size: 1.5vw;
+    margin-top: -4vh;
 }
 
 .list {

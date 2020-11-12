@@ -8,20 +8,24 @@ export default function CreateProjectPage() {
     const [users, setUsers] = useState([]);
     const [profilePic, setProfilePic] = useState([]);
     const [formSent, setFormSent] = useState(false);
+    const [state, setState] = useState(true);
+    let num;
+    let click = 0;
     let groupCode = '';
     const selectedUsers = [];
-    // Gets all authenticated users from login page
+
+    // Creates unique group code
     useEffect(() => {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         for (let i = 0; i < 10; i += 1) {
             groupCode += characters.charAt(Math.floor(Math.random() * 62));
         }
         setCode(groupCode);
-    }, []); 
-    
+    }, []);
+
+    // Gets list of users to select from
     useEffect(() => {
         Socket.on('get user list', (data) => {
-            console.log("getting user list");
             setUsers(data.all_users);
             setProfilePic(data.all_profile_pics);
         });
@@ -32,7 +36,6 @@ export default function CreateProjectPage() {
             });
         };
     }, []);
-
 
     // Gathers submitted information and sends to server
     function handleSubmit(event) {
@@ -45,21 +48,26 @@ export default function CreateProjectPage() {
             selectedUsers,
         });
 
-
-    document.getElementById('name').value = '';
-    document.getElementById('description').value = '';
-    event.preventDefault();
-    console.log("here")
-    setFormSent(true);
-   
-  }
+        document.getElementById('name').value = '';
+        document.getElementById('description').value = '';
+        event.preventDefault();
+        setFormSent(true);
+    }
 
     // Handles user selection checkboxes
     function handleClick(event) {
         const { checked, value } = event.target;
         if (checked) {
             selectedUsers.push(value);
+            click += 1;
+            if (num === 1) {
+                setState(false);
+            }
         } else {
+            click -= 1;
+            if (click === 0) {
+                setState(true);
+            }
             for (let i = 0; i < selectedUsers.length; i += 1) {
                 if (selectedUsers[i] === value) {
                     selectedUsers.splice(i, 1);
@@ -67,9 +75,25 @@ export default function CreateProjectPage() {
             }
         }
     }
-    if (formSent){
-        return(<Dash />)
+    
+    // Handle input textbox changes
+    function handleChange() {
+        if ((document.getElementById('name').value) !== '' && (document.getElementById('description').value) !== '') {
+            num = 1;
+            if (click > 0) {
+                setState(false);
+            }
+        } else {
+            num = 0;
+            setState(true);
+        }
     }
+    
+    // Redirect page back to dashboard after form submit
+    if (formSent) {
+        return (<Dash />);
+    }
+
     return (
         <div id="form">
             <h1 className="size">
@@ -80,35 +104,32 @@ export default function CreateProjectPage() {
                     {code}
                 </span>
             </h1>
-            <h1 className="right pad">
-                <br />
-                Select users to add:
-            </h1>
 
             <form onSubmit={handleSubmit} autoComplete="off">
                 <br />
+                <textarea className="textarea" id="name" placeholder="Project Name" onChange={handleChange}/>
                 <br />
-                <textarea className="textarea" id="name" placeholder="Project Name" />
                 <br />
-                <br />
-                <textarea className="textarea" id="description" placeholder="Project Description" />
-                <label className="right pad">
+                <textarea className="textarea" id="description" placeholder="Project Description" onChange={handleChange}/>
+                <label htmlFor="Users" className="right pad">
+                    &nbsp;&nbsp;
+                    Select users to add:
+                    <br />
+                    <br />
+                    <br />
                     {users.map((user, index) => (
                         <li className="list" key={index.id}>
-                            <input type="checkbox" value={user} onClick={handleClick} />
+                            <input type="checkbox" name="Users" value={user} onClick={handleClick} />
                             {' '}
                             <img className="profilePic" src={profilePic[index]} alt="Invalid pic link" />
                             {' '}
                             {user}
                             <br />
-                            <br />
                         </li>
                     ))}
                 </label>
                 <br />
-                <br />
-                <br />
-                <button id="submit" type="submit">Create</button>
+                <button id="submit" type="submit" disabled={state}>Create</button>
             </form>
         </div>
     );
