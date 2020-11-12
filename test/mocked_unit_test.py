@@ -50,7 +50,6 @@ class smtp_sslObj:
     def sendmail(self, sender_email, receiver_email, message):
         return None
 
-
 class Unit_TestCase_Mock(unittest.TestCase):
     def mocked_emit_user_list(self, channel):
         return
@@ -83,43 +82,40 @@ class Unit_TestCase_Mock(unittest.TestCase):
             app.emit_user_list(CHANNEL)
             self.assertEqual(mocked_socket.emit.call_count, 1)
 
-    """
-    def test_create_and_send_email_success(self):
-        session = UnifiedAlchemyMagicMock()
-        with mock.patch("app.db.session", session):
-            with mock.patch("app.smtplib", smtplibObj()):
-                app.create_and_send_email("email")
-    """
-
     def test_on_create_task_success(self):
         session = UnifiedAlchemyMagicMock()
+        session.add(models.Users("Jake","jake@gmail.com","",""))
         with mock.patch("app.db.session", session):
             with mock.patch("app.smtplib", smtplibObj()):
                 app.on_create_task(
                     {
-                        "email": "testEmail.edu",
+                        "email": "jake@gmail.com",
                         "title": "Create HomePage",
                         "description": "Create HomePage using React, HTML, and CSS",
                         "deadline": "2020-11-06",
                     }
                 )
-
+    
+    
     def test_on_create_project_success(self):
         session = UnifiedAlchemyMagicMock()
+        session.add(models.Users("Mike","mike.email","","38n5hHdk35"))
         data = {
             "projectName": "Mike",
             "projectDescription": "This is a description",
             "code": "38n5hHdk35",
             "selectedUsers": ["Mike", "Jake", "Aarati", "Devin"],
+            "email": "mike.email",
         }
         with mock.patch("app.db.session", session):
             with mock.patch("app.request", RequestObj()):
-                app.on_create_project(data)
-                query = session.query(models.Projects).first()
-                self.assertEqual(query.proj_name, "Mike")
-                self.assertEqual(query.p_description, "This is a description")
-                self.assertEqual(query.group_code, "38n5hHdk35")
-                
+                with mock.patch("app.smtplib", smtplibObj()):
+                    app.on_create_project(data)
+                    query = session.query(models.Projects).first()
+                    self.assertEqual(query.proj_name, "Mike")
+                    self.assertEqual(query.p_description, "This is a description")
+                    self.assertEqual(query.group_code, "38n5hHdk35")
+              
     def test_on_select_task(self):
         session = UnifiedAlchemyMagicMock()
         data = {
