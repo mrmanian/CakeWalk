@@ -23,10 +23,10 @@ export default function Dash({email}) {
     
     if(createProject){
         Socket.emit('get users');
-        return(<CreateProjectPage />);
+        return(<CreateProjectPage email = {email}/>);
     }
     if(createTask){
-        return(<CreateTaskPage />);
+        return(<CreateTaskPage email = {email}/>);
     }
     
     return(

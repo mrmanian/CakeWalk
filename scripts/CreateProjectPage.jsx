@@ -3,7 +3,7 @@ import { Socket } from './Socket';
 import Dash from './Dash';
 import './CreateProjectPage.css';
 
-export default function CreateProjectPage() {
+export default function CreateProjectPage({email}) {
     const [code, setCode] = useState('');
     const [users, setUsers] = useState([]);
     const [profilePic, setProfilePic] = useState([]);
@@ -46,6 +46,7 @@ export default function CreateProjectPage() {
             projectDescription,
             code,
             selectedUsers,
+            email,
         });
 
         document.getElementById('name').value = '';
