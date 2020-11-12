@@ -1,11 +1,8 @@
-import React, { useState } from 'react';
-import {
-  Button, FormGroup, FormControl, ControlLabel,
-} from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
+/* eslint import/no-extraneous-dependencies: */
+import React from 'react';
 import { GoogleLogin } from 'react-google-login';
 import { Socket } from './Socket';
-
+/* eslint no-console: ["error", { allow: ["log"] }] */
 export default function Login() {
   const header = {
     textAlign: 'center',
@@ -26,7 +23,7 @@ export default function Login() {
     console.log(response.profileObj.imageUrl);
     console.log(response.profileObj.email);
     Socket.emit('newlogin', { uname: response.profileObj.name, imageurl: response.profileObj.imageUrl, email: response.profileObj.email });
-    Socket.emit('user email', {email: response.profileObj.email});
+    Socket.emit('user email', { email: response.profileObj.email });
     event.preventDefault();
   }
   function handleFail() {
