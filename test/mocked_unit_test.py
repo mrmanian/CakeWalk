@@ -50,6 +50,7 @@ class smtp_sslObj:
     def sendmail(self, sender_email, receiver_email, message):
         return None
 
+
 class Unit_TestCase_Mock(unittest.TestCase):
     def mocked_emit_user_list(self, channel):
         return
@@ -57,10 +58,21 @@ class Unit_TestCase_Mock(unittest.TestCase):
     def mock_db_insert(self, session):
         session.add(models.Users("Jake", "jake@gmail.com", "https://google.com", ""))
 
-    @mock.patch("app.socketio")
-    def test_disconnected_emit(self, mocked_socket):
+    @mock.patch("builtins.print")
+    def test_on_connect(self, mock_print):
+        app.on_connect()
+        mock_print.assert_called_with("Someone connected!")
+
+    @mock.patch("builtins.print")
+    def test_on_disconnect(self, mock_print):
         app.on_disconnect()
-        self.assertEqual(mocked_socket.emit.call_count, 1)
+        mock_print.assert_called_with("Someone disconnected!")
+
+    @mock.patch("flask.templating._render", return_value="")
+    def test_mocked_render(self, mocked):
+        test_client = app.app.test_client()
+        test_client.get("/")
+        self.assertEqual(mocked.called, True)
 
     def test_on_newlogin(self):
         session = UnifiedAlchemyMagicMock()
@@ -73,7 +85,6 @@ class Unit_TestCase_Mock(unittest.TestCase):
             with mock.patch("app.request", RequestObj()):
                 app.on_newlogin(data)
                 session.query.assert_called_once()
-                
 
     @mock.patch("app.socketio")
     def test_emit_user_list(self, mocked_socket):
@@ -84,7 +95,7 @@ class Unit_TestCase_Mock(unittest.TestCase):
 
     def test_on_create_task_success(self):
         session = UnifiedAlchemyMagicMock()
-        session.add(models.Users("Jake","jake@gmail.com","",""))
+        session.add(models.Users("Jake", "jake@gmail.com", "", ""))
         with mock.patch("app.db.session", session):
             with mock.patch("app.smtplib", smtplibObj()):
                 app.on_create_task(
@@ -95,38 +106,18 @@ class Unit_TestCase_Mock(unittest.TestCase):
                         "deadline": "2020-11-06",
                     }
                 )
-    
-    def test_on_create_project_success(self):
-        session = UnifiedAlchemyMagicMock()
-        #session.add(models.Users("mike","mike@gmail.com","",""))
-        session.add(models.Projects("38n5hHdk35","Mike","This is a description"))
-        session.commit()
-        data = {
-            "projectName": "Mike",
-            "projectDescription": "This is a description",
-            "code": "38n5hHdk35",
-            "selectedUsers": ["Mike", "Jake", "Aarati", "Devin"],
-            "email": "mike@gmail.com"
-        }
-        with mock.patch("app.db.session", session):
-            with mock.patch("app.request", RequestObj()):
-                app.on_create_project(data)
-                query = session.query(models.Projects).first()
-                self.assertEqual(query.proj_name, "Mike")
-                self.assertEqual(query.p_description, "This is a description")
-                self.assertEqual(query.group_code, "38n5hHdk35")
-                
-            
+
     def test_on_select_task(self):
         session = UnifiedAlchemyMagicMock()
         data = {
             "selectedTask": ["Landing Page"],
-            "email" : "jake",
+            "email": "jake",
         }
         with mock.patch("app.db.session", session):
             app.on_select_task(data)
-            
+
             session.query.assert_called_once()
+
 
 if __name__ == "__main__":
     unittest.main()
