@@ -92,10 +92,12 @@ class Unit_TestCase_Mock(unittest.TestCase):
         with mock.patch("app.db.session", session):
             app.emit_user_list(CHANNEL)
             self.assertEqual(mocked_socket.emit.call_count, 1)
-
+    
     def test_on_create_task_success(self):
         session = UnifiedAlchemyMagicMock()
         session.add(models.Users("Jake", "jake@gmail.com", "", ""))
+        print("not here")
+        print(session.query(models.Users).all())
         with mock.patch("app.db.session", session):
             with mock.patch("app.smtplib", smtplibObj()):
                 app.on_create_task(
@@ -106,7 +108,24 @@ class Unit_TestCase_Mock(unittest.TestCase):
                         "deadline": "2020-11-06",
                     }
                 )
-
+        
+    def test_on_create_project_success(self):
+        session2 = UnifiedAlchemyMagicMock()
+        session2.add(models.Users("Jake", "jake@gmail.com", "", ""))
+        print("here")
+        print(session2.query(models.Users).all())
+        with mock.patch("app.db.session", session2):
+            with mock.patch("app.smtplib", smtplibObj()):
+                app.on_create_project(
+            {           "projectName": "testproject",
+                        "projectDescription": "test",
+                        "code": "xyzabc",
+                        "selectedUsers": "aarati",
+                        "email": "jake@gmail.com",
+                    }
+                )
+                
+                
     def test_on_select_task(self):
         session = UnifiedAlchemyMagicMock()
         data = {
