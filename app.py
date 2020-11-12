@@ -17,7 +17,7 @@ socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
 database_uri = os.environ["DATABASE_URL"]
-email_password = os.environ["EMAIL_PASSWORD"]
+#email_password = os.environ["EMAIL_PASSWORD"]
 app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
 
 db = flask_sqlalchemy.SQLAlchemy(app)
@@ -51,8 +51,8 @@ def emit_user_list(channel):
     )
 
 
-# Emits list of tasks from tasks table
-def emit_task_list(channel, user_gc="UT3JuAdepJ"):
+# Emits list of tasks from tasks table NKo5WU7eFR
+def emit_task_list(channel, user_gc="abc"):
     proj_names = [
         db_proj.proj_name
         for db_proj in db.session.query(models.Projects).filter(
@@ -92,7 +92,7 @@ def create_and_send_email(receiver_email, message):
     message = message.format(user)
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
-    server.login(sender_email, email_password)
+    #server.login(sender_email, email_password)
     server.sendmail(sender_email, receiver_email, message)
     print("Sent email to user.")
 
