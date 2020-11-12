@@ -77,8 +77,7 @@ def emit_task_list(channel, user_gc="NKo5WU7eFR"):
         },
     )
 
-
-def create_and_send_project_email(receiver_email):
+def create_and_send_email(receiver_email,message):
     user = [
         db_username.username
         for db_username in db.session.query(models.Users).filter(
@@ -91,41 +90,12 @@ def create_and_send_project_email(receiver_email):
     port = 465  # For SSL
     # Create a secure SSL context
     context = ssl.create_default_context()
-    message = """
-    Hello {},
-    
-    You have created a project on the Project Manager app!
-    """.format(user)
+    message.format(user)
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
     server.login(sender_email, email_password)
     server.sendmail(sender_email, receiver_email, message)
-    print("Sent project email to user.")
-
-
-def create_and_send_task_email(receiver_email):
-    user = [
-        db_username.username
-        for db_username in db.session.query(models.Users).filter(
-            models.Users.email == receiver_email
-        )
-    ]
-    user = user[0]
-
-    sender_email = "cs490.projectmanager@gmail.com"
-    port = 465  # For SSL
-    # Create a secure SSL context
-    context = ssl.create_default_context()
-    message = """
-    Hello {},
-    
-    You have created a task on the Project Manager app!
-    """.format(user)
-
-    server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
-    server.login(sender_email, email_password)
-    server.sendmail(sender_email, receiver_email, message)
-    print("Sent task email to user.")
+    print("Sent email to user.")
 
 
 @app.route("/")
@@ -194,8 +164,12 @@ def on_create_project(data):
             {models.Users.group_code: group_code}
         )
         db.session.commit()
-    print(email)
-    create_and_send_project_email(email)
+    message = """
+    Hello {},
+    
+    You have created a project on the Project Manager app!
+    """
+    create_and_send_email(email,message)
 
 
 # Gets information from create task page
@@ -209,7 +183,12 @@ def on_create_task(data):
     owner = ""
     db.session.add(models.Tasks(title, description, deadline, "NKo5WU7eFR", owner))
     db.session.commit()
-    create_and_send_task_email(email)
+    message = """
+    Hello {},
+    
+    You have created a task on the Project Manager app!
+    """
+    create_and_send_email(email,message)
 
 
 @socketio.on("task selection")

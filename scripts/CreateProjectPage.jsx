@@ -92,7 +92,7 @@ export default function CreateProjectPage({email}) {
     
     // Redirect page back to dashboard after form submit
     if (formSent) {
-        return (<Dash />);
+        return (<Dash email={email}/>);
     }
 
     return (

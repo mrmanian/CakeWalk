@@ -9,6 +9,7 @@ export default function Dash({email}) {
     const [createProject, updateCreateProject] = useState(false);
     const [createTask, updateCreateTask] = useState(false);
 
+
     function createsProject(e) {
         e.preventDefault();
         console.log('The create Project button link was clicked.');
@@ -26,7 +27,7 @@ export default function Dash({email}) {
         return(<CreateProjectPage email = {email}/>);
     }
     if(createTask){
-        return(<CreateTaskPage email = {email}/>);
+        return(<CreateTaskPage email={email}/>);
     }
     
     return(
