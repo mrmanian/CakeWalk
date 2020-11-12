@@ -1,3 +1,4 @@
+/* eslint import/no-extraneous-dependencies: */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import Content from './Content';
