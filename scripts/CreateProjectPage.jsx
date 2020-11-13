@@ -46,7 +46,7 @@ export default function CreateProjectPage({ email }) {
       selectedUsers,
       email,
     });
-    
+
     document.getElementById('name').value = '';
     document.getElementById('description').value = '';
     event.preventDefault();
@@ -56,7 +56,7 @@ export default function CreateProjectPage({ email }) {
   // Handles user selection checkboxes
   function handleClick(event) {
     const { checked, value } = event.target;
-    
+
     if (checked) {
       selectedUsers.push(value);
     } else {
