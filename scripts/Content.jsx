@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Dash from './Dash';
 import Login from './Login';
 import { Socket } from './Socket';
-
+/* eslint import/no-extraneous-dependencies: */
 export default function Content() {
   const [login, setLogin] = React.useState(false);
   const [email, setEmail] = React.useState('');
@@ -23,7 +23,7 @@ export default function Content() {
   }
   getLogin();
 
-  if (login && email != '') {
+  if (login && email !== '') {
     return (<Dash email={email} />);
   }
 
