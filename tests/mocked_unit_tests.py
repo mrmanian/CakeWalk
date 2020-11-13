@@ -3,8 +3,9 @@ import unittest.mock as mock
 import os
 import sys
 import inspect
-#pylint: disable=unused-argument
-#pylint: disable=invalid-name
+
+# pylint: disable=unused-argument
+# pylint: disable=invalid-name
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
@@ -120,7 +121,6 @@ class Unit_TestCase_Mock(unittest.TestCase):
         self.assertEqual(mocked.called, True)
 
     def test_on_newlogin(self):
-        # session = UnifiedAlchemyMagicMock()
         data = {
             "uname": "Jake",
             "email": "jake@gmail.com",
@@ -129,7 +129,6 @@ class Unit_TestCase_Mock(unittest.TestCase):
         with mock.patch("app.db.session", SessionObject()):
             with mock.patch("app.request", RequestObj()):
                 app.on_newlogin(data)
-                # session.query.assert_called_once()
 
     @mock.patch("app.socketio")
     def test_emit_user_list(self, mocked_socket):
