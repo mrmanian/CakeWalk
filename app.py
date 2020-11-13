@@ -17,7 +17,7 @@ socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
 database_uri = os.environ["DATABASE_URL"]
-email_password = os.environ["EMAIL_PASSWORD"]
+#email_password = os.environ["EMAIL_PASSWORD"]
 app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
 
 db = flask_sqlalchemy.SQLAlchemy(app)
@@ -52,7 +52,7 @@ def emit_user_list(channel):
 
 
 # Emits list of tasks from tasks table NKo5WU7eFR
-def emit_task_list(channel, user_gc="NKo5WU7eFR"):
+def emit_task_list(channel, user_gc="abc"):
     proj_names = [
         db_proj.proj_name
         for db_proj in db.session.query(models.Projects).filter(
@@ -92,7 +92,7 @@ def create_and_send_email(receiver_email, message):
     message = message.format(user)
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
-    server.login(sender_email, email_password)
+    #server.login(sender_email, email_password)
     server.sendmail(sender_email, receiver_email, message)
     print("Sent email to user.")
 
@@ -101,7 +101,10 @@ def create_and_send_email(receiver_email, message):
 def emit():
     emit_user_list(CHANNEL)
     emit_task_list(TASK_CHANNEL)
-
+    
+@socketio.on('emit gc')
+def emit_proj(data):
+    emit_task_list(TASK_CHANNEL, data['gc'])
 
 # Adds user data to user table on login
 @socketio.on("newlogin")
@@ -147,7 +150,7 @@ def on_create_project(data):
     create_and_send_email(email, message)
 
 
-# Gets information from create task page
+# Gets information from create task page "NKo5WU7eFR"
 @socketio.on("create task")
 def on_create_task(data):
     print("Received new task data: ", data)
@@ -155,15 +158,16 @@ def on_create_task(data):
     title = data["title"]
     description = data["description"]
     deadline = data["deadline"]
+    gc = db.session.query(models.Users.group_code).filter(models.Users.email == email)
     owner = ""
-    db.session.add(models.Tasks(title, description, deadline, "NKo5WU7eFR", owner))
+    db.session.add(models.Tasks(title, description, deadline, gc, owner))
     db.session.commit()
     message = """
     Hello {},
     
     You have created a task on the Project Manager app!
     """
-    create_and_send_email(email, message)
+    #create_and_send_email(email, message)
 
 
 @socketio.on("task selection")

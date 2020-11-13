@@ -46,7 +46,7 @@ export default function CreateProjectPage({ email }) {
       selectedUsers,
       email,
     });
-
+    
     document.getElementById('name').value = '';
     document.getElementById('description').value = '';
     event.preventDefault();
