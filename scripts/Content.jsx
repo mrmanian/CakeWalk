@@ -23,7 +23,7 @@ export default function Content() {
   }
   getLogin();
 
-  if (login) {
+  if (login && email != '') {
     return (<Dash email={email} />);
   }
 

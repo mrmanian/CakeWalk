@@ -26,7 +26,9 @@ export default function Dash({ email }) {
   }
 
   if (createProject) {
-    Socket.emit('emit');
+    Socket.emit('emit', {
+      email,
+    });
     return (<CreateProjectPage email={email} />);
   }
   if (createTask) {

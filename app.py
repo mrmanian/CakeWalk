@@ -17,7 +17,7 @@ socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
 database_uri = os.environ["DATABASE_URL"]
-#email_password = os.environ["EMAIL_PASSWORD"]
+email_password = os.environ["EMAIL_PASSWORD"]
 app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
 
 db = flask_sqlalchemy.SQLAlchemy(app)
@@ -92,15 +92,17 @@ def create_and_send_email(receiver_email, message):
     message = message.format(user)
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
-    #server.login(sender_email, email_password)
+    server.login(sender_email, email_password)
     server.sendmail(sender_email, receiver_email, message)
     print("Sent email to user.")
 
 
 @socketio.on("emit")
-def emit():
+def emit(data):
+    email = data['email']
+    gc = db.session.query(models.Users.group_code).filter(models.Users.email == email)
     emit_user_list(CHANNEL)
-    emit_task_list(TASK_CHANNEL)
+    emit_task_list(TASK_CHANNEL, gc)
     
 @socketio.on('emit gc')
 def emit_proj(data):
@@ -167,7 +169,7 @@ def on_create_task(data):
     
     You have created a task on the Project Manager app!
     """
-    #create_and_send_email(email, message)
+    create_and_send_email(email, message)
 
 
 @socketio.on("task selection")

@@ -9,7 +9,9 @@ export default function Tasks({ email }) {
   const selectedTask = [];
 
   useEffect(() => {
-    Socket.emit('emit');
+    Socket.emit('emit', {
+      email,
+    });
   }, []);
 
   function updateTasks(data) {
@@ -48,7 +50,9 @@ export default function Tasks({ email }) {
     });
     document.getElementById('selectTaskForm').reset();
     event.preventDefault();
-    Socket.emit('emit');
+    Socket.emit('emit', {
+      email,
+    });
   }
 
   return (
