@@ -87,6 +87,13 @@ class Unit_TestCase_Mock(unittest.TestCase):
             app.emit_user_list(CHANNEL)
             self.assertEqual(mocked_socket.emit.call_count, 1)
 
+    @mock.patch("app.socketio")
+    def test_emit_task_list(self, mocked_socket):
+        session = UnifiedAlchemyMagicMock()
+        with mock.patch("app.db.session", session):
+            app.emit_task_list(CHANNEL)
+            self.assertEqual(mocked_socket.emit.call_count, 1)
+            
     @mock.patch("app.create_and_send_email")
     def test_on_create_task_success(self, create_and_send_email):
         session = UnifiedAlchemyMagicMock()
@@ -108,9 +115,9 @@ class Unit_TestCase_Mock(unittest.TestCase):
 
     @mock.patch("app.create_and_send_email")
     def test_on_create_project_success(self, create_and_send_email):
-        session2 = UnifiedAlchemyMagicMock()
-        session2.add(models.Users("Jake", "jake@gmail.com", "", ""))
-        with mock.patch("app.db.session", session2):
+        session = UnifiedAlchemyMagicMock()
+        session.add(models.Users("Jake", "jake@gmail.com", "", ""))
+        with mock.patch("app.db.session", session):
             app.on_create_project(
                 {
                     "projectName": "testproject",
@@ -139,15 +146,15 @@ class Unit_TestCase_Mock(unittest.TestCase):
     @mock.patch("app.emit_user_list")
     @mock.patch("app.emit_task_list")
     def test_on_emit(self, emit_task_list, emit_user_list):
-        session3 = UnifiedAlchemyMagicMock()
-        session3.add(models.Users("Jake", "jake@gmail.com", "", ""))
-        with mock.patch("app.db.session", session3):
+        session = UnifiedAlchemyMagicMock()
+        session.add(models.Users("Jake", "jake@gmail.com", "", ""))
+        with mock.patch("app.db.session", session):
             app.emit(
                 {
                     "email": "jake@gmail.com",
                 }
             )
-            emit_task_list.assert_called_once_with("task list", session3)
+            emit_task_list.assert_called_once_with("task list", session)
             emit_user_list.assert_called_once_with("get user list")
 
     @mock.patch("app.emit_task_list")
