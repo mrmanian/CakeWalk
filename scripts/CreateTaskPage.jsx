@@ -1,23 +1,15 @@
 /* eslint import/no-extraneous-dependencies: */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Socket } from './Socket';
 import Dash from './Dash';
 import './CreateTaskPage.css';
 
+/* eslint-disable react/prop-types */
 export default function CreateTaskPage({ email }) {
   const [titleValue, updateTitleValue] = useState('');
   const [descriptionValue, updateDescriptionValue] = useState('');
   const [deadlineValue, updateDeadlineValue] = useState('');
   const [formSent, setFormSent] = useState(false);
-  /* eslint-disable react/prop-types */
-  function serverData() {
-    useEffect(() => {
-      Socket.on('connected', (data) => {
-        /* eslint no-console: ["error", { allow: ["log"] }] */
-        console.log(`Received user's email from server: ${data.email}`);
-      });
-    }, []);
-  }
 
   // Gathers submitted information and sends to server
   function handleSubmit(event) {
@@ -33,8 +25,6 @@ export default function CreateTaskPage({ email }) {
     });
     setFormSent(true);
   }
-
-  serverData();
 
   // Redirect page back to dashboard after form submit
   if (formSent) {

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Socket } from './Socket';
 
-/* eslint-disable react/prop-types */ 
+/* eslint-disable react/prop-types */
 export default function Tasks({ email }) {
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -16,6 +16,7 @@ export default function Tasks({ email }) {
     setProjects(data.projects);
     setTasks(data.tasks);
   }
+
   function getTasks() {
     useEffect(() => {
       Socket.on('task list', updateTasks);
@@ -47,6 +48,7 @@ export default function Tasks({ email }) {
     });
     document.getElementById('selectTaskForm').reset();
     event.preventDefault();
+    Socket.emit('emit');
   }
 
   return (
@@ -60,30 +62,33 @@ export default function Tasks({ email }) {
         </thead>
         <tbody>
           {
-                    projects.map((project, index) => (
-                      <tr key={index}>
-                        <td>
-                          {project}
-                        </td>
-                        <td>
-                          <form onSubmit={handleSubmit} id="selectTaskForm" autoComplete="off">
-                            <ul id='task'>
-                              {
-                                        tasks.map((task, index2) => (
-                                          <li key={index2}>
-                                            <input type="checkbox" value={task} onClick={handleClick} />
-                                            {' '}
-                                            {task}
-                                          </li>
-                                        ))
-                                    }
-                            </ul>
-                            <button  className='create' type="submit">Select Tasks</button>
-                          </form>
-                        </td>
-                      </tr>
-                    ))
-                }
+            projects.map((project, index) => (
+              <tr key={index}>
+                <td>
+                  {project}
+                </td>
+                <td>
+                  <form onSubmit={handleSubmit} id="selectTaskForm" autoComplete="off">
+                    <ul id="task">
+                      {
+                        tasks.map((task, index2) => (
+                          <li key={index2}>
+                            <input type="checkbox" value={task[0]} onClick={handleClick} />
+                            {' '}
+                            {task[0]}
+                            :
+                            {' '}
+                            {task[1] === '' ? 'Open' : task[1]}
+                          </li>
+                        ))
+                      }
+                    </ul>
+                    <button className="create" type="submit">Select Tasks</button>
+                  </form>
+                </td>
+              </tr>
+            ))
+          }
         </tbody>
       </table>
     </div>
