@@ -9,9 +9,6 @@ export default function CreateProjectPage({ email }) {
   const [users, setUsers] = useState([]);
   const [profilePic, setProfilePic] = useState([]);
   const [formSent, setFormSent] = useState(false);
-  const [state, setState] = useState(true);
-  let num;
-  let click = 0;
   let groupCode = '';
   const selectedUsers = [];
 
@@ -59,35 +56,15 @@ export default function CreateProjectPage({ email }) {
   // Handles user selection checkboxes
   function handleClick(event) {
     const { checked, value } = event.target;
+    
     if (checked) {
       selectedUsers.push(value);
-      click += 1;
-      if (num === 1) {
-        setState(false);
-      }
     } else {
-      click -= 1;
-      if (click === 0) {
-        setState(true);
-      }
       for (let i = 0; i < selectedUsers.length; i += 1) {
         if (selectedUsers[i] === value) {
           selectedUsers.splice(i, 1);
         }
       }
-    }
-  }
-
-  // Handle input textbox changes
-  function handleChange() {
-    if ((document.getElementById('name').value) !== '' && (document.getElementById('description').value) !== '') {
-      num = 1;
-      if (click > 0) {
-        setState(false);
-      }
-    } else {
-      num = 0;
-      setState(true);
     }
   }
 
@@ -109,10 +86,10 @@ export default function CreateProjectPage({ email }) {
 
       <form onSubmit={handleSubmit} autoComplete="off">
         <br />
-        <textarea className="textarea" id="name" placeholder="Project Name" onChange={handleChange} />
+        <textarea className="textarea" id="name" placeholder="Project Name" />
         <br />
         <br />
-        <textarea className="textarea" id="description" placeholder="Project Description" onChange={handleChange} />
+        <textarea className="textarea" id="description" placeholder="Project Description" />
         <label htmlFor="Users" className="right pad">
           &nbsp;&nbsp;
           Select users to add:
@@ -131,7 +108,7 @@ export default function CreateProjectPage({ email }) {
           ))}
         </label>
         <br />
-        <button id="submit" type="submit" disabled={state}>Create</button>
+        <button id="submit" type="submit">Create</button>
       </form>
     </div>
   );
