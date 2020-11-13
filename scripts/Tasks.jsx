@@ -1,6 +1,7 @@
 /* eslint import/no-extraneous-dependencies: */
 import React, { useState, useEffect } from 'react';
 import { Socket } from './Socket';
+
 /* eslint-disable react/prop-types */ 
 export default function Tasks({ email }) {
   const [projects, setProjects] = useState([]);
@@ -47,8 +48,6 @@ export default function Tasks({ email }) {
     document.getElementById('selectTaskForm').reset();
     event.preventDefault();
   }
-  
-  //id="submit"
 
   return (
     <div>
