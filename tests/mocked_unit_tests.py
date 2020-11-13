@@ -87,7 +87,8 @@ class Unit_TestCase_Mock(unittest.TestCase):
             app.emit_user_list(CHANNEL)
             self.assertEqual(mocked_socket.emit.call_count, 1)
 
-    def test_on_create_task_success(self):
+    @mock.patch("app.create_and_send_email")
+    def test_on_create_task_success(self, create_and_send_email):
         session = UnifiedAlchemyMagicMock()
         session.add(models.Users("Jake", "jake@gmail.com", "", ""))
         with mock.patch("app.db.session", session):
@@ -100,6 +101,10 @@ class Unit_TestCase_Mock(unittest.TestCase):
                         "deadline": "2020-11-06",
                     }
                 )
+            create_and_send_email.assert_called_once_with(
+                "jake@gmail.com",
+                "\n    Hello {},\n    \n    You have created a task on the Project Manager app!\n    ",
+            )
 
     @mock.patch("app.create_and_send_email")
     def test_on_create_project_success(self, create_and_send_email):
@@ -132,14 +137,23 @@ class Unit_TestCase_Mock(unittest.TestCase):
             session.query.assert_called_once()
 
     @mock.patch("app.emit_user_list")
-    def test_emit1(self, emit_user_list):
-        app.emit()
-        emit_user_list.assert_called_once_with("get user list")
+    @mock.patch("app.emit_task_list")
+    def test_on_emit(self, emit_task_list, emit_user_list):
+        session3 = UnifiedAlchemyMagicMock()
+        session3.add(models.Users("Jake", "jake@gmail.com", "", ""))
+        with mock.patch("app.db.session", session3):
+            app.emit(
+                {
+                    "email": "jake@gmail.com",
+                }
+            )
+            emit_task_list.assert_called_once_with("task list", session3)
+            emit_user_list.assert_called_once_with("get user list")
 
     @mock.patch("app.emit_task_list")
-    def test_emit2(self, emit_task_list):
-        app.emit()
-        emit_task_list.assert_called_once_with("task list")
+    def test_emit_proj(self, emit_task_list):
+        app.emit_proj({"gc": "345gbfdsfa"})
+        emit_task_list.assert_called_once_with("task list", "345gbfdsfa")
 
 
 if __name__ == "__main__":

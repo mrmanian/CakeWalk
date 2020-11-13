@@ -66,7 +66,6 @@ def emit_task_list(channel, user_gc="abc"):
             models.Tasks.group_code == user_gc
         )
     ]
-    print(user_tasks)
     print("Extracting user projects and tasks.")
     socketio.emit(
         channel,
@@ -84,12 +83,11 @@ def create_and_send_email(receiver_email, message):
             models.Users.email == receiver_email
         )
     ]
-    user = user[0]
     sender_email = "cs490.projectmanager@gmail.com"
     port = 465  # For SSL
     # Create a secure SSL context
     context = ssl.create_default_context()
-    message = message.format(user)
+    message = message.format(user[0])
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
     server.login(sender_email, email_password)
@@ -99,14 +97,16 @@ def create_and_send_email(receiver_email, message):
 
 @socketio.on("emit")
 def emit(data):
-    email = data['email']
+    email = data["email"]
     gc = db.session.query(models.Users.group_code).filter(models.Users.email == email)
     emit_user_list(CHANNEL)
     emit_task_list(TASK_CHANNEL, gc)
-    
-@socketio.on('emit gc')
+
+
+@socketio.on("emit gc")
 def emit_proj(data):
-    emit_task_list(TASK_CHANNEL, data['gc'])
+    emit_task_list(TASK_CHANNEL, data["gc"])
+
 
 # Adds user data to user table on login
 @socketio.on("newlogin")
