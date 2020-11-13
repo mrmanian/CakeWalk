@@ -52,12 +52,6 @@ class smtp_sslObj:
 
 
 class Unit_TestCase_Mock(unittest.TestCase):
-    def mocked_emit_user_list(self, channel):
-        return
-
-    def mock_db_insert(self, session):
-        session.add(models.Users("Jake", "jake@gmail.com", "https://google.com", ""))
-
     @mock.patch("builtins.print")
     def test_on_connect(self, mock_print):
         app.on_connect()
@@ -92,12 +86,10 @@ class Unit_TestCase_Mock(unittest.TestCase):
         with mock.patch("app.db.session", session):
             app.emit_user_list(CHANNEL)
             self.assertEqual(mocked_socket.emit.call_count, 1)
-    
+
     def test_on_create_task_success(self):
         session = UnifiedAlchemyMagicMock()
         session.add(models.Users("Jake", "jake@gmail.com", "", ""))
-        print("not here")
-        print(session.query(models.Users).all())
         with mock.patch("app.db.session", session):
             with mock.patch("app.smtplib", smtplibObj()):
                 app.on_create_task(
@@ -108,24 +100,26 @@ class Unit_TestCase_Mock(unittest.TestCase):
                         "deadline": "2020-11-06",
                     }
                 )
-        
-    def test_on_create_project_success(self):
+
+    @mock.patch("app.create_and_send_email")
+    def test_on_create_project_success(self, create_and_send_email):
         session2 = UnifiedAlchemyMagicMock()
         session2.add(models.Users("Jake", "jake@gmail.com", "", ""))
-        print("here")
-        print(session2.query(models.Users).all())
         with mock.patch("app.db.session", session2):
-            with mock.patch("app.smtplib", smtplibObj()):
-                app.on_create_project(
-            {           "projectName": "testproject",
-                        "projectDescription": "test",
-                        "code": "xyzabc",
-                        "selectedUsers": "aarati",
-                        "email": "jake@gmail.com",
-                    }
-                )
-                
-                
+            app.on_create_project(
+                {
+                    "projectName": "testproject",
+                    "projectDescription": "test",
+                    "code": "xyzabc",
+                    "selectedUsers": ["mike", "aarati", "jake", "devin"],
+                    "email": "jake@gmail.com",
+                }
+            )
+            create_and_send_email.assert_called_once_with(
+                "jake@gmail.com",
+                "\n    Hello {},\n    \n    You have created a project on the Project Manager app!\n    ",
+            )
+
     def test_on_select_task(self):
         session = UnifiedAlchemyMagicMock()
         data = {
@@ -136,6 +130,16 @@ class Unit_TestCase_Mock(unittest.TestCase):
             app.on_select_task(data)
 
             session.query.assert_called_once()
+
+    @mock.patch("app.emit_user_list")
+    def test_emit1(self, emit_user_list):
+        app.emit()
+        emit_user_list.assert_called_once_with("get user list")
+
+    @mock.patch("app.emit_task_list")
+    def test_emit2(self, emit_task_list):
+        app.emit()
+        emit_task_list.assert_called_once_with("task list")
 
 
 if __name__ == "__main__":
