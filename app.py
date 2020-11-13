@@ -17,7 +17,7 @@ socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
 database_uri = os.environ["DATABASE_URL"]
-#email_password = os.environ["EMAIL_PASSWORD"]
+email_password = os.environ["EMAIL_PASSWORD"]
 app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
 
 db = flask_sqlalchemy.SQLAlchemy(app)
@@ -52,7 +52,7 @@ def emit_user_list(channel):
 
 
 # Emits list of tasks from tasks table NKo5WU7eFR
-def emit_task_list(channel, user_gc="abc"):
+def emit_task_list(channel, user_gc="NKo5WU7eFR"):
     proj_names = [
         db_proj.proj_name
         for db_proj in db.session.query(models.Projects).filter(
@@ -92,7 +92,7 @@ def create_and_send_email(receiver_email, message):
     message = message.format(user)
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
-    #server.login(sender_email, email_password)
+    server.login(sender_email, email_password)
     server.sendmail(sender_email, receiver_email, message)
     print("Sent email to user.")
 
@@ -130,6 +130,9 @@ def on_create_project(data):
     project_users = data["selectedUsers"]
     email = data["email"]
     db.session.add(models.Projects(group_code, project_name, project_description))
+    db.session.query(models.Users).filter(models.Users.email == email).update(
+        {models.Users.group_code: group_code}
+    )
     db.session.commit()
     for user in project_users:
         db.session.query(models.Users).filter(models.Users.email == user).update(
@@ -153,7 +156,7 @@ def on_create_task(data):
     description = data["description"]
     deadline = data["deadline"]
     owner = ""
-    db.session.add(models.Tasks(title, description, deadline, "UT3JuAdepJ", owner))
+    db.session.add(models.Tasks(title, description, deadline, "NKo5WU7eFR", owner))
     db.session.commit()
     message = """
     Hello {},
