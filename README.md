@@ -1,5 +1,5 @@
-# Project Management Dashboard
-A project management dashboard that allows team members to assign work with deadlines and check off completed items.
+# [Task Manager](https://taskmanager490.herokuapp.com/)
+This web app is a project management dashboard that allows team members to assign work to others with set deadlines and the ability to check off completed tasks.
 
 ## Table of Contents 
 
@@ -89,6 +89,25 @@ Close out of vim and then restart psql. Ensure that `sql.env` has the correct us
 We also need to change the owner of the postgres database to the username that you created. This is required for heroku deployment which will be covered in the later steps. Go into psql by typing `psql` and run the following. The username should be the same username that you have in your `sql.env` file!
 
         ALTER DATABASE postgres OWNER TO [your_username]
+#### **Email functionality**
+
+The email functionality of the app is made possible using SMTP SSL and Port 465.  In order for this to work in your `sql.env` file, write the following and fill in the variable with your own email password.
+
+        EMAIL_PASSWORD=[your_email_password]
+
+#### **Google Login functionality**
+
+Go to https://console.developers.google.com/ and create an app, be sure to login with a gmail account.
+
+Navigate to "Select a Project" and create a new Project.
+
+Go to the Credentials tab and Create Credentials and select Oauth client ID.
+
+Select web application and name the credential. Finally insert the url of where you would like the application to run(beware to use http not https, and leave no slash at the end).
+
+Follow the following link after where you put the url and select External.
+
+Navigate to the Oauth consent screen and add your link's TLD to the Authorized Domains.
 
 #### **Run the app**
 
@@ -150,31 +169,33 @@ If all went correctly, the website should be up and running!! In case it does no
 
 #### Michael Manian
 
-* TODO
+Added Create Project functionality to the application, which allows the user to create a project. I  parsed data from the input form and emitted to the server and then stored it in a database.  Project creators can also select which users to add to the project. The page is then reloaded back to the dashboard where the project will be visible to the creator and all participants the creator added. Coded a function which will generate a random unique group code to identify who is part of which project. I styled this page and also restyled the create task page such that when a user shrinks their screen, nothing gets cut off and everything resized proportionally. Throughout development I linted as I wrote code and helped debug a ton of issues my teammates were having. I implemented a feature where the create button is disabled until the user inputs name/description and selects a user, but ended up removing it as it caused issues elsewhere despite it working fine. I also mocked the create project, emit, on connect/disconnect, and the index render template functions. In the end I successfully pushed and deployed to Heroku.
 
 #### Devin Romanoff
 
-* TODO
+Created the Projects and Tasks tables in the database. I wrote methods to send the user, project, and task data to be displayed on the dashboard. This included querying the database based on unique identifiers to get the proper tasks and projects. This data is displayed on task and project creation as well as on login for all users involved in the project. I styled the dashboard and task display components of the UI. Throughout development I helped lint the backend python and frontend jsx files. Helped integrate project and task creation screens into the dashboard, as well as the transition to the dashboard after a user logs in. I was also the PM in week one.
 
 #### Aarati Srikumar
 
-* TODO
+Added Create Task functionality to the application, which allows the user to create a task and emit data to the server, and reload to the Dash page. I chose the style colors for the entire application, and styled this page as well. Wrote code on the server to send email to users when a task or project is created using db calls to get the username as well as python’s smtp library. Created and managed access to the email for our application, that sends emails to users when Tasks or Projects are created. Wrote code to call google calendar api but it needed our app to be verified so we did not use it. Wrote mock tests for my method and other methods, as well as checked and re-checked eslint and pylint for all files made. Tested overall coverage for our application and wrote 5 mock db methods to mock db calls which greatly increased our coverage.
 
 #### Jacob Karpman
 
-* TODO
+Added Google Oauth functionality and created methods to emit user data back to the server. In the server I created the Users Table and made methods to enter user data into Users Table on first login. I styled the Login Page and created the Google Button and Login Javascript files. I added the task_owner attribute to the Tasks table then made the methods display the task owner attribute next to each task in the Task Javascript file. I also created the method that logs the task owner into the Task table on selection of the Task. Along with creating the mock test for all of the methods which I created. Along with being a resource and helping other members when I could. I was also the PM for week 2. 
 
 **[Back to top](#Project-Management-Dashboard)**
 
 ## Pending Work
-
-* TODO
+- When a user adds a project, the project changes for all users, but when a user logs back in, it is corrected. So it is correct in the database, we just have to fix the UI
+- Add a cancel button to Create Task and Create Project page if user changes their mind and make every input of the form required so that we don't have null values
+- Allow users to be a part of multiple projects rather than just one
 
 **[Back to top](#Project-Management-Dashboard)**
 
 ## Linting Errors
-
-* TODO
+- 'useState' is defined but never used  no-unused-vars error, which happens but the script actually does use useState so it is inaccurate
+- Dependency cycle detected, which we needed for our app to refresh to a page where users can decide if they want to create another task or project
+- import/prefer-default-export, which happens in Socket.jsx which was given to us from a lecture so we didn't change it
 
 **[Back to top](#Project-Management-Dashboard)**
 
