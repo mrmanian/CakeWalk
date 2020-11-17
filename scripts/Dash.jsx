@@ -5,11 +5,13 @@ import Tasks from './Tasks';
 import CreateProjectPage from './CreateProjectPage';
 import CreateTaskPage from './CreateTaskPage';
 import './Dash.css';
+import LandingPage from './LandingPage';
 /* eslint-disable react/prop-types */
 
 export default function Dash({ email }) {
   const [createProject, updateCreateProject] = useState(false);
   const [createTask, updateCreateTask] = useState(false);
+  const [landpage, updateLandPage] = useState(false);
 
   function createsProject(e) {
     e.preventDefault();
@@ -24,6 +26,12 @@ export default function Dash({ email }) {
     console.log('The create Task button link was clicked.');
     updateCreateTask(true);
   }
+  
+  function handleAbout(e){
+    e.preventDefault();
+    console.log("Hit about");
+    updateLandPage(true);
+  }
 
   if (createProject) {
     Socket.emit('emit', {
@@ -34,10 +42,14 @@ export default function Dash({ email }) {
   if (createTask) {
     return (<CreateTaskPage email={email} />);
   }
+  if(landpage){
+    return (<LandingPage email={email} />);
+  }
 
   return (
     <div id="head">
       <h1 id="title">Task Manager</h1>
+      <button type="button" onClick={handleAbout}>About</button>
       <br />
       <br />
       <div id="btn">
