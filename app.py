@@ -61,10 +61,17 @@ def emit_task_list(channel, user_gc="abc"):
     ]
 
     user_tasks = [
-        (db_task.title, db_task.task_owner)
+        (db_task.title, db_task.task_owner, db_task.complete_status)
         for db_task in db.session.query(models.Tasks).filter(
             models.Tasks.group_code == user_gc
         )
+    ]
+    completed_tasks = [
+        (db_task.title, db_task.task_owner, db_task.complete_status)
+        for db_task in db.session.query(models.Tasks).filter(
+            models.Tasks.group_code == user_gc, 
+            models.Tasks.complete_status == 'T'
+        ) 
     ]
     print("Extracting user projects and tasks.")
     socketio.emit(
@@ -72,6 +79,7 @@ def emit_task_list(channel, user_gc="abc"):
         {
             "projects": proj_names,
             "tasks": user_tasks,
+            "completed_tasks": completed_tasks
         },
     )
 
@@ -160,9 +168,10 @@ def on_create_task(data):
     title = data["title"]
     description = data["description"]
     deadline = data["deadline"]
+    complete_status = "F"
     gc = db.session.query(models.Users.group_code).filter(models.Users.email == email)
     owner = ""
-    db.session.add(models.Tasks(title, description, deadline, gc, owner))
+    db.session.add(models.Tasks(title, description, deadline, gc, owner, complete_status))
     db.session.commit()
     message = """
     Hello {},
@@ -182,6 +191,20 @@ def on_select_task(data):
             {models.Tasks.task_owner: owner}
         )
         db.session.commit()
+
+@socketio.on("complete task")        
+def on_complete_task(data):
+    print("Completed Tasks: ", data)
+    titles = data["completed"]
+    owner = data["email"]
+    cs = 'T'
+    for task in titles:
+        print(task)
+        db.session.query(models.Tasks).filter(models.Tasks.title == task, models.Tasks.task_owner == owner).update(
+            {models.Tasks.complete_status: cs}
+        )
+        db.session.commit()
+        
 
 
 @app.route("/")
