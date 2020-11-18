@@ -185,6 +185,17 @@ class Unit_TestCase_Mock(unittest.TestCase):
             app.on_select_task(data)
 
             session.query.assert_called_once()
+            
+    def test_on_complete_task(self):
+        session = UnifiedAlchemyMagicMock()
+        data = {
+            "selectedTask": ["Landing Page"],
+            "email": "jake",
+        }
+        with mock.patch("app.db.session", session):
+            app.on_select_task(data)
+
+            session.query.assert_called_once()
 
     @mock.patch("app.emit_user_list")
     @mock.patch("app.emit_task_list")
