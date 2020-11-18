@@ -10,6 +10,7 @@ export default function CreateTaskPage({ email }) {
   const [descriptionValue, updateDescriptionValue] = useState('');
   const [deadlineValue, updateDeadlineValue] = useState('');
   const [formSent, setFormSent] = useState(false);
+  const [cancel, setCancel] = useState(false);
 
   // Gathers submitted information and sends to server
   function handleSubmit(event) {
@@ -28,6 +29,15 @@ export default function CreateTaskPage({ email }) {
 
   // Redirect page back to dashboard after form submit
   if (formSent) {
+    return (<Dash email={email} />);
+  }
+  
+  function handleCancel(event){
+    console.log("Hit Cancel");
+    setCancel(true);
+  }
+  
+  if(cancel){
     return (<Dash email={email} />);
   }
 
@@ -49,6 +59,7 @@ export default function CreateTaskPage({ email }) {
           <input type="date" id="deadline" name="Deadline" value={deadlineValue} onChange={(e) => updateDeadlineValue(e.target.value)} />
         </label>
         <button id="submit" type="submit">Create</button>
+        <button id="submit" type="button" onClick={handleCancel}>Cancel</button>
       </form>
     </div>
   );

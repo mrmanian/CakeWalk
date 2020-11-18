@@ -9,6 +9,7 @@ export default function CreateProjectPage({ email }) {
   const [users, setUsers] = useState([]);
   const [profilePic, setProfilePic] = useState([]);
   const [formSent, setFormSent] = useState(false);
+  const [cancel, setCancel] = useState(false);
   let groupCode = '';
   const selectedUsers = [];
 
@@ -72,6 +73,15 @@ export default function CreateProjectPage({ email }) {
   if (formSent) {
     return (<Dash email={email} />);
   }
+  
+  function handleCancel(event){
+    console.log("Hit Cancel");
+    setCancel(true);
+  }
+  
+  if(cancel){
+    return (<Dash email={email} />);
+  }
 
   return (
     <div id="form">
@@ -109,6 +119,7 @@ export default function CreateProjectPage({ email }) {
         </label>
         <br />
         <button id="submit" type="submit">Create</button>
+        <button id="submit" type="button" onClick={handleCancel}>Cancel</button>
       </form>
     </div>
   );
