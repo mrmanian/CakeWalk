@@ -49,7 +49,7 @@ export default function Dash({ email }) {
   return (
     <div id="head">
       <h1 id="title">Task Manager</h1>
-      <button type="button" onClick={handleAbout}>About</button>
+      <button type="button" className="create" onClick={handleAbout}>About</button>
       <br />
       <br />
       <div id="btn">

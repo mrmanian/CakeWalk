@@ -107,7 +107,8 @@ export default function Tasks({ email }) {
                             Status: 
                             {' '}
                             {task[2] === 'T' ? 'Completed' : 'In Progress'}
-                            <button type="submit" id="complete" value={task[0]} onClick={handleComplete}>Set Complete</button>
+                            {'   '}
+                            <button type="submit" className="create" id="complete" value={task[0]} onClick={handleComplete}>Set Complete</button>
                           </li>
                         ))
                       }
