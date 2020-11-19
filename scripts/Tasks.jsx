@@ -6,7 +6,9 @@ import { Socket } from './Socket';
 export default function Tasks({ email }) {
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [completedTasks, setCompletedTasks] = useState([]);
   const selectedTask = [];
+  const completed = [];
 
   useEffect(() => {
     Socket.emit('emit', {
@@ -17,6 +19,7 @@ export default function Tasks({ email }) {
   function updateTasks(data) {
     setProjects(data.projects);
     setTasks(data.tasks);
+    setCompletedTasks(data.completed_tasks);
   }
 
   function getTasks() {
@@ -54,6 +57,22 @@ export default function Tasks({ email }) {
       email,
     });
   }
+  
+  function handleComplete(event) {
+    var t = document.getElementById('complete').value;
+    console.log(t);
+    completed.push(t);
+    console.log(completed);
+    
+    
+    Socket.emit('complete task',{
+      completed,
+      email,
+    });
+    Socket.emit('emit', {
+      email,
+    });
+  }
 
   return (
     <div>
@@ -62,6 +81,7 @@ export default function Tasks({ email }) {
           <tr>
             <th>Projects</th>
             <th>Tasks</th>
+            <th>Completed</th>
           </tr>
         </thead>
         <tbody>
@@ -83,12 +103,31 @@ export default function Tasks({ email }) {
                             :
                             {' '}
                             {task[1] === '' ? 'Open' : task[1]}
+                            {' '}
+                            Status: 
+                            {' '}
+                            {task[2] === 'T' ? 'Completed' : 'In Progress'}
+                            {'   '}
+                            <button type="submit" className="create" id="complete" value={task[0]} onClick={handleComplete}>Set Complete</button>
                           </li>
                         ))
                       }
                     </ul>
                     <button className="create" type="submit">Select Tasks</button>
                   </form>
+                </td>
+                <td>
+                <ul id="completed-task">
+                {
+                  completedTasks.map((task, index3) => (
+                  <li key={index3}>
+                  {' '}
+                  {task[0]}
+                  </li>
+                  
+                  ))
+                }
+                </ul>
                 </td>
               </tr>
             ))

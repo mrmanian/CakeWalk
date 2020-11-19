@@ -49,14 +49,16 @@ class Tasks(db.Model):
     date = db.Column(db.String(255))
     group_code = db.Column(db.String(10))
     task_owner = db.Column(db.String(255))
+    complete_status = db.Column(db.String(10))
 
-    def __init__(self, t, td, d, gc, to):
+    def __init__(self, t, td, d, gc, to, cs):
         self.title = t
         self.t_description = td
         self.date = d
         self.group_code = gc
         self.task_owner = to
-
+        self.complete_status = cs
+        
     def __repr__(self):
         return "< %s : %s : %s >" % (
             self.title,
