@@ -1,57 +1,30 @@
-/* eslint import/no-extraneous-dependencies: */
 import React from 'react';
-import { GoogleLogin } from 'react-google-login';
-import { Socket } from './Socket';
-/* eslint no-console: ["error", { allow: ["log"] }] */
+import GoogleButton from './GoogleButton';
+import FacebookButton from './FacebookButton';
+import './Login-Register.css';
+
 export default function Login() {
-  const header = {
-    textAlign: 'center',
-    color: '#561B1F',
-  };
-  const desc = {
-    textAlign: 'center',
-    color: '#193B53',
-  };
-  const button = {
-    textAlign: 'center',
-    color: '#BEB07B',
-  };
-
-  function handleSubmit(response) {
-    console.log('submitted');
-    console.log(response.profileObj.name);
-    console.log(response.profileObj.imageUrl);
-    console.log(response.profileObj.email);
-    Socket.emit('newlogin', { uname: response.profileObj.name, imageurl: response.profileObj.imageUrl, email: response.profileObj.email });
-    Socket.emit('user email', { email: response.profileObj.email });
-    event.preventDefault();
-  }
-  function handleFail() {
-    console.log('Fail');
-  }
-
   return (
-    <div>
-      <h1 style={header}>Welcome to Task Manager!</h1>
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <h2 style={desc}>The web app that fills all your project management needs...</h2>
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <div style={button}>
-        <GoogleLogin
-          clientId="820684354318-tlcrjakf8qm4o0ln9e9r0qqoh0kq2tc6.apps.googleusercontent.com"
-          buttonText="Login"
-          onSuccess={handleSubmit}
-          onFailure={handleFail}
-          cookiePolicy="single_host_origin"
-        />
+    <div className="box-container">
+      <div className="head">Login</div>
+      <div>
+        <div className="login-image">
+          <img src="https://aleragroup.com/wp-content/uploads/2019/06/featured-1560781094-GettyImages-941665020.jpg" alt="Not found" />
+        </div>
+        <br />
+        <form className="login-form" autoComplete="off">
+          <label htmlFor="Email">Email</label>
+          <input type="text" id="Email" name="Email" placeholder="Email" required />
+          <label htmlFor="Password">Password</label>
+          <input type="password" id="Password" name="Password" placeholder="Password" autoComplete="on" required />
+          <button type="submit" className="login-button">Login</button>
+        </form>
+        <p className="forgot">Forgot Password</p>
+        <hr />
+        <p className="or">Or continue with your social account</p>
+        <div className="socials">
+          <GoogleButton />
+        </div>
       </div>
     </div>
   );
