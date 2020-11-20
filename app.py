@@ -41,7 +41,7 @@ def emit_user_list(channel):
         db_profile_img.profile_img
         for db_profile_img in db.session.query(models.Users).all()
     ]
-    print("Extracting user information.")
+    #print("Extracting user information.")
     socketio.emit(
         channel,
         {
@@ -61,7 +61,7 @@ def emit_task_list(channel, user_gc="abc"):
     ]
 
     user_tasks = [
-        (db_task.title, db_task.task_owner, db_task.complete_status)
+        (db_task.title, db_task.task_owner, db_task.complete_status,  db_task.t_description, db_task.date )
         for db_task in db.session.query(models.Tasks).filter(
             models.Tasks.group_code == user_gc
         )
@@ -73,7 +73,7 @@ def emit_task_list(channel, user_gc="abc"):
             models.Tasks.complete_status == 'T'
         ) 
     ]
-    print("Extracting user projects and tasks.")
+    #print("Extracting user projects and tasks.")
     socketio.emit(
         channel,
         {
@@ -204,9 +204,13 @@ def on_complete_task(data):
             {models.Tasks.complete_status: cs}
         )
         db.session.commit()
+
+@socketio.on("reload")
+def on_reload_page():
+    #socketio.emit("reload", sid)
+    socketio.emit("reload")
+    
         
-
-
 @app.route("/")
 def index():
     return flask.render_template("index.html")

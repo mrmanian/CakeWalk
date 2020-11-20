@@ -1,6 +1,7 @@
 /* eslint import/no-extraneous-dependencies: */
 import React, { useState, useEffect } from 'react';
 import { Socket } from './Socket';
+import  ViewTask  from './ViewTask';
 
 /* eslint-disable react/prop-types */
 export default function Tasks({ email }) {
@@ -9,12 +10,20 @@ export default function Tasks({ email }) {
   const [completedTasks, setCompletedTasks] = useState([]);
   const selectedTask = [];
   const completed = [];
-
+  const [viewTask, setViewTask] = useState(-1);
   useEffect(() => {
     Socket.emit('emit', {
       email,
     });
   }, []);
+  
+  useEffect(() => {
+      Socket.on('reload', () => {
+        /* eslint no-console: ["error", { allow: ["log"] }] */
+        console.log('Received reload from server');
+        setViewTask(-1);
+      });
+    }, []);
 
   function updateTasks(data) {
     setProjects(data.projects);
@@ -58,12 +67,17 @@ export default function Tasks({ email }) {
     });
   }
   
+  function handleViewTask(event) {
+    setViewTask(event.target.id)
+    document.getElementById('selectTaskForm').reset();
+    event.preventDefault();
+  }
+  
   function handleComplete(event) {
     var t = document.getElementById('complete').value;
     console.log(t);
     completed.push(t);
     console.log(completed);
-    
     
     Socket.emit('complete task',{
       completed,
@@ -73,7 +87,10 @@ export default function Tasks({ email }) {
       email,
     });
   }
-
+  
+   if (viewTask != -1) {
+    return (<ViewTask email={email} tasks = {tasks[viewTask]}/>);
+  }
   return (
     <div>
       <table>
@@ -109,12 +126,16 @@ export default function Tasks({ email }) {
                             {task[2] === 'T' ? 'Completed' : 'In Progress'}
                             {'   '}
                             <button type="submit" className="create" id="complete" value={task[0]} onClick={handleComplete}>Set Complete</button>
+                               <form onSubmit={handleViewTask} id={index2} autoComplete="off">
+                               <button type="submit" className="create" id="complete" onClick={handleComplete}>View Task</button>
+                               </form>
                           </li>
                         ))
                       }
                     </ul>
                     <button className="create" type="submit">Select Tasks</button>
                   </form>
+                  
                 </td>
                 <td>
                 <ul id="completed-task">
@@ -137,3 +158,4 @@ export default function Tasks({ email }) {
     </div>
   );
 }
+

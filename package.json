@@ -42,6 +42,7 @@
     "radium": "^0.26.1",
     "react-facebook-login": "^4.1.1",
     "react-google-login": "^5.1.21",
+    "react-linkify": "^1.0.0-alpha",
     "react-router-dom": "^5.2.0",
     "react-scroll-to-bottom": "^4.0.0",
     "react-social-login-buttons": "^3.1.0",
