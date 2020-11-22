@@ -1,9 +1,8 @@
-/* eslint import/no-extraneous-dependencies: */
 import React, { useState, useEffect } from 'react';
 import { Socket } from './Socket';
 import Dash from './Dash';
 import './CreateProjectPage.css';
-/* eslint-disable react/prop-types */
+
 export default function CreateProjectPage({ email }) {
   const [code, setCode] = useState('');
   const [users, setUsers] = useState([]);
@@ -13,7 +12,6 @@ export default function CreateProjectPage({ email }) {
   let groupCode = '';
   const selectedUsers = [];
 
-  // Creates unique group code
   useEffect(() => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (let i = 0; i < 10; i += 1) {
@@ -22,7 +20,6 @@ export default function CreateProjectPage({ email }) {
     setCode(groupCode);
   }, []);
 
-  // Gets list of users to select from
   useEffect(() => {
     Socket.on('get user list', (data) => {
       setUsers(data.all_users);
@@ -36,10 +33,10 @@ export default function CreateProjectPage({ email }) {
     };
   }, []);
 
-  // Gathers submitted information and sends to server
-  function handleSubmit(event) {
+  function handleSubmit() {
     const projectName = document.getElementById('name').value;
     const projectDescription = document.getElementById('description').value;
+
     Socket.emit('create project', {
       projectName,
       projectDescription,
@@ -47,14 +44,9 @@ export default function CreateProjectPage({ email }) {
       selectedUsers,
       email,
     });
-
-    document.getElementById('name').value = '';
-    document.getElementById('description').value = '';
-    event.preventDefault();
     setFormSent(true);
   }
 
-  // Handles user selection checkboxes
   function handleClick(event) {
     const { checked, value } = event.target;
 
@@ -69,17 +61,15 @@ export default function CreateProjectPage({ email }) {
     }
   }
 
-  // Redirect page back to dashboard after form submit
   if (formSent) {
     return (<Dash email={email} />);
   }
-  
-  function handleCancel(event){
-    console.log("Hit Cancel");
+
+  function handleCancel() {
     setCancel(true);
   }
-  
-  if(cancel){
+
+  if (cancel) {
     return (<Dash email={email} />);
   }
 
@@ -96,10 +86,10 @@ export default function CreateProjectPage({ email }) {
 
       <form onSubmit={handleSubmit} autoComplete="off">
         <br />
-        <textarea className="textarea" id="name" placeholder="Project Name" />
+        <textarea className="textarea" id="name" placeholder="Project Name" required />
         <br />
         <br />
-        <textarea className="textarea" id="description" placeholder="Project Description" />
+        <textarea className="textarea" id="description" placeholder="Project Description" required />
         <label htmlFor="Users" className="right pad">
           &nbsp;&nbsp;
           Select users to add:

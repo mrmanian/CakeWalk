@@ -41,7 +41,7 @@ def emit_user_list(channel):
         db_profile_img.profile_img
         for db_profile_img in db.session.query(models.Users).all()
     ]
-    #print("Extracting user information.")
+    # print("Extracting user information.")
     socketio.emit(
         channel,
         {
@@ -51,7 +51,7 @@ def emit_user_list(channel):
     )
 
 
-# Emits list of tasks from tasks table NKo5WU7eFR
+# Emits list of tasks from tasks table
 def emit_task_list(channel, user_gc="abc"):
     proj_names = [
         db_proj.proj_name
@@ -61,7 +61,13 @@ def emit_task_list(channel, user_gc="abc"):
     ]
 
     user_tasks = [
-        (db_task.title, db_task.task_owner, db_task.complete_status,  db_task.t_description, db_task.date )
+        (
+            db_task.title,
+            db_task.task_owner,
+            db_task.complete_status,
+            db_task.t_description,
+            db_task.date,
+        )
         for db_task in db.session.query(models.Tasks).filter(
             models.Tasks.group_code == user_gc
         )
@@ -69,17 +75,16 @@ def emit_task_list(channel, user_gc="abc"):
     completed_tasks = [
         (db_task.title, db_task.task_owner, db_task.complete_status)
         for db_task in db.session.query(models.Tasks).filter(
-            models.Tasks.group_code == user_gc, 
-            models.Tasks.complete_status == 'T'
-        ) 
+            models.Tasks.group_code == user_gc, models.Tasks.complete_status == "T"
+        )
     ]
-    #print("Extracting user projects and tasks.")
+    # print("Extracting user projects and tasks.")
     socketio.emit(
         channel,
         {
             "projects": proj_names,
             "tasks": user_tasks,
-            "completed_tasks": completed_tasks
+            "completed_tasks": completed_tasks,
         },
     )
 
@@ -123,14 +128,22 @@ def on_newlogin(data):
     login_status = True
     uname = data["uname"]
     email = data["email"]
+    password = data["password"]
     img = data["imageurl"]
     group_code = ""
     exists = db.session.query(db.exists().where(models.Users.email == email)).scalar()
     if not exists:
-        db.session.add(models.Users(uname, email, img, group_code))
+        db.session.add(models.Users(uname, email, password, img, group_code))
         db.session.commit()
     sid = request.sid
     socketio.emit("login_status", {"loginStatus": login_status, "email": email}, sid)
+
+
+# Verify user login credentials
+@socketio.on("verifylogin")
+def on_verifylogin(data):
+    email = data["email"]
+    password = data["password"]
 
 
 # Gets information from create project page
@@ -171,7 +184,9 @@ def on_create_task(data):
     complete_status = "F"
     gc = db.session.query(models.Users.group_code).filter(models.Users.email == email)
     owner = ""
-    db.session.add(models.Tasks(title, description, deadline, gc, owner, complete_status))
+    db.session.add(
+        models.Tasks(title, description, deadline, gc, owner, complete_status)
+    )
     db.session.commit()
     message = """
     Hello {},
@@ -192,25 +207,27 @@ def on_select_task(data):
         )
         db.session.commit()
 
-@socketio.on("complete task")        
+
+@socketio.on("complete task")
 def on_complete_task(data):
     print("Completed Tasks: ", data)
     titles = data["completed"]
     owner = data["email"]
-    cs = 'T'
+    cs = "T"
     for task in titles:
         print(task)
-        db.session.query(models.Tasks).filter(models.Tasks.title == task, models.Tasks.task_owner == owner).update(
-            {models.Tasks.complete_status: cs}
-        )
+        db.session.query(models.Tasks).filter(
+            models.Tasks.title == task, models.Tasks.task_owner == owner
+        ).update({models.Tasks.complete_status: cs})
         db.session.commit()
+
 
 @socketio.on("reload")
 def on_reload_page():
-    #socketio.emit("reload", sid)
+    # socketio.emit("reload", sid)
     socketio.emit("reload")
-    
-        
+
+
 @app.route("/")
 def index():
     return flask.render_template("index.html")
