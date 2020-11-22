@@ -6,7 +6,7 @@ class Users(db.Model):
     username = db.Column(db.String(50))
     email = db.Column(db.String(255))
     password = db.Column(db.String(255))
-    profile_img = db.Column(db.String(500))
+    profile_img = db.Column(db.String(10000))
     group_code = db.Column(db.String(10))
 
     def __init__(self, u, e, p, i, gc):
