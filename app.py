@@ -144,6 +144,18 @@ def on_newlogin(data):
 def on_verifylogin(data):
     email = data["email"]
     password = data["password"]
+    verify_email = db.session.query(
+        db.exists().where(models.Users.email == email)
+    ).scalar()
+    verify_password = db.session.query(
+        db.exists().where(models.Users.password == password)
+    ).scalar()
+    if verify_email and verify_password:
+        sid = request.sid
+        socketio.emit("login_status", {"loginStatus": True, "email": email}, sid)
+    else:
+        sid = request.sid
+        socketio.emit("login_status", {"loginStatus": False, "email": email}, sid)
 
 
 # Gets information from create project page
@@ -173,7 +185,7 @@ def on_create_project(data):
     create_and_send_email(email, message)
 
 
-# Gets information from create task page "NKo5WU7eFR"
+# Gets information from create task page
 @socketio.on("create task")
 def on_create_task(data):
     print("Received new task data: ", data)
