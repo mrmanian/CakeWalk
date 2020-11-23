@@ -121,6 +121,27 @@ def emit_proj(data):
     emit_task_list(TASK_CHANNEL, data["gc"])
 
 
+# Send user email of their password
+@socketio.on("forgot password")
+def on_forgot_password(data):
+    email = data["email"]
+    password = (
+        db.session.query(models.Users.password)
+        .filter(models.Users.email == email)
+        .all()
+    )
+
+    message = (
+        """
+    Hello {},
+    
+    This is your password: """
+        + str(password[0][0])
+        + "."
+    )
+    create_and_send_email(email, message)
+
+
 # Adds user data to user table on login
 @socketio.on("newlogin")
 def on_newlogin(data):

@@ -13,7 +13,9 @@ export default function Login() {
     if (document.getElementById('Email').value === '') {
       alert('Enter valid email address!');
     } else {
-      console.log(document.getElementById('Email').value);
+      email = document.getElementById('Email').value;
+      Socket.emit('forgot password', { email });
+      alert('An email was sent containing your password!');
       document.getElementById('Email').value = '';
     }
   }
