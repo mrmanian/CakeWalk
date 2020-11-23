@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
+import Dash from './Dash';
 import Login from './Login';
 import Register from './Register';
 import './LoginPage.css';
 
-export default function LoginPage() {
+export default function LoginPage({ state, email }) {
   const [isLoginActive, setIsLoginActive] = useState(true);
 
   function handleClick() {
     setIsLoginActive(!isLoginActive);
+  }
+
+  if (state) {
+    return (<Dash email={email} />);
   }
 
   return (
