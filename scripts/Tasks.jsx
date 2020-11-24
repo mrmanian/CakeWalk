@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Socket } from './Socket';
 import  ViewTask  from './ViewTask';
+import { Card } from 'react-bootstrap';
 
 /* eslint-disable react/prop-types */
 export default function Tasks({ email }) {
@@ -93,12 +94,12 @@ export default function Tasks({ email }) {
   }
   return (
     <div>
-      <table>
+      <table class="table table-hover table-bordered table-danger">
         <thead>
           <tr>
-            <th>Projects</th>
-            <th>Tasks</th>
-            <th>Completed</th>
+            <th scope="col">Projects</th>
+            <th scope="col">Tasks</th>
+            <th scope="col">Completed</th>
           </tr>
         </thead>
         <tbody>
@@ -110,10 +111,10 @@ export default function Tasks({ email }) {
                 </td>
                 <td>
                   <form onSubmit={handleSubmit} id="selectTaskForm" autoComplete="off">
-                    <ul id="task">
+                    <ul class="list-group" id="task">
                       {
                         tasks.map((task, index2) => (
-                          <li key={index2}>
+                          <li class="list-group-item list-group-item-warning" key={index2}>
                             <input type="checkbox" value={task[0]} onClick={handleClick} />
                             {' '}
                             {task[0]}
@@ -133,6 +134,7 @@ export default function Tasks({ email }) {
                         ))
                       }
                     </ul>
+                    <br />
                     <button className="create" type="submit">Select Tasks</button>
                   </form>
                   

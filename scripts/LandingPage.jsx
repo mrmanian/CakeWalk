@@ -60,7 +60,7 @@ const Header = ({email}) => {
   return (
     <div className="header">
       <span className="header-title">
-        <img className="logo" src="https://i.ibb.co/dDSQhhP/taskmanagerlogo.png" alt="LOGO" />
+        <img className="logo" src="https://i.imgur.com/fyoEzeP.png" alt="LOGO" />
         
       </span>
       <br />

@@ -48,7 +48,7 @@ export default function Dash({ email }) {
 
   return (
     <div id="head">
-      <h1 id="title">Task Manager</h1>
+      <h1 id="title">Cakewalk</h1>
       <button type="button" className="create" onClick={handleAbout}>About</button>
       <br />
       <br />

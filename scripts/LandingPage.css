@@ -28,24 +28,24 @@
 .logo {
   padding: 10px;
   position: relative;
-  top: -70px;
+  top: -50px;
   display: block;
   margin-left: auto;
   margin-right: auto;
 }
 .header {
-  background-color: #beb07b;
+  background-color: #F0F8FF;
   color: #193b53;
   width: 100%;
   text-align: center;
-  height: 170px;
+  height: 220px;
   padding: 30px;
   display: block;
 }
 .header-text {
   font-size: 25px;
   position: relative;
-  top: -180px;
+  top: -110px;
   
 }
 
