@@ -7,22 +7,19 @@ class Users(db.Model):
     email = db.Column(db.String(255))
     password = db.Column(db.String(255))
     profile_img = db.Column(db.String(10000))
-    group_code = db.Column(db.String(10))
 
-    def __init__(self, u, e, p, i, gc):
+    def __init__(self, u, e, p, i):
         self.username = u
         self.email = e
         self.password = p
         self.profile_img = i
-        self.group_code = gc
 
     def __repr__(self):
-        return "< %s : %s : %s : %s : %s >" % (
+        return "< %s : %s : %s : %s >" % (
             self.profile_img,
             self.username,
             self.email,
             self.password,
-            self.group_code,
         )
 
 
@@ -71,3 +68,16 @@ class Tasks(db.Model):
             self.task_owner,
             self.complete_status,
         )
+        
+class Participants(db.Model):
+    par_id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(255))
+    group_code = db.Column(db.String(10))
+    
+    def __init__(self, e, gc):
+        self.email = e
+        self.group_code = gc
+        
+    def __repr__(self):
+        return "< %s : %s >" % (self.email, self.group_code)
+    
