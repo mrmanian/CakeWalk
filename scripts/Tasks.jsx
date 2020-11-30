@@ -107,7 +107,7 @@ export default function Tasks({ email }) {
             projects.map((project, index) => (
               <tr key={index}>
                 <td>
-                  {project}
+                  {project[0]}
                 </td>
                 <td>
                   <form onSubmit={handleSubmit} id="selectTaskForm" autoComplete="off">
