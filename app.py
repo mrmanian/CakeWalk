@@ -52,7 +52,7 @@ def emit_user_list(channel):
 
 
 # Emits list of tasks from tasks table
-def emit_task_list(channel, user_gc="abc"):
+def emit_task_list(channel, user_gc=["abc"]):
     proj_names = [
         db_proj.proj_name
         for db_proj in db.session.query(models.Projects).filter(
@@ -111,7 +111,13 @@ def create_and_send_email(receiver_email, message):
 @socketio.on("emit")
 def emit(data):
     email = data["email"]
-    gc = db.session.query(models.Users.group_code).filter(models.Users.email == email)
+    # gc = db.session.query(models.Users.group_code).filter(models.Users.email == email)
+    gc = [
+        db_par.group_code
+        for db_par in db.session.query(models.Participants).filter(
+            models.Participants.email == email
+        )    
+    ]
     emit_user_list(CHANNEL)
     emit_task_list(TASK_CHANNEL, gc)
 
@@ -220,7 +226,7 @@ def on_create_task(data):
     
     You have created a task on the Project Manager app!
     """
-    create_and_send_email(email, message)
+    #create_and_send_email(email, message)
 
 
 @socketio.on("task selection")
