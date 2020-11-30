@@ -53,38 +53,47 @@ def emit_user_list(channel):
 
 # Emits list of tasks from tasks table
 def emit_task_list(channel, user_gc=["abc"]):
-    proj_names = [
-        db_proj.proj_name
-        for db_proj in db.session.query(models.Projects).filter(
-            models.Projects.group_code == user_gc
-        )
-    ]
+    all_projs = []
+    all_tasks = []
+    all_comp_tasks = []
+    
+    for gc in user_gc:
+        proj_names = [
+            db_proj.proj_name
+            for db_proj in db.session.query(models.Projects).filter(
+                models.Projects.group_code == gc
+            )
+        ]
 
-    user_tasks = [
-        (
-            db_task.title,
-            db_task.task_owner,
-            db_task.complete_status,
-            db_task.t_description,
-            db_task.date,
-        )
-        for db_task in db.session.query(models.Tasks).filter(
-            models.Tasks.group_code == user_gc
-        )
-    ]
-    completed_tasks = [
-        (db_task.title, db_task.task_owner, db_task.complete_status)
-        for db_task in db.session.query(models.Tasks).filter(
-            models.Tasks.group_code == user_gc, models.Tasks.complete_status == "T"
-        )
-    ]
-    # print("Extracting user projects and tasks.")
+        user_tasks = [
+            (
+                db_task.title,
+                db_task.task_owner,
+                db_task.complete_status,
+                db_task.t_description,
+                db_task.date,
+            )
+            for db_task in db.session.query(models.Tasks).filter(
+                models.Tasks.group_code == gc
+            )
+        ]
+        completed_tasks = [
+            (db_task.title, db_task.task_owner, db_task.complete_status)
+            for db_task in db.session.query(models.Tasks).filter(
+                models.Tasks.group_code == gc, models.Tasks.complete_status == "T"
+            )
+        ]
+        
+        all_projs.append(proj_names)
+        all_tasks.append(user_tasks)
+        all_comp_tasks.append(completed_tasks)
+        
     socketio.emit(
         channel,
         {
-            "projects": proj_names,
-            "tasks": user_tasks,
-            "completed_tasks": completed_tasks,
+            "projects": all_projs,
+            "tasks": all_tasks,
+            "completed_tasks": all_comp_tasks,
         },
     )
 
