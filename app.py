@@ -17,7 +17,7 @@ socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
 database_uri = os.environ["DATABASE_URL"]
-email_password = os.environ["EMAIL_PASSWORD"]
+#email_password = os.environ["EMAIL_PASSWORD"]
 app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
 
 db = flask_sqlalchemy.SQLAlchemy(app)
@@ -103,7 +103,7 @@ def create_and_send_email(receiver_email, message):
     message = message.format(user[0])
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
-    server.login(sender_email, email_password)
+    #server.login(sender_email, email_password)
     server.sendmail(sender_email, receiver_email, message)
     print("Sent email to user.")
 
@@ -139,7 +139,7 @@ def on_forgot_password(data):
         + str(password[0][0])
         + "."
     )
-    create_and_send_email(email, message)
+    #create_and_send_email(email, message)
 
 
 # Adds user data to user table on login
@@ -151,10 +151,9 @@ def on_newlogin(data):
     email = data["email"]
     password = data["password"]
     img = data["imageurl"]
-    group_code = ""
     exists = db.session.query(db.exists().where(models.Users.email == email)).scalar()
     if not exists:
-        db.session.add(models.Users(uname, email, password, img, group_code))
+        db.session.add(models.Users(uname, email, password, img))
         db.session.commit()
     sid = request.sid
     socketio.emit("login_status", {"loginStatus": login_status, "email": email}, sid)
@@ -203,7 +202,7 @@ def on_create_project(data):
     
     You have created a project on the Project Manager app!
     """
-    create_and_send_email(email, message)
+    #create_and_send_email(email, message)
 
 
 # Gets information from create task page
