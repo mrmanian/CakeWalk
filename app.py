@@ -188,14 +188,9 @@ def on_create_project(data):
     project_users = data["selectedUsers"]
     email = data["email"]
     db.session.add(models.Projects(group_code, project_name, project_description))
-    db.session.query(models.Users).filter(models.Users.email == email).update(
-        {models.Users.group_code: group_code}
-    )
     db.session.commit()
     for user in project_users:
-        db.session.query(models.Users).filter(models.Users.email == user).update(
-            {models.Users.group_code: group_code}
-        )
+        db.session.add(models.Participants(user, group_code))
         db.session.commit()
     message = """
     Hello {},
