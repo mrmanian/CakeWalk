@@ -95,69 +95,104 @@ export default function Tasks({ email }) {
   return (
     <div>
       <table class="table table-hover table-bordered table-danger">
-        <thead>
-          <tr>
-            <th scope="col">Projects</th>
-            <th scope="col">Tasks</th>
-            <th scope="col">Completed</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            projects.map((project, index) => (
-              <tr key={index}>
-                <td>
-                  {project}
-                </td>
-                <td>
-                  <form onSubmit={handleSubmit} id="selectTaskForm" autoComplete="off">
-                    <ul class="list-group" id="task">
+        <tr>
+          <td>
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Projects</th>
+                </tr>
+              </thead>
+              <tbody>
+              {
+                projects.map((project, index) => (
+                  <tr key={index}>
+                    <td>
+                      {project[0]}
+                    </td>
+                  </tr>
+                ))
+              }
+              </tbody>
+            </table>
+          </td>
+          <td>
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Tasks</th>
+                </tr>
+              </thead>
+              <tbody>
+              {
+                tasks.map((task_list, index2) => (
+                  <tr key={index2}>
+                    <td>
+                      <form onSubmit={handleSubmit} id="selectTaskForm" autoComplete="off">
+                        <ul>
+                        {
+                          task_list.map((task, index3) => (
+                            <li>
+                              <input type="checkbox" value={task[0]} onClick={handleClick} />
+                              {' '}
+                              {task[0]}
+                              :
+                              {' '}
+                              {task[1] === '' ? 'Open' : task[1]}
+                              {' '}
+                              Status: 
+                              {' '}
+                              {task[2] === 'T' ? 'Completed' : 'In Progress'}
+                              {'   '}
+                              <button type="submit" className="create" id="complete" value={task[0]} onClick={handleComplete}>Set Complete</button>
+                                <form onSubmit={handleViewTask} id={index2} autoComplete="off">
+                                  <button type="submit" className="create" id="complete" onClick={handleComplete}>View Task</button>
+                                </form>
+                            </li>
+                          ))
+                        }
+                        </ul>
+                        <br />
+                        <button className="create" type="submit">Select Tasks</button>
+                      </form>
+                    </td>
+                  </tr>
+                ))
+              }
+              </tbody>
+            </table>
+          </td>
+          <td>
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Completed</th>
+                </tr>
+              </thead>
+              <tbody>
+              {
+                completedTasks.map((comp_list, index4) => (
+                  <tr key={index4}>
+                    <td>
+                      <ul id="completed-task">
                       {
-                        tasks.map((task, index2) => (
-                          <li class="list-group-item list-group-item-warning" key={index2}>
-                            <input type="checkbox" value={task[0]} onClick={handleClick} />
-                            {' '}
-                            {task[0]}
-                            :
-                            {' '}
-                            {task[1] === '' ? 'Open' : task[1]}
-                            {' '}
-                            Status: 
-                            {' '}
-                            {task[2] === 'T' ? 'Completed' : 'In Progress'}
-                            {'   '}
-                            <button type="submit" className="create" id="complete" value={task[0]} onClick={handleComplete}>Set Complete</button>
-                               <form onSubmit={handleViewTask} id={index2} autoComplete="off">
-                               <button type="submit" className="create" id="complete" onClick={handleComplete}>View Task</button>
-                               </form>
+                        comp_list.map((task, index3) => (
+                          <li key={index3}>
+                          {' '}
+                          {task[0]}
                           </li>
                         ))
                       }
-                    </ul>
-                    <br />
-                    <button className="create" type="submit">Select Tasks</button>
-                  </form>
-                  
-                </td>
-                <td>
-                <ul id="completed-task">
-                {
-                  completedTasks.map((task, index3) => (
-                  <li key={index3}>
-                  {' '}
-                  {task[0]}
-                  </li>
-                  
-                  ))
-                }
-                </ul>
-                </td>
-              </tr>
-            ))
-          }
-        </tbody>
+                      </ul>
+                    </td>
+                  </tr>
+                ))
+              }
+              </tbody>
+            </table>
+          </td>
+        </tr>
       </table>
     </div>
   );
 }
-
