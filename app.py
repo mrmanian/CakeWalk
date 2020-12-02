@@ -166,10 +166,11 @@ def on_newlogin(data):
     uname = data["uname"]
     email = data["email"]
     password = data["password"]
+    role = ""
     img = data["imageurl"]
     exists = db.session.query(db.exists().where(models.Users.email == email)).scalar()
     if not exists:
-        db.session.add(models.Users(uname, email, password, img))
+        db.session.add(models.Users(uname, email, password, role, img))
         db.session.commit()
     sid = request.sid
     socketio.emit("login_status", {"loginStatus": login_status, "email": email}, sid)
