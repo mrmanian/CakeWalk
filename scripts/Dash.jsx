@@ -1,36 +1,26 @@
-/* eslint import/no-extraneous-dependencies: */
 import React, { useState } from 'react';
 import { Socket } from './Socket';
 import Tasks from './Tasks';
 import CreateProjectPage from './CreateProjectPage';
 import CreateTaskPage from './CreateTaskPage';
-import './Dash.css';
 import LandingPage from './LandingPage';
-/* eslint-disable react/prop-types */
+import ProfilePage from './ProfilePage';
+import './Dash.css';
 
 export default function Dash({ email }) {
   const [createProject, updateCreateProject] = useState(false);
   const [createTask, updateCreateTask] = useState(false);
-  const [landpage, updateLandPage] = useState(false);
 
   function createsProject(e) {
     e.preventDefault();
-    /* eslint no-console: ["error", { allow: ["log"] }] */
     console.log('The create Project button link was clicked.');
     updateCreateProject(true);
   }
 
   function createsTasks(e) {
     e.preventDefault();
-    /* eslint no-console: ["error", { allow: ["log"] }] */
     console.log('The create Task button link was clicked.');
     updateCreateTask(true);
-  }
-  
-  function handleAbout(e){
-    e.preventDefault();
-    console.log("Hit about");
-    updateLandPage(true);
   }
 
   if (createProject) {
@@ -39,17 +29,16 @@ export default function Dash({ email }) {
     });
     return (<CreateProjectPage email={email} />);
   }
+
   if (createTask) {
     return (<CreateTaskPage email={email} />);
-  }
-  if(landpage){
-    return (<LandingPage email={email} />);
   }
 
   return (
     <div id="head">
       <h1 id="title">Cakewalk</h1>
-      <button type="button" className="create" onClick={handleAbout}>About</button>
+      <LandingPage email={email} />
+      <ProfilePage email={email} />
       <br />
       <br />
       <div id="btn">
