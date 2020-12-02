@@ -22,10 +22,10 @@ export default function ProfilePage({ email }) {
   useEffect(() => {
     Socket.on('data', (data) => {
       setUsername(data.username);
-      if (data.password === 'Used Facebook Login') {
+      if (data.password[0][0] === 'Used Facebook Login') {
         setPassword(data.password);
         setChange(false);
-      } else if (data.password === 'Used Google Login') {
+      } else if (data.password[0][0] === 'Used Google Login') {
         setPassword(data.password);
         setChange(false);
       } else {
