@@ -162,11 +162,37 @@ export default function Tasks({ email }) {
               </tbody>
             </table>
           </td>
+          <td>
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Completed</th>
+                </tr>
+              </thead>
+              <tbody>
+              {
+                completedTasks.map((comp_list, index4) => (
+                  <tr key={index4}>
+                    <td>
+                      <ul id="completed-task">
+                      {
+                        comp_list.map((task, index3) => (
+                          <li key={index3}>
+                          {' '}
+                          {task[0]}
+                          </li>
+                        ))
+                      }
+                      </ul>
+                    </td>
+                  </tr>
+                ))
+              }
+              </tbody>
+            </table>
+          </td>
         </tr>
       </table>
     </div>
   );
 }
-
-//<th scope="col">Tasks</th>
-//<th scope="col">Completed</th>
