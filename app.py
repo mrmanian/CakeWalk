@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import flask
 import flask_socketio
 import flask_sqlalchemy
+from sqlalchemy import func, any_
 from flask import request
 
 app = flask.Flask(__name__)
@@ -17,7 +18,7 @@ socketio = flask_socketio.SocketIO(app)
 socketio.init_app(app, cors_allowed_origins="*")
 
 database_uri = os.environ["DATABASE_URL"]
-#email_password = os.environ["EMAIL_PASSWORD"]
+# email_password = os.environ["EMAIL_PASSWORD"]
 app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
 
 db = flask_sqlalchemy.SQLAlchemy(app)
@@ -56,7 +57,7 @@ def emit_task_list(channel, user_gc=["abc"]):
     all_projs = []
     all_tasks = []
     all_comp_tasks = []
-    
+
     for gc in user_gc:
         proj_names = [
             db_proj.proj_name
@@ -83,11 +84,11 @@ def emit_task_list(channel, user_gc=["abc"]):
                 models.Tasks.group_code == gc, models.Tasks.complete_status == "T"
             )
         ]
-        
+
         all_projs.append(proj_names)
         all_tasks.append(user_tasks)
         all_comp_tasks.append(completed_tasks)
-        
+
     socketio.emit(
         channel,
         {
@@ -112,7 +113,7 @@ def create_and_send_email(receiver_email, message):
     message = message.format(user[0])
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
-    #server.login(sender_email, email_password)
+    # server.login(sender_email, email_password)
     server.sendmail(sender_email, receiver_email, message)
     print("Sent email to user.")
 
@@ -125,7 +126,7 @@ def emit(data):
         db_par.group_code
         for db_par in db.session.query(models.Participants).filter(
             models.Participants.email == email
-        )    
+        )
     ]
     emit_user_list(CHANNEL)
     emit_task_list(TASK_CHANNEL, gc)
@@ -154,7 +155,7 @@ def on_forgot_password(data):
         + str(password[0][0])
         + "."
     )
-    #create_and_send_email(email, message)
+    # create_and_send_email(email, message)
 
 
 # Adds user data to user table on login
@@ -212,7 +213,7 @@ def on_create_project(data):
     
     You have created a project on the Project Manager app!
     """
-    #create_and_send_email(email, message)
+    # create_and_send_email(email, message)
 
 
 # Gets information from create task page
@@ -235,7 +236,7 @@ def on_create_task(data):
     
     You have created a task on the Project Manager app!
     """
-    #create_and_send_email(email, message)
+    # create_and_send_email(email, message)
 
 
 @socketio.on("task selection")
@@ -268,6 +269,90 @@ def on_complete_task(data):
 def on_reload_page():
     # socketio.emit("reload", sid)
     socketio.emit("reload")
+
+
+@socketio.on("data")
+def on_data(data):
+    email = data["email"]
+    group_code = (
+        db.session.query(models.Participants.group_code)
+        .filter(models.Participants.email == email)
+        .all()
+    )
+    username = (
+        db.session.query(models.Users.username)
+        .filter(models.Users.email == email)
+        .all()
+    )
+    password = (
+        db.session.query(models.Users.password)
+        .filter(models.Users.email == email)
+        .all()
+    )
+    role = db.session.query(models.Users.role).filter(models.Users.email == email).all()
+    profile_img = (
+        db.session.query(models.Users.profile_img)
+        .filter(models.Users.email == email)
+        .all()
+    )
+    total_projects = (
+        db.session.query(func.count(models.Projects.group_code))
+        .filter(models.Projects.group_code.like(any_(group_code)))
+        .all()
+    )
+    total_tasks = (
+        db.session.query(func.count(models.Tasks.task_owner))
+        .filter(models.Tasks.group_code.like(any_(group_code)))
+        .all()
+    )
+    completed_tasks = (
+        db.session.query(func.count(models.Tasks.complete_status))
+        .filter(models.Tasks.group_code.like(any_(group_code)))
+        .filter(models.Tasks.complete_status == "T")
+        .all()
+    )
+    socketio.emit(
+        "data",
+        {
+            "profileImg": profile_img,
+            "role": role,
+            "password": password,
+            "username": username,
+            "totalProjects": total_projects,
+            "totalTasks": total_tasks,
+            "completedTasks": completed_tasks,
+        },
+    )
+
+
+@socketio.on("update profile pic")
+def on_update_pic(data):
+    email = data["email"]
+    new_pic = data["image"]
+    db.session.query(models.Users).filter(models.Users.email == email).update(
+        {models.Users.profile_img: new_pic}
+    )
+    db.session.commit()
+
+
+@socketio.on("update role")
+def on_update_role(data):
+    email = data["email"]
+    new_role = data["role"]
+    db.session.query(models.Users).filter(models.Users.email == email).update(
+        {models.Users.role: new_role}
+    )
+    db.session.commit()
+
+
+@socketio.on("update password")
+def on_update_password(data):
+    email = data["email"]
+    new_pass = data["new_pass"]
+    db.session.query(models.Users).filter(models.Users.email == email).update(
+        {models.Users.password: new_pass}
+    )
+    db.session.commit()
 
 
 @app.route("/")
