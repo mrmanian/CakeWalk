@@ -16,6 +16,18 @@
   font-size: 25px;
 }
 
+.about_btn {
+  border-width: 0px;
+  border: none;
+  outline: none;
+  border-radius: 70%;
+  height: 100px;
+  width: 100px;
+  float: left;
+  margin-left: -4px;
+  margin-top: -4px;
+}
+
 .return {
   position: relative;
   top: -100px;
@@ -25,6 +37,7 @@
   background-color: #561B1F;
   color: white;
 }
+
 .logo {
   padding: 10px;
   position: relative;
@@ -33,22 +46,23 @@
   margin-left: auto;
   margin-right: auto;
 }
+
 .header {
   background-color: #F0F8FF;
   color: #193b53;
   width: 100%;
   text-align: center;
-  height: 220px;
+  height: 280px;
   padding: 30px;
   display: block;
 }
+
 .header-text {
   font-size: 25px;
   position: relative;
   top: -110px;
   
 }
-
 
 .section {
   flex-flow: row wrap;
@@ -87,6 +101,7 @@
   justify-content: space-between;
   width: 80%;
 }
+
 .div-title {
   text-align: center;
 }
@@ -94,7 +109,6 @@
 .contact-form {
   display: flex;
   flex-direction: row;
-  /*flex-flow: row wrap;*/
   justify-content: space-between;
   width: 100%;
 }

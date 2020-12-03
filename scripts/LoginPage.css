@@ -1,6 +1,12 @@
-.title {
-    text-align: center;
-    color: #BEB07B;
+.top-logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    height: 200px;
+    width: 200px;
+    margin-top: -4vh;
+    margin-bottom: -4vh;
 }
 
 .login-wrapper {
