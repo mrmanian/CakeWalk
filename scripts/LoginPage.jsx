@@ -17,8 +17,7 @@ export default function LoginPage({ state, email }) {
 
   return (
     <div>
-      <h1 className="title">Welcome to Task Manager!</h1>
-      <br />
+      <input type="image" className="top-logo" src="https://i.imgur.com/JBNbaE7.gif" alt="App Logo" />
       <div className="Login">
         <div className="login">
           <div className="containerr">
