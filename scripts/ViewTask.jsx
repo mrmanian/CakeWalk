@@ -15,7 +15,6 @@ export default function ViewTask({ email, tasks }) {
   if (cancel) {
     Socket.emit('reload');
   }
-  
   return (
     <div id="vt">
       <h1 id="header">View Task:</h1>
