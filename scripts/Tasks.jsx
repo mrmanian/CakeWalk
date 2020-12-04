@@ -12,6 +12,7 @@ export default function Tasks({ email }) {
   const selectedTask = [];
   const completed = [];
   const [viewTask, setViewTask] = useState(-1);
+  const [indivTask, setIndivTask] = useState(-1);
   useEffect(() => {
     Socket.emit('emit', {
       email,
@@ -69,7 +70,8 @@ export default function Tasks({ email }) {
   }
   
   function handleViewTask(event) {
-    setViewTask(event.target.id)
+    setViewTask(event.target.id);
+    setIndivTask(event.target.className);
     document.getElementById('selectTaskForm').reset();
     event.preventDefault();
   }
@@ -89,8 +91,8 @@ export default function Tasks({ email }) {
     });
   }
   
-   if (viewTask != -1) {
-    return (<ViewTask email={email} tasks = {tasks[viewTask]}/>);
+  if (viewTask != -1 && indivTask != -1) {
+    return (<ViewTask email={email} tasks={tasks[viewTask][indivTask]}/>);
   }
   return (
     <div>
@@ -132,7 +134,7 @@ export default function Tasks({ email }) {
                         <ul>
                         {
                           task_list.map((task, index3) => (
-                            <li>
+                            <li key={index3}>
                               <input type="checkbox" value={task[0]} onClick={handleClick} />
                               {' '}
                               {task[0]}
@@ -145,7 +147,7 @@ export default function Tasks({ email }) {
                               {task[2] === 'T' ? 'Completed' : 'In Progress'}
                               {'   '}
                               <button type="submit" className="create" id="complete" value={task[0]} onClick={handleComplete}>Set Complete</button>
-                                <form onSubmit={handleViewTask} id={index2} autoComplete="off">
+                                <form onSubmit={handleViewTask} id={index2} className={index3} autoComplete="off">
                                   <button type="submit" className="create" id="complete" onClick={handleComplete}>View Task</button>
                                 </form>
                             </li>
