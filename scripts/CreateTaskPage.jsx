@@ -27,6 +27,13 @@ export default function CreateTaskPage({ email }) {
       });
     };
   }, []);
+  
+  useEffect(() => {
+      Socket.on('reload', () => {
+        /* eslint no-console: ["error", { allow: ["log"] }] */
+        console.log('Received reload from server');
+      });
+    }, []);
 
   function handleSubmit() {
     updateTitleValue('');
@@ -72,7 +79,7 @@ export default function CreateTaskPage({ email }) {
         <select name="cars" id="cars">
         {
           projects.map((project, index) => (
-            <option value={project[0]} key={index}>{project[0]}</option>
+            <option value={project[index]} key={index}>{project[0]}</option>
           ))
         }
         </select>
