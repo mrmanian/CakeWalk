@@ -68,14 +68,10 @@ export default function CreateTaskPage({ email }) {
       <h1 className="size">
         Create Task
       </h1>
+      <br />
       <form onSubmit={handleSubmit} autoComplete="off">
-        <br />
-        <textarea className="textarea" id="name" placeholder="Task Name" value={titleValue} onChange={(e) => updateTitleValue(e.target.value)} required />
-        <br />
-        <br />
-        <textarea className="textarea" id="description" placeholder="Task Description" value={descriptionValue} onChange={(e) => updateDescriptionValue(e.target.value)} required />
-        <label>Select project:</label>
-        <select name="projs" id="projs" onChange={(e) => updateProjValue(e.target.value)}>
+      <label>Select project:</label>
+        <select name="projs" onChange={(e) => updateProjValue(e.target.value)}>
         {
           projects.map((project, index) => (
             <option value={project[index]} key={index}>{project[0]}</option>
@@ -83,6 +79,12 @@ export default function CreateTaskPage({ email }) {
         }
          <option value=''> </option>
         </select>
+        <br />
+        <textarea className="textarea" id="name" placeholder="Task Name" value={titleValue} onChange={(e) => updateTitleValue(e.target.value)} required />
+        <br />
+        <br />
+        <textarea className="textarea" id="description" placeholder="Task Description" value={descriptionValue} onChange={(e) => updateDescriptionValue(e.target.value)} required />
+        
         <br />
         <label htmlFor="Deadline" className="label">
           Deadline:
