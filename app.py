@@ -28,6 +28,7 @@ db.create_all()
 db.session.commit()
 
 CHANNEL = "get user list"
+PROJ_CHANNEL = 'proj list'
 TASK_CHANNEL = "task list"
 
 
@@ -50,6 +51,29 @@ def emit_user_list(channel):
             "all_profile_pics": all_profile_pics,
         },
     )
+    
+    
+#Emits list of projects from projects
+def emit_proj_list(channel, user_gc=["abc"]):
+    projs = []
+    
+    for gc in user_gc:
+        proj = [
+            db_proj.proj_name
+            for db_proj in db.session.query(models.Projects).filter(
+                models.Projects.group_code == gc
+            )
+        ]
+        
+        projs.append(proj)
+    
+    if len(projs) > 0:
+        socketio.emit(
+            channel,
+            {
+                "projs": projs,
+            },
+        )
 
 
 # Emits list of tasks from tasks table
@@ -129,6 +153,7 @@ def emit(data):
         )
     ]
     emit_user_list(CHANNEL)
+    emit_proj_list(PROJ_CHANNEL, gc)
     emit_task_list(TASK_CHANNEL, gc)
 
 
@@ -225,11 +250,33 @@ def on_create_task(data):
     title = data["title"]
     description = data["description"]
     deadline = data["deadline"]
+    proj_name = data['project']
     complete_status = "F"
-    gc = db.session.query(models.Users.group_code).filter(models.Users.email == email)
+    
+    gc = ''
+    user_gc = [
+        db_par.group_code
+        for db_par in db.session.query(models.Participants).filter(
+            models.Participants.email == email
+        )
+    ]
+    for code in user_gc:
+        exists = db.session.query(models.Projects).filter(models.Projects.group_code == code).filter(models.Projects.proj_name == proj_name).scalar()
+        if (exists):
+            gc = [
+                db_proj.group_code
+                for db_proj in db.session.query(models.Projects).filter(
+                    models.Projects.group_code == code
+                ).filter(
+                    models.Projects.proj_name == proj_name
+                )
+            ]
+            break
+        
     owner = ""
+    
     db.session.add(
-        models.Tasks(title, description, deadline, gc, owner, complete_status)
+        models.Tasks(title, description, deadline, gc[0], owner, complete_status)
     )
     db.session.commit()
     message = """

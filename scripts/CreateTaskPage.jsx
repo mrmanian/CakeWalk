@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Socket } from './Socket';
 import Dash from './Dash';
 import './CreateTaskPage.css';
@@ -7,8 +7,34 @@ export default function CreateTaskPage({ email }) {
   const [titleValue, updateTitleValue] = useState('');
   const [descriptionValue, updateDescriptionValue] = useState('');
   const [deadlineValue, updateDeadlineValue] = useState('');
+  const [projValue, updateProjValue] = useState('');
   const [formSent, setFormSent] = useState(false);
   const [cancel, setCancel] = useState(false);
+  const [projects, setProjects] = useState([]);
+  
+  useEffect(() => {
+    Socket.emit('emit', {
+      email,
+    });
+  }, []);
+  
+  useEffect(() => {
+    Socket.on('proj list', (data) => {
+      setProjects(data.projs);
+    });
+    return () => {
+      Socket.off('proj list', (data) => {
+        setProjects(data.projs);
+      });
+    };
+  }, []);
+  
+  useEffect(() => {
+      Socket.on('reload', () => {
+        /* eslint no-console: ["error", { allow: ["log"] }] */
+        console.log('Received reload from server');
+      });
+    }, []);
 
   function handleSubmit() {
     updateTitleValue('');
@@ -20,6 +46,7 @@ export default function CreateTaskPage({ email }) {
       title: titleValue,
       description: descriptionValue,
       deadline: deadlineValue,
+      project: projValue,
     });
     setFormSent(true);
   }
@@ -47,6 +74,14 @@ export default function CreateTaskPage({ email }) {
         <br />
         <br />
         <textarea className="textarea" id="description" placeholder="Task Description" value={descriptionValue} onChange={(e) => updateDescriptionValue(e.target.value)} required />
+        <label>Select project:</label>
+        <select name="projs" id="projs" onChange={(e) => updateProjValue(e.target.value)}>
+        {
+          projects.map((project, index) => (
+            <option value={project[index]} key={index}>{project[0]}</option>
+          ))
+        }
+        </select>
         <br />
         <label htmlFor="Deadline" className="label">
           Deadline:
