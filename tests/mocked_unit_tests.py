@@ -54,23 +54,28 @@ class smtp_sslObj:
 
 
 class SQLObject:
-    def __init__(self, username):
+    def __init__(self, username, group_code):
         self.username = username
+        self.group_code = group_code
+        
     def all(self):
        return "abc"
+       
+    def filter(self, boolean):
+        return Table()
 
 class Table:
-    def __init__(self, message):
+    def __init__(self):
         return
 
     def all(self):
-        return [SQLObject("test USER")]
+        return [SQLObject("test USER","gc")]
 
-    def filter(self, item):
-        return [SQLObject("test USER")]
+    def filter(self, boolean):
+        return [SQLObject("test USER", "gc")]
 
     def scalar(self):
-        return None
+        return True
 
 
 class SessionObject:
@@ -83,25 +88,45 @@ class SessionObject:
     def commit(self):
         return
 
-    def query(self, message):
-        return Table(message)
+    def query(self, table):
+        return Table()
+        
+#_______________________________________________________________________________
+class SQLObject2:
+    def __init__(self, username, group_code):
+        self.username = username
+        self.group_code = group_code
+        
+    def all(self):
+       return ["abc"]
+    
+    def filter(self, boolean):
+        return Table()   
 
-
-class DBObject:
+class Table2:
     def __init__(self):
         return
 
-    def init_app(self, app):
+    def filter(self, boolean):
+        return SQLObject2("test USER","gc")
+
+    def scalar(self):
+        return None
+
+
+class SessionObject2:
+    def __init__(self):
         return
 
-    def app(self):
+    def add(self, table):
         return
 
-    def create_all(self):
+    def commit(self):
         return
 
-    def session(self):
-        return SessionObject()
+    def query(self, table):
+        return Table2()
+
 
 
 class Unit_TestCase_Mock(unittest.TestCase):
@@ -145,9 +170,9 @@ class Unit_TestCase_Mock(unittest.TestCase):
         with mock.patch("app.db.session", session):
             app.emit_task_list(CHANNEL)
             self.assertEqual(mocked_socket.emit.call_count, 1)
-    """
+    
     def test_on_create_task_success(self):
-        with mock.patch("app.db.session", SessionObject()):
+        with mock.patch("app.db.session", SessionObject2()):
             with mock.patch("app.smtplib", smtplibObj()):
                 app.on_create_task(
                     {
@@ -155,21 +180,18 @@ class Unit_TestCase_Mock(unittest.TestCase):
                         "title": "Create HomePage",
                         "description": "Create HomePage using React, HTML, and CSS",
                         "deadline": "2020-11-06",
+                        "project" : "testProj"
                     }
              )
-    """
-    """
+    """"""
     @mock.patch("app.create_and_send_email")
     def test_on_forgot_password(self,send_email):
         session = UnifiedAlchemyMagicMock()
         session.add(models.Users("Jake", "jake@gmail.com", "password", "img", "xyzabc"))
-        with mock.patch("app.db.session", session):
+        with mock.patch("app.db.session", SessionObject2()):
             app.on_forgot_password({"email":"jake@gmail.com"})
-            app.create_and_send_email.assert_called_once_with(
-                "jake@gmail.com",
-                "\n    Hello {},\n    \n    You have created a project on the Project Manager app!\n    ",
-            )
-        """
+            app.create_and_send_email.assert_called_once_with('jake@gmail.com', '\n    Hello {},\n    \n    This is your password: a.')
+    
     def test_on_send_email(self):  
         with mock.patch("app.db.session", SessionObject()):
             with mock.patch("app.ssl", sslObj()):
