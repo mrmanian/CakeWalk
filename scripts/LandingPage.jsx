@@ -23,7 +23,6 @@ export default function LandingPage() {
           <Header />
           <Card
             className="section"
-            img="./Capture1.PNG"
             title="About the Team"
             description="The team here at CakeWalk includes Jacob Karpman, Aarati Srikumar,
                 Devin Romanoff, and Michael Manian. This team are comprised of Computer Science
@@ -32,7 +31,6 @@ export default function LandingPage() {
 
           <Card
             className="section bg-grey"
-            img="./Capture3.PNG"
             title="What is CakeWalk?"
             description="CakeWalk is the one-stop-shop for organizing projects. The app
                 works by allowing users to create projects with other logged users on the app. From
@@ -42,7 +40,6 @@ export default function LandingPage() {
 
           <Card
             className="section"
-            img="./Capture1.PNG"
             title="Importance"
             description="Communication amongst group members is one of the most important
                 aspects to teamwork. This application would streamline task assignment
@@ -100,5 +97,6 @@ const ContactContainer = () => (
         </span>
       </div>
     </div>
+    <img className="group" src="https://i.imgur.com/WrpCH4D.jpg" alt="Unavailable"></img>
   </div>
 );

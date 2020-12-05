@@ -1,4 +1,4 @@
-# [Task Manager](https://taskmanager490.herokuapp.com/)
+# [CakeWalk](https://taskmanager490.herokuapp.com/)
 This web app is a project management dashboard that allows team members to assign work to others with set deadlines and the ability to check off completed tasks.
 
 ## Table of Contents 
@@ -20,7 +20,7 @@ Prerequisites:
 
 To run this app, you first need to clone my repo to your local machine and then cd into it by typing the following commands on your terminal.
 
-        git clone https://github.com/NJIT-CS490/project3-taskmanager.git
+        git clone https://github.com/NJIT-CS490/project-taskmanager-sprint2.git
         cd project3-taskmanager
 
 Now let us install the packages required to run the app! First step is to upgrade node to version 10, yum to the latest version, and pip to the latest version. Enter yes to any and all prompt, if given.
@@ -50,6 +50,14 @@ Let us also install packages used for linting and checking coverage
 
 Accept the default options for eslint or configure it to your liking.
 
+Let us also add some additional packages for more complex functionality.
+
+        npm install --save react-social-login-buttons
+        npm i react-facebook-login
+        npm i react-social-login-buttons
+        npm i react-bootstrap
+        npm i react-sliding-pane
+        
 Note: if you see any error messages, make sure you use `sudo pip` or `sudo npm`. If it says 'pip cannot be found', run `which pip` and use `sudo [path to pip from which pip] install` .
 
 #### **Setup PSQL Database**
@@ -181,7 +189,7 @@ Added Create Task functionality to the application, which allows the user to cre
 
 #### Jacob Karpman
 
-Added Google Oauth functionality and created methods to emit user data back to the server. In the server I created the Users Table and made methods to enter user data into Users Table on first login. I styled the Login Page and created the Google Button and Login Javascript files. I added the task_owner attribute to the Tasks table then made the methods display the task owner attribute next to each task in the Task Javascript file. I also created the method that logs the task owner into the Task table on selection of the Task. Along with creating the mock test for all of the methods which I created. Along with being a resource and helping other members when I could. I was also the PM for week 2. 
+Added Google Oauth functionality and created methods to emit user data back to the server. In the server I created the Users Table and made methods to enter user data into Users Table on first login. I styled the Login Page and created the Google Button and Login Javascript files. I added the task_owner attribute to the Tasks table then made the methods display the task owner attribute next to each task in the Task Javascript file. I also created the method that logs the task owner into the Task table on selection of the Task. Along with creating the mock test for all of the methods which I created. Along with being a resource and helping other members when I could. I was also the PM for week 2. For Sprint 2 I created the process for setting Tasks as complete also creating the front end button and layout for task selection and completion. I created the Cancel buttons for the CreateTask and CreateProjects page that allows you to return to the Dashboard without logging the information. I also used bootstrap to style the Dashboard view with gridlines, hovering, and color. I created the Landing Page, writing the information as well as designing the landing page. I created all CakeWalk logos from scratch and implemented the spinning animation. 
 
 **[Back to top](#Project-Management-Dashboard)**
 
