@@ -1,10 +1,11 @@
 /* eslint import/no-extraneous-dependencies: */
 import React, { useState, useEffect } from 'react';
-import { Socket } from './Socket';
-import  ViewTask  from './ViewTask';
 import { Card } from 'react-bootstrap';
+import { Socket } from './Socket';
+import ViewTask from './ViewTask';
 
 /* eslint-disable react/prop-types */
+/* eslint-disable react/no-array-index-key */
 export default function Tasks({ email }) {
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -18,14 +19,14 @@ export default function Tasks({ email }) {
       email,
     });
   }, []);
-  
+
   useEffect(() => {
-      Socket.on('reload', () => {
-        /* eslint no-console: ["error", { allow: ["log"] }] */
-        console.log('Received reload from server');
-        setViewTask(-1);
-      });
-    }, []);
+    Socket.on('reload', () => {
+      /* eslint no-console: ["error", { allow: ["log"] }] */
+      console.log('Received reload from server');
+      setViewTask(-1);
+    });
+  }, []);
 
   function updateTasks(data) {
     setProjects(data.projects);
@@ -68,21 +69,21 @@ export default function Tasks({ email }) {
       email,
     });
   }
-  
+
   function handleViewTask(event) {
     setViewTask(event.target.id);
     setIndivTask(event.target.className);
     document.getElementById('selectTaskForm').reset();
     event.preventDefault();
   }
-  
-  function handleComplete(event) {
-    var t = document.getElementById('complete').value;
+
+  function handleComplete() {
+    const t = document.getElementById('complete').value;
     console.log(t);
     completed.push(t);
     console.log(completed);
-    
-    Socket.emit('complete task',{
+
+    Socket.emit('complete task', {
       completed,
       email,
     });
@@ -90,13 +91,13 @@ export default function Tasks({ email }) {
       email,
     });
   }
-  
-  if (viewTask != -1 && indivTask != -1) {
-    return (<ViewTask email={email} tasks={tasks[viewTask][indivTask]}/>);
+
+  if (viewTask !== -1 && indivTask !== -1) {
+    return (<ViewTask email={email} tasks={tasks[viewTask][indivTask]} />);
   }
   return (
     <div>
-      <table class="table table-hover table-bordered table-danger">
+      <table className="table table-hover table-bordered table-danger">
         <tr>
           <td>
             <table>
@@ -106,7 +107,7 @@ export default function Tasks({ email }) {
                 </tr>
               </thead>
               <tbody>
-              {
+                {
                 projects.map((project, index) => (
                   <tr key={index}>
                     <td>
@@ -126,14 +127,14 @@ export default function Tasks({ email }) {
                 </tr>
               </thead>
               <tbody>
-              {
-                tasks.map((task_list, index2) => (
+                {
+                tasks.map((taskList, index2) => (
                   <tr key={index2}>
                     <td>
                       <form onSubmit={handleSubmit} id="selectTaskForm" autoComplete="off">
                         <ul>
-                        {
-                          task_list.map((task, index3) => (
+                          {
+                          taskList.map((task, index3) => (
                             <li key={index3}>
                               <input type="checkbox" value={task[0]} onClick={handleClick} />
                               {' '}
@@ -142,14 +143,14 @@ export default function Tasks({ email }) {
                               {' '}
                               {task[1] === '' ? 'Open' : task[1]}
                               {' '}
-                              Status: 
+                              Status:
                               {' '}
                               {task[2] === 'T' ? 'Completed' : 'In Progress'}
                               {'   '}
                               <button type="submit" className="create" id="complete" value={task[0]} onClick={handleComplete}>Set Complete</button>
-                                <form onSubmit={handleViewTask} id={index2} className={index3} autoComplete="off">
-                                  <button type="submit" className="create" id="complete" onClick={handleComplete}>View Task</button>
-                                </form>
+                              <form onSubmit={handleViewTask} id={index2} className={index3} autoComplete="off">
+                                <button type="submit" className="create" id="complete" onClick={handleComplete}>View Task</button>
+                              </form>
                             </li>
                           ))
                         }
@@ -172,16 +173,16 @@ export default function Tasks({ email }) {
                 </tr>
               </thead>
               <tbody>
-              {
-                completedTasks.map((comp_list, index4) => (
+                {
+                completedTasks.map((compList, index4) => (
                   <tr key={index4}>
                     <td>
                       <ul id="completed-task">
-                      {
-                        comp_list.map((task, index3) => (
+                        {
+                        compList.map((task, index3) => (
                           <li key={index3}>
-                          {' '}
-                          {task[0]}
+                            {' '}
+                            {task[0]}
                           </li>
                         ))
                       }

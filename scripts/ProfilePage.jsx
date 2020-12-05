@@ -72,6 +72,11 @@ export default function ProfilePage({ email }) {
     event.preventDefault();
   }
 
+  function handleLogout() {
+    window.location.reload();
+    return false;
+  }
+
   return (
     <div>
       <input type="image" className="prof_btn" alt="Profile Pic" src={profileImg} onClick={() => setState({ isPaneOpen: true })} />
@@ -158,6 +163,7 @@ export default function ProfilePage({ email }) {
           {' '}
           {completedTasks}
         </h6>
+        <button type="submit" className="center prof-button" onClick={handleLogout}>Logout</button>
       </SlidingPane>
     </div>
   );
