@@ -17,22 +17,20 @@ export default function ViewTask({ email, tasks }) {
   }
   return (
     <div id="vt">
-      <h1 id="header">View Task:</h1>
+      <h1 id="header">View Task</h1>
+      <br />
       <p>
-        Title:
-        {tasks[0]}
+        Title: {tasks[0]}
       </p>
       <Linkify>
         <p>
-          Description:
-          {tasks[3]}
+          Description: {tasks[3]}
         </p>
       </Linkify>
       <p>
-        Date:
-        {tasks[4]}
+        Date: {tasks[4]}
       </p>
-      <button id="submit" type="button" onClick={handleCancel}>Cancel</button>
+      <button id="submit" type="button" onClick={handleCancel}>Go Back</button>
     </div>
   );
 }
