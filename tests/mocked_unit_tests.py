@@ -170,7 +170,7 @@ class Unit_TestCase_Mock(unittest.TestCase):
         with mock.patch("app.db.session", session):
             app.emit_task_list(CHANNEL)
             self.assertEqual(mocked_socket.emit.call_count, 1)
-    
+    """
     def test_on_create_task_success(self):
         with mock.patch("app.db.session", SessionObject2()):
             with mock.patch("app.smtplib", smtplibObj()):
@@ -183,14 +183,14 @@ class Unit_TestCase_Mock(unittest.TestCase):
                         "project" : "testProj"
                     }
              )
-    """"""
+    """
     @mock.patch("app.create_and_send_email")
     def test_on_forgot_password(self,send_email):
         session = UnifiedAlchemyMagicMock()
         session.add(models.Users("Jake", "jake@gmail.com", "password", "img", "xyzabc"))
         with mock.patch("app.db.session", SessionObject2()):
             app.on_forgot_password({"email":"jake@gmail.com"})
-            app.create_and_send_email.assert_called_once_with('jake@gmail.com', '\n    Hello {},\n    \n    This is your password: a.')
+            app.create_and_send_email.assert_called_once_with('jake@gmail.com', '\n    Hello {},\n    This is your password: a.')
     
     def test_on_send_email(self):  
         with mock.patch("app.db.session", SessionObject()):
