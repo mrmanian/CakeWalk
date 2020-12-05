@@ -138,7 +138,7 @@ def create_and_send_email(receiver_email, message):
     message = message.format(user[0])
 
     server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=context)
-    # server.login(sender_email, email_password)
+    server.login(sender_email, email_password)
     server.sendmail(sender_email, receiver_email, message)
     print("Sent email to user.")
 
