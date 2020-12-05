@@ -56,6 +56,7 @@ export default function Tasks({ email }) {
         }
       }
     }
+    console.log(selectedTask)
   }
 
   function handleSubmit(event) {
@@ -78,13 +79,11 @@ export default function Tasks({ email }) {
   }
 
   function handleComplete() {
-    const t = document.getElementById('complete').value;
+    const t = selectedTask;
     console.log(t);
-    completed.push(t);
-    console.log(completed);
 
     Socket.emit('complete task', {
-      completed,
+      t,
       email,
     });
     Socket.emit('emit', {
@@ -131,12 +130,12 @@ export default function Tasks({ email }) {
                 tasks.map((taskList, index2) => (
                   <tr key={index2}>
                     <td>
-                      <form onSubmit={handleSubmit} id="selectTaskForm" autoComplete="off">
+                      <form onSubmit={handleSubmit} id="selectTaskFor" autoComplete="off">
                         <ul>
                           {
                           taskList.map((task, index3) => (
                             <li key={index3}>
-                              <input type="checkbox" value={task[0]} onClick={handleClick} />
+                              <input type="checkbox" id="complete" value={task[0]} onClick={handleClick} />
                               {' '}
                               {task[0]}
                               :
@@ -147,9 +146,11 @@ export default function Tasks({ email }) {
                               {' '}
                               {task[2] === 'T' ? 'Completed' : 'In Progress'}
                               {'   '}
-                              <button type="submit" className="create" id="complete" value={task[0]} onClick={handleComplete}>Set Complete</button>
+                              <form onSubmit={handleComplete} id="selectTaskForm" autoComplete="off">
+                                <button type="submit" className="create" value={selectedTask}>Set Complete</button>
+                              </form>
                               <form onSubmit={handleViewTask} id={index2} className={index3} autoComplete="off">
-                                <button type="submit" className="create" id="complete" onClick={handleComplete}>View Task</button>
+                                <button type="submit" className="create">View Task</button>
                               </form>
                             </li>
                           ))
