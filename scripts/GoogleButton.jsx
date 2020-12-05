@@ -8,7 +8,9 @@ export default function GoogleButton() {
     const { name } = response.profileObj;
     const { email } = response.profileObj;
     const picUrl = response.profileObj.imageUrl;
-    Socket.emit('newlogin', { uname: name, password: 'Used Google Login',imageurl: picUrl, email });
+    Socket.emit('newlogin', {
+      uname: name, password: 'Used Google Login', imageurl: picUrl, email,
+    });
   }
 
   function handleFailure() {

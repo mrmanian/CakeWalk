@@ -76,7 +76,7 @@ export default function ProfilePage({ email }) {
     window.location.reload();
     return false;
   }
-  
+
   return (
     <div>
       <input type="image" className="prof_btn" alt="Profile Pic" src={profileImg} onClick={() => setState({ isPaneOpen: true })} />

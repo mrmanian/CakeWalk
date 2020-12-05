@@ -8,7 +8,9 @@ export default function FacebookButton() {
     const { name } = response;
     const { email } = response;
     const picUrl = response.picture.data.url;
-    Socket.emit('newlogin', { uname: name, password: 'Used Facebook Login', imageurl: picUrl, email });
+    Socket.emit('newlogin', {
+      uname: name, password: 'Used Facebook Login', imageurl: picUrl, email,
+    });
   }
 
   function handleFailure() {

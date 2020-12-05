@@ -33,6 +33,8 @@ ul {
     background-color: #561B1F;
     color: white;
     text-align: center;
+    font-size: 55px;
+    font-family: 'Snell Roundhand', cursive;
 }
 
 .create {
