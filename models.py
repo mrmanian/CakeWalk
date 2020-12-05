@@ -41,7 +41,7 @@ class Projects(db.Model):
         return "< %s : %s : %s >" % (
             self.group_code,
             self.proj_name,
-            self.description,
+            self.p_description,
         )
 
 

@@ -81,6 +81,7 @@ export default function CreateTaskPage({ email }) {
             <option value={project[index]} key={index}>{project[0]}</option>
           ))
         }
+         <option value=''> </option>
         </select>
         <br />
         <label htmlFor="Deadline" className="label">
