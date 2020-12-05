@@ -58,17 +58,26 @@ export default function Tasks({ email }) {
     }
     console.log(selectedTask)
   }
+  function unCheck() {
+      var x = document.getElementsByClassName("com");
+      for(let i=0; i<=x.length; i++) {
+      x[i].checked = false;
+      }   
+  }
+
 
   function handleSubmit(event) {
     Socket.emit('task selection', {
       selectedTask,
       email,
     });
-    document.getElementById('selectTaskForm').reset();
-    event.preventDefault();
+
+
     Socket.emit('emit', {
       email,
     });
+    event.preventDefault();
+    unCheck()
   }
 
   function handleViewTask(event) {
@@ -135,7 +144,7 @@ export default function Tasks({ email }) {
                           {
                           taskList.map((task, index3) => (
                             <li key={index3}>
-                              <input type="checkbox" id="complete" value={task[0]} onClick={handleClick} />
+                              <input type="checkbox" id="complete" className="com" value={task[0]} onClick={handleClick} />
                               {' '}
                               {task[0]}
                               :
@@ -146,9 +155,6 @@ export default function Tasks({ email }) {
                               {' '}
                               {task[2] === 'T' ? 'Completed' : 'In Progress'}
                               {'   '}
-                              <form onSubmit={handleComplete} id="selectTaskForm" autoComplete="off">
-                                <button type="submit" className="create" value={selectedTask}>Set Complete</button>
-                              </form>
                               <form onSubmit={handleViewTask} id={index2} className={index3} autoComplete="off">
                                 <button type="submit" className="create">View Task</button>
                               </form>
@@ -158,6 +164,9 @@ export default function Tasks({ email }) {
                         </ul>
                         <br />
                         <button className="create" type="submit">Select Tasks</button>
+                        <form onSubmit={handleComplete} id="selectTaskForm" autoComplete="off">
+                          <button type="submit" className="create" value={selectedTask}>Set Complete</button>
+                        </form>
                       </form>
                     </td>
                   </tr>
