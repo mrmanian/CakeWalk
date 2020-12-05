@@ -54,22 +54,28 @@ def emit_user_list(channel):
     
     
 #Emits list of projects from projects
-def emit_proj_list(channel, email):
-    projs = [
-        (
-            db_proj.proj_name,
-            db_proj.group_code,
-        )
-        #for db_proj in db.session.query(models.Projects).join(models.Participants.group_code == models.Projects.group_code).filter(models.Participants.email == email)
-        for db_proj in db.session.query(models.Projects).filter(models.Projects.group_code == '2fJDO7YYpI')
-    ]
+def emit_proj_list(channel, user_gc=["abc"]):
+    projs = []
     
-    socketio.emit(
-        channel,
-        {
-            "projs": projs,
-        },
-    )
+    for gc in user_gc:
+        proj = [
+            db_proj.proj_name
+            for db_proj in db.session.query(models.Projects).filter(
+                models.Projects.group_code == gc
+            )
+        ]
+        
+        projs.append(proj)
+        
+    print(projs)
+    
+    if len(projs) > 0:
+        socketio.emit(
+            channel,
+            {
+                "projs": projs,
+            },
+        )
 
 
 # Emits list of tasks from tasks table
@@ -149,7 +155,7 @@ def emit(data):
         )
     ]
     emit_user_list(CHANNEL)
-    emit_proj_list(PROJ_CHANNEL, email)
+    emit_proj_list(PROJ_CHANNEL, gc)
     emit_task_list(TASK_CHANNEL, gc)
 
 
