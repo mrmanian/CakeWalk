@@ -7,6 +7,7 @@ export default function CreateTaskPage({ email }) {
   const [titleValue, updateTitleValue] = useState('');
   const [descriptionValue, updateDescriptionValue] = useState('');
   const [deadlineValue, updateDeadlineValue] = useState('');
+  const [projValue, updateProjValue] = useState('');
   const [formSent, setFormSent] = useState(false);
   const [cancel, setCancel] = useState(false);
   const [projects, setProjects] = useState([]);
@@ -45,6 +46,7 @@ export default function CreateTaskPage({ email }) {
       title: titleValue,
       description: descriptionValue,
       deadline: deadlineValue,
+      project: projValue,
     });
     setFormSent(true);
   }
@@ -60,9 +62,6 @@ export default function CreateTaskPage({ email }) {
   if (cancel) {
     return (<Dash email={email} />);
   }
-  
-  console.log('--------');
-  console.log({projects});
 
   return (
     <div id="form">
@@ -76,7 +75,7 @@ export default function CreateTaskPage({ email }) {
         <br />
         <textarea className="textarea" id="description" placeholder="Task Description" value={descriptionValue} onChange={(e) => updateDescriptionValue(e.target.value)} required />
         <label>Select project:</label>
-        <select name="cars" id="cars">
+        <select name="projs" id="projs" onChange={(e) => updateProjValue(e.target.value)}>
         {
           projects.map((project, index) => (
             <option value={project[index]} key={index}>{project[0]}</option>
