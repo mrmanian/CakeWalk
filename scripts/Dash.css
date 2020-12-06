@@ -44,3 +44,37 @@ ul {
     color: white;
     text-align: center;
 }
+
+.serv ul {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+}
+
+.serv ul li {
+  list-style: none;
+  flex: 0 0 20%;
+  padding: 25px;
+}
+
+.card-header{
+    font-weight: bold !important;
+}
+
+#green_card{
+    color: green !important;
+    font-weight: bold !important;
+}
+
+#black_card{
+    color: red !important;
+    font-weight: bold !important;
+}
+
+.Hder {
+    font-size: 30px;
+}
+
+.pHder {
+    font-size: 23px;
+}

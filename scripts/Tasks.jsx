@@ -1,19 +1,14 @@
-/* eslint import/no-extraneous-dependencies: */
 import React, { useState, useEffect } from 'react';
-import { Card } from 'react-bootstrap';
 import { Socket } from './Socket';
 import ViewTask from './ViewTask';
 
-/* eslint-disable react/prop-types */
-/* eslint-disable react/no-array-index-key */
 export default function Tasks({ email }) {
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
-  const [completedTasks, setCompletedTasks] = useState([]);
   const selectedTask = [];
-  const completed = [];
   const [viewTask, setViewTask] = useState(-1);
   const [indivTask, setIndivTask] = useState(-1);
+
   useEffect(() => {
     Socket.emit('emit', {
       email,
@@ -22,7 +17,6 @@ export default function Tasks({ email }) {
 
   useEffect(() => {
     Socket.on('reload', () => {
-      /* eslint no-console: ["error", { allow: ["log"] }] */
       console.log('Received reload from server');
       setViewTask(-1);
     });
@@ -31,7 +25,6 @@ export default function Tasks({ email }) {
   function updateTasks(data) {
     setProjects(data.projects);
     setTasks(data.tasks);
-    setCompletedTasks(data.completed_tasks);
   }
 
   function getTasks() {
@@ -56,28 +49,25 @@ export default function Tasks({ email }) {
         }
       }
     }
-    console.log(selectedTask)
-  }
-  function unCheck() {
-      var x = document.getElementsByClassName("com");
-      for(let i=0; i<=x.length; i++) {
-      x[i].checked = false;
-      }   
   }
 
+  function unCheck() {
+    const x = document.getElementsByClassName('com');
+    for (let i = 0; i <= x.length; i += 1) {
+      x[i].checked = false;
+    }
+  }
 
   function handleSubmit(event) {
     Socket.emit('task selection', {
       selectedTask,
       email,
     });
-
-
     Socket.emit('emit', {
       email,
     });
     event.preventDefault();
-    unCheck()
+    unCheck();
   }
 
   function handleViewTask(event) {
@@ -89,8 +79,6 @@ export default function Tasks({ email }) {
 
   function handleComplete() {
     const t = selectedTask;
-    console.log(t);
-
     Socket.emit('complete task', {
       t,
       email,
@@ -111,27 +99,7 @@ export default function Tasks({ email }) {
             <table>
               <thead>
                 <tr>
-                  <th scope="col">Projects</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                projects.map((project, index) => (
-                  <tr key={index}>
-                    <td>
-                      {project[0]}
-                    </td>
-                  </tr>
-                ))
-              }
-              </tbody>
-            </table>
-          </td>
-          <td>
-            <table>
-              <thead>
-                <tr>
-                  <th scope="col">Tasks</th>
+                  <th scope="col" className="Hder">Projects and Tasks</th>
                 </tr>
               </thead>
               <tbody>
@@ -139,64 +107,36 @@ export default function Tasks({ email }) {
                 tasks.map((taskList, index2) => (
                   <tr key={index2}>
                     <td>
-                      <form onSubmit={handleSubmit} id="selectTaskFor" autoComplete="off">
-                        <ul>
-                          {
-                          taskList.map((task, index3) => (
-                            <li key={index3}>
-                              <input type="checkbox" id="complete" className="com" value={task[0]} onClick={handleClick} />
-                              {' '}
-                              {task[0]}
-                              :
-                              {' '}
-                              {task[1] === '' ? 'Open' : task[1]}
-                              {' '}
-                              Status:
-                              {' '}
-                              {task[2] === 'T' ? 'Completed' : 'In Progress'}
-                              {'   '}
-                              <form onSubmit={handleViewTask} id={index2} className={index3} autoComplete="off">
-                                <button type="submit" className="create">View Task</button>
-                              </form>
-                            </li>
-                          ))
-                        }
-                        </ul>
-                        <br />
+                      <div className="card-header pHder">{projects[index2][0]}</div>
+                      <form onSubmit={handleSubmit} id="selectTaskForm" autoComplete="off">
+                        <div className="serv">
+                          <ul>
+                            {
+                            taskList.map((task, index3) => (
+                              <li key={index3}>
+                                <input type="checkbox" id="complete" className="com" value={task[0]} onClick={handleClick} />
+                                <div className="card border-primary mb-3" styles="max-width: 18rem">
+                                  <div className="card-header" id={task[2] === 'T' ? 'green_card' : 'black_card'}>{task[2] === 'T' ? 'Completed' : 'In Progress'}</div>
+                                  <div className="card-body">
+                                    <h5 className="card-title">{task[0]}</h5>
+                                    <p className="card-text">{task[1] === '' ? 'Open' : task[1]}</p>
+                                  </div>
+                                </div>
+                                <form onSubmit={handleViewTask} id={index2} className={index3} autoComplete="off">
+                                  <button type="submit" className="create">View Task</button>
+                                </form>
+                              </li>
+                            ))
+                            }
+                          </ul>
+                        </div>
                         <button className="create" type="submit">Select Tasks</button>
-                        <form onSubmit={handleComplete} id="selectTaskForm" autoComplete="off">
+                        <br />
+                        <br />
+                        <form onSubmit={handleComplete} autoComplete="off">
                           <button type="submit" className="create" value={selectedTask}>Set Complete</button>
                         </form>
                       </form>
-                    </td>
-                  </tr>
-                ))
-              }
-              </tbody>
-            </table>
-          </td>
-          <td>
-            <table>
-              <thead>
-                <tr>
-                  <th scope="col">Completed</th>
-                </tr>
-              </thead>
-              <tbody>
-                {
-                completedTasks.map((compList, index4) => (
-                  <tr key={index4}>
-                    <td>
-                      <ul id="completed-task">
-                        {
-                        compList.map((task, index3) => (
-                          <li key={index3}>
-                            {' '}
-                            {task[0]}
-                          </li>
-                        ))
-                      }
-                      </ul>
                     </td>
                   </tr>
                 ))
