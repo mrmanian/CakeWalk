@@ -37,7 +37,7 @@ TASK_CHANNEL = "task list"
 import models
 
 # Emit's list of users from users table
-def emit_user_list(channel):
+def emit_user_list(channel, sid):
     all_users = [
         db_username.email for db_username in db.session.query(models.Users).all()
     ]
@@ -51,11 +51,12 @@ def emit_user_list(channel):
             "all_users": all_users,
             "all_profile_pics": all_profile_pics,
         },
+        sid
     )
 
 
 # Emits list of projects from projects
-def emit_proj_list(channel, user_gc=["abc"]):
+def emit_proj_list(channel, sid, user_gc=["abc"]):
     projs = []
 
     for gc in user_gc:
@@ -74,11 +75,12 @@ def emit_proj_list(channel, user_gc=["abc"]):
             {
                 "projs": projs,
             },
+            sid
         )
 
 
 # Emits list of tasks from tasks table
-def emit_task_list(channel, user_gc=["abc"]):
+def emit_task_list(channel, sid, user_gc=["abc"]):
     all_projs = []
     all_tasks = []
     all_comp_tasks = []
@@ -121,6 +123,7 @@ def emit_task_list(channel, user_gc=["abc"]):
             "tasks": all_tasks,
             "completed_tasks": all_comp_tasks,
         },
+        sid
     )
 
 
@@ -146,6 +149,7 @@ def create_and_send_email(receiver_email, message):
 @socketio.on("emit")
 def emit(data):
     email = data["email"]
+    sid = request.sid
     # gc = db.session.query(models.Users.group_code).filter(models.Users.email == email)
     gc = [
         db_par.group_code
@@ -153,9 +157,9 @@ def emit(data):
             models.Participants.email == email
         )
     ]
-    emit_user_list(CHANNEL)
-    emit_proj_list(PROJ_CHANNEL, gc)
-    emit_task_list(TASK_CHANNEL, gc)
+    emit_user_list(CHANNEL, sid)
+    emit_proj_list(PROJ_CHANNEL, sid, gc)
+    emit_task_list(TASK_CHANNEL, sid, gc)
 
 
 @socketio.on("emit gc")
@@ -305,7 +309,7 @@ def on_select_task(data):
 @socketio.on("complete task")
 def on_complete_task(data):
     print("Completed Tasks: ", data)
-    titles = data["completed"]
+    titles = data["t"]
     owner = data["email"]
     cs = "T"
     for task in titles:
@@ -325,6 +329,8 @@ def on_reload_page():
 @socketio.on("data")
 def on_data(data):
     email = data["email"]
+    sid = request.sid
+    
     group_code = (
         db.session.query(models.Participants.group_code)
         .filter(models.Participants.email == email)
@@ -373,6 +379,7 @@ def on_data(data):
             "totalTasks": total_tasks,
             "completedTasks": completed_tasks,
         },
+        sid
     )
 
 
