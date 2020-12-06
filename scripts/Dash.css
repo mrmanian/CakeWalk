@@ -38,14 +38,9 @@ ul {
 }
 
 .create {
-    background-color: #BEB07B;
-    border: none;
-    border-radius: 4px;
+    padding: 3px 15px;
+    background-color: #193b53;
+    font-size: 15px;
     color: white;
-    padding: .33vw .66vh;
     text-align: center;
-}
-
-.create:hover {
-    background-color: #A3945F;
 }
