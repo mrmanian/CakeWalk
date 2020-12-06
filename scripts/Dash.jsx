@@ -22,6 +22,13 @@ export default function Dash({ email }) {
     console.log('The create Task button link was clicked.');
     updateCreateTask(true);
   }
+  
+  function handleRefresh(e) {
+    e.preventDefault();
+    Socket.emit('emit', {
+      email,
+    });
+  }
 
   if (createProject) {
     Socket.emit('emit', {
@@ -45,6 +52,8 @@ export default function Dash({ email }) {
         <button type="button" className="create" onClick={createsProject}>Create Project</button>
         <div id="divider" />
         <button type="button" className="create" onClick={createsTasks}>Create Task</button>
+        <div id="divider" />
+        <button type="button" className="create" onClick={handleRefresh}>Refresh Data</button>
       </div>
       <br />
       <br />
