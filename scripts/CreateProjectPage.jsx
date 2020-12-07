@@ -91,9 +91,7 @@ export default function CreateProjectPage({ email }) {
         <br />
         <textarea className="textarea" id="description" placeholder="Project Description" required />
         <label htmlFor="Users" className="right pad">
-          &nbsp;&nbsp;
           Select users to add:
-          <br />
           <br />
           <br />
           {users.map((user, index) => (

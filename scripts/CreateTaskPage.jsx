@@ -11,13 +11,13 @@ export default function CreateTaskPage({ email }) {
   const [formSent, setFormSent] = useState(false);
   const [cancel, setCancel] = useState(false);
   const [projects, setProjects] = useState([]);
-  
+
   useEffect(() => {
     Socket.emit('emit', {
       email,
     });
   }, []);
-  
+
   useEffect(() => {
     Socket.on('proj list', (data) => {
       setProjects(data.projs);
@@ -28,13 +28,12 @@ export default function CreateTaskPage({ email }) {
       });
     };
   }, []);
-  
+
   useEffect(() => {
-      Socket.on('reload', () => {
-        /* eslint no-console: ["error", { allow: ["log"] }] */
-        console.log('Received reload from server');
-      });
-    }, []);
+    Socket.on('reload', () => {
+      console.log('Received reload from server');
+    });
+  }, []);
 
   function handleSubmit() {
     updateTitleValue('');
@@ -68,30 +67,31 @@ export default function CreateTaskPage({ email }) {
       <h1 className="size">
         Create Task
       </h1>
-      <br />
-      <form onSubmit={handleSubmit} autoComplete="off">
-      <label className="projLabel">Select project:</label>
-        <select className="projects" name="projs" onChange={(e) => updateProjValue(e.target.value)}>
-        {
+      <label className="projLabel">
+        Select project:
+        {' '}
+        <select className="projects" name="projs" onChange={(e) => updateProjValue(e.target.value)} required>
+          <option value="" />
+          {
           projects.map((project, index) => (
             <option value={project[index]} key={index}>{project[0]}</option>
           ))
         }
-         <option value=''> </option>
         </select>
-        <br />
+      </label>
+      <form onSubmit={handleSubmit} autoComplete="off">
         <br />
         <textarea className="textarea" id="name" placeholder="Task Name" value={titleValue} onChange={(e) => updateTitleValue(e.target.value)} required />
         <br />
         <br />
         <textarea className="textarea" id="description" placeholder="Task Description" value={descriptionValue} onChange={(e) => updateDescriptionValue(e.target.value)} required />
-        
         <br />
         <label htmlFor="Deadline" className="label">
           Deadline:
           {' '}
           <input type="date" id="deadline" name="Deadline" value={deadlineValue} onChange={(e) => updateDeadlineValue(e.target.value)} required />
         </label>
+
         <button id="submit" type="submit">Create</button>
         <button id="submit" type="button" onClick={handleCancel}>Cancel</button>
       </form>

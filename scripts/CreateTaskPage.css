@@ -43,6 +43,16 @@ html {
     resize: none;
 }
 
+textarea:focus {
+    outline: none;
+    box-shadow: 0px 0px 12px 0.8px #BEB07B;
+}
+
+.label input:focus {
+    outline: none;
+    box-shadow: 0px 0px 12px 0.8px #BEB07B;
+}
+
 .size {
     font-size: 3vw;
     margin-bottom: -3vh;
@@ -56,9 +66,11 @@ html {
 
 .projLabel {
     font-size: 2vw;
+    margin-bottom: -8vh;
+    margin-top: 5vh;
 }
 
 .projects {
     font-size: 2vw;
-    height: 3vh;
+    height: 5vh;
 }
