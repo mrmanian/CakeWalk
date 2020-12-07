@@ -70,8 +70,8 @@ export default function CreateTaskPage({ email }) {
       </h1>
       <br />
       <form onSubmit={handleSubmit} autoComplete="off">
-      <label>Select project:</label>
-        <select name="projs" onChange={(e) => updateProjValue(e.target.value)}>
+      <label className="projLabel">Select project:</label>
+        <select className="projects" name="projs" onChange={(e) => updateProjValue(e.target.value)}>
         {
           projects.map((project, index) => (
             <option value={project[index]} key={index}>{project[0]}</option>
@@ -79,6 +79,7 @@ export default function CreateTaskPage({ email }) {
         }
          <option value=''> </option>
         </select>
+        <br />
         <br />
         <textarea className="textarea" id="name" placeholder="Task Name" value={titleValue} onChange={(e) => updateTitleValue(e.target.value)} required />
         <br />
