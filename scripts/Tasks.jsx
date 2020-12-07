@@ -120,11 +120,11 @@ export default function Tasks({ email }) {
                                   <div className="card-body">
                                     <h5 className="card-title">{task[0]}</h5>
                                     <p className="card-text">{task[1] === '' ? 'Open' : task[1]}</p>
+                                    <form onSubmit={handleViewTask} id={index2} className={index3} autoComplete="off">
+                                      <button type="submit" className="create">View Task</button>
+                                    </form>
                                   </div>
                                 </div>
-                                <form onSubmit={handleViewTask} id={index2} className={index3} autoComplete="off">
-                                  <button type="submit" className="create">View Task</button>
-                                </form>
                               </li>
                             ))
                             }
