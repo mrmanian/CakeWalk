@@ -1,5 +1,3 @@
-# pylint: disable=# pylint: disable=invalid-name
-# pylint: disable=# pylint: disable=dangerous-default-value
 from os.path import join, dirname
 import os
 import smtplib
@@ -57,7 +55,6 @@ def emit_user_list(channel, sid):
 
 # Emits list of projects from projects
 def emit_proj_list(channel, sid, user_gc=["abc"]):
-    print("here")
     projs = []
 
     for gc in user_gc:
@@ -150,17 +147,15 @@ def create_and_send_email(receiver_email, message):
 @socketio.on("emit")
 def emit(data):
     email = data["email"]
-    sid = request.sid
-    # gc = db.session.query(models.Users.group_code).filter(models.Users.email == email)
     gc = [
         db_par.group_code
         for db_par in db.session.query(models.Participants).filter(
             models.Participants.email == email
         )
     ]
-    emit_user_list(CHANNEL, sid)
-    emit_proj_list(PROJ_CHANNEL, sid, gc)
-    emit_task_list(TASK_CHANNEL, sid, gc)
+    emit_user_list(CHANNEL, request.sid)
+    emit_proj_list(PROJ_CHANNEL, request.sid, gc)
+    emit_task_list(TASK_CHANNEL, request.sid, gc)
 
 
 @socketio.on("emit gc")
@@ -275,7 +270,6 @@ def on_create_task(data):
         )
         print(exists)
         if exists:
-            print("in exists")
             for db_proj in db.session.query(models.Projects):
                 print()
             gc = [
@@ -329,7 +323,6 @@ def on_complete_task(data):
 
 @socketio.on("reload")
 def on_reload_page():
-    # socketio.emit("reload", sid)
     socketio.emit("reload")
 
 

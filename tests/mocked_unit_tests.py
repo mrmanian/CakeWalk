@@ -4,8 +4,7 @@ import os
 import sys
 import inspect
 
-# pylint: disable=unused-argument
-# pylint: disable=invalid-name
+
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
@@ -37,8 +36,8 @@ class sslObj:
 class smtplibObj:
     def __init__(self):
         return None
-        
-    def SMTP_SSL(self,email, port, context):
+
+    def SMTP_SSL(self, email, port, context):
         return smtp_sslObj(email, port, context)
 
 
@@ -57,19 +56,20 @@ class SQLObject:
     def __init__(self, username, group_code):
         self.username = username
         self.group_code = group_code
-        
+
     def all(self):
-       return "abc"
-       
+        return "abc"
+
     def filter(self, boolean):
         return Table()
+
 
 class Table:
     def __init__(self):
         return
 
     def all(self):
-        return [SQLObject("test USER","gc")]
+        return [SQLObject("test USER", "gc")]
 
     def filter(self, boolean):
         return [SQLObject("test USER", "gc")]
@@ -90,25 +90,26 @@ class SessionObject:
 
     def query(self, table):
         return Table()
-        
-#_______________________________________________________________________________
+
+
 class SQLObject2:
     def __init__(self, username, group_code):
         self.username = username
         self.group_code = group_code
-        
+
     def all(self):
-       return ["abc"]
-    
+        return ["abc"]
+
     def filter(self, boolean):
-        return Table()   
+        return Table()
+
 
 class Table2:
     def __init__(self):
         return
 
     def filter(self, boolean):
-        return SQLObject2("test USER","gc")
+        return SQLObject2("test USER", "gc")
 
     def scalar(self):
         return None
@@ -126,7 +127,6 @@ class SessionObject2:
 
     def query(self, table):
         return Table2()
-
 
 
 class Unit_TestCase_Mock(unittest.TestCase):
@@ -168,22 +168,28 @@ class Unit_TestCase_Mock(unittest.TestCase):
     def test_emit_task_list(self, mocked_socket):
         session = UnifiedAlchemyMagicMock()
         with mock.patch("app.db.session", session):
-            app.emit_task_list(CHANNEL,"sid")
+            app.emit_task_list(CHANNEL, "sid")
             self.assertEqual(mocked_socket.emit.call_count, 1)
-    
+
     @mock.patch("app.create_and_send_email")
-    def test_on_forgot_password(self,send_email):
+    def test_on_forgot_password(self, send_email):
         session = UnifiedAlchemyMagicMock()
         session.add(models.Users("Jake", "jake@gmail.com", "password", "img", "xyzabc"))
         with mock.patch("app.db.session", SessionObject2()):
-            app.on_forgot_password({"email":"jake@gmail.com"})
-            app.create_and_send_email.assert_called_once_with('jake@gmail.com', '\n    Hello {},\n    This is your password: a.')
-            
-    @mock.patch("app.create_and_send_email")        
+            app.on_forgot_password({"email": "jake@gmail.com"})
+            app.create_and_send_email.assert_called_once_with(
+                "jake@gmail.com", "\n    Hello {},\n    This is your password: a."
+            )
+
+    @mock.patch("app.create_and_send_email")
     def test_on_create_task_success(self, send_email):
         session = UnifiedAlchemyMagicMock()
         session.add(models.Participants("testEmail.edu", "gc"))
-        session.add(models.Projects("gc","testProj","Create HomePage using React, HTML, and CSS"))    
+        session.add(
+            models.Projects(
+                "gc", "testProj", "Create HomePage using React, HTML, and CSS"
+            )
+        )
         with mock.patch("app.db.session", session):
             with mock.patch("app.ssl", sslObj()):
                 with mock.patch("app.smtplib", smtplibObj()):
@@ -193,17 +199,20 @@ class Unit_TestCase_Mock(unittest.TestCase):
                             "title": "Create HomePage",
                             "description": "Create HomePage using React, HTML, and CSS",
                             "deadline": "2020-11-06",
-                            "project" : "testProj"
-                        })
-                    app.create_and_send_email.assert_called_once_with('testEmail.edu', '\n    Hello {},\n    \n    You have created a task on the Project Manager app!\n    ')
-    
-    def test_on_send_email(self):  
+                            "project": "testProj",
+                        }
+                    )
+                    app.create_and_send_email.assert_called_once_with(
+                        "testEmail.edu",
+                        "\n    Hello {},\n    \n    You have created a task on the Project Manager app!\n    ",
+                    )
+
+    def test_on_send_email(self):
         with mock.patch("app.db.session", SessionObject()):
             with mock.patch("app.ssl", sslObj()):
                 with mock.patch("app.smtplib", smtplibObj()):
                     app.create_and_send_email("testEmail", "testmessage")
 
-    
     def test_on_create_project_success(self):
         session = UnifiedAlchemyMagicMock()
         session.add(models.Users("Jake", "jake@gmail.com", "password", "img", "xyzabc"))
@@ -255,53 +264,61 @@ class Unit_TestCase_Mock(unittest.TestCase):
         }
         with mock.patch("app.db.session", session):
             app.on_complete_task(data)
-    
+
     @mock.patch("app.emit_task_list")
     def test_emit_proj(self, emit_task_list):
         app.emit_proj({"gc": "345gbfdsfa"})
         emit_task_list.assert_called_once_with("task list", "345gbfdsfa")
-    
-    
+
     def test_on_verify_login(self):
         with mock.patch("app.request", RequestObj()):
-            app.on_verifylogin({"email": "aarati@email.com", "password": "testpassword"})
+            app.on_verifylogin(
+                {"email": "aarati@email.com", "password": "testpassword"}
+            )
 
     def test_reload(self):
         app.on_reload_page()
-        
+
     def test_on_update_password(self):
         session = UnifiedAlchemyMagicMock()
         session.add(models.Users("Jake", "email@email", "password", "role", "img"))
         with mock.patch("app.db.session", session):
-            app.on_update_password({"email":"email@email", "new_pass":"password"})
-    
+            app.on_update_password({"email": "email@email", "new_pass": "password"})
+
     def test_on_data(self):
         session = UnifiedAlchemyMagicMock()
         session.add(models.Users("Jake", "email@email", "password", "role", "img"))
         session.add(models.Participants("email@email", "gc"))
-        session.add(models.Projects("gc","testName","testDescription"))
-        session.add(models.Tasks("testTitle","testDescription","date","gc","owner","done"))
+        session.add(models.Projects("gc", "testName", "testDescription"))
+        session.add(
+            models.Tasks("testTitle", "testDescription", "date", "gc", "owner", "done")
+        )
         with mock.patch("app.db.session", session):
             with mock.patch("app.request", RequestObj()):
-                app.on_data({"email":"email@email"})    
+                app.on_data({"email": "email@email"})
 
     def test_on_update_pic(self):
         session = UnifiedAlchemyMagicMock()
         session.add(models.Users("Jake", "email@email", "password", "role", "img"))
         with mock.patch("app.db.session", session):
-            app.on_update_pic({"email":"email@email", "image":"img"})
-            
+            app.on_update_pic({"email": "email@email", "image": "img"})
+
     def test_on_update_role(self):
         session = UnifiedAlchemyMagicMock()
         session.add(models.Users("Jake", "email@email", "password", "role", "img"))
         with mock.patch("app.db.session", session):
-            app.on_update_role({"email":"email@email", "role":"role"})    
-    
+            app.on_update_role({"email": "email@email", "role": "role"})
+
     def emit_proj_list(self):
         session = UnifiedAlchemyMagicMock()
-        session.add(models.Projects("gc","testProj","Create HomePage using React, HTML, and CSS"))
+        session.add(
+            models.Projects(
+                "gc", "testProj", "Create HomePage using React, HTML, and CSS"
+            )
+        )
         with mock.patch("app.db.session", session):
-            app.emit_proj_list(CHANNEL, "sid",["gc"])
-        
+            app.emit_proj_list(CHANNEL, "sid", ["gc"])
+
+
 if __name__ == "__main__":
     unittest.main()
