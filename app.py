@@ -51,7 +51,7 @@ def emit_user_list(channel, sid):
             "all_users": all_users,
             "all_profile_pics": all_profile_pics,
         },
-        sid
+        sid,
     )
 
 
@@ -76,7 +76,7 @@ def emit_proj_list(channel, sid, user_gc=["abc"]):
             {
                 "projs": projs,
             },
-            sid
+            sid,
         )
 
 
@@ -124,7 +124,7 @@ def emit_task_list(channel, sid, user_gc=["abc"]):
             "tasks": all_tasks,
             "completed_tasks": all_comp_tasks,
         },
-        sid
+        sid,
     )
 
 
@@ -261,9 +261,11 @@ def on_create_task(data):
     gc = ""
     user_gc = [
         db_par.group_code
-        for db_par in db.session.query(models.Participants).filter(models.Participants.email == email)
+        for db_par in db.session.query(models.Participants).filter(
+            models.Participants.email == email
+        )
     ]
-    
+
     for code in user_gc:
         exists = (
             db.session.query(models.Projects)
@@ -282,11 +284,11 @@ def on_create_task(data):
                 .filter(models.Projects.group_code == code)
                 .filter(models.Projects.proj_name == proj_name)
             ]
-            
+
             break
 
     owner = ""
-    
+
     db.session.add(
         models.Tasks(title, description, deadline, gc[0], owner, complete_status)
     )
@@ -335,7 +337,7 @@ def on_reload_page():
 def on_data(data):
     email = data["email"]
     sid = request.sid
-    
+
     group_code = (
         db.session.query(models.Participants.group_code)
         .filter(models.Participants.email == email)
@@ -384,7 +386,7 @@ def on_data(data):
             "totalTasks": total_tasks,
             "completedTasks": completed_tasks,
         },
-        sid
+        sid,
     )
 
 
