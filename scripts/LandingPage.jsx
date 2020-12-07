@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './LandingPage.css';
 import SlidingPane from 'react-sliding-pane';
 import 'react-sliding-pane/dist/react-sliding-pane.css';
-/* eslint-disable react/destructuring-assignment */
+
 export default function LandingPage() {
   const [state, setState] = useState({ isPaneOpen: false });
 
@@ -97,6 +97,6 @@ const ContactContainer = () => (
         </span>
       </div>
     </div>
-    <img className="group" src="https://i.imgur.com/WrpCH4D.jpg" alt="Unavailable"></img>
+    <img className="group" src="https://i.imgur.com/WrpCH4D.jpg" alt="Unavailable" />
   </div>
 );

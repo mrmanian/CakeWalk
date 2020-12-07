@@ -4,8 +4,7 @@ import { Socket } from './Socket';
 import GoogleButton from './GoogleButton';
 import FacebookButton from './FacebookButton';
 import './Login-Register.css';
-/* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+
 export default function Login() {
   const [verified, setVerified] = useState(false);
   let email = '';

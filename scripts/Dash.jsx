@@ -22,7 +22,7 @@ export default function Dash({ email }) {
     console.log('The create Task button link was clicked.');
     updateCreateTask(true);
   }
-  
+
   function handleRefresh(e) {
     e.preventDefault();
     Socket.emit('emit', {

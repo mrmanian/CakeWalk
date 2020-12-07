@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LoginPage from './LoginPage';
 import { Socket } from './Socket';
 import './Login-Register.css';
-/* eslint-disable jsx-a11y/label-has-associated-control */
+
 export default function Register() {
   const [formSent, setFormSent] = useState(false);
   let email = '';

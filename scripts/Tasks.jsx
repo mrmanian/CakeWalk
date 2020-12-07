@@ -89,8 +89,9 @@ export default function Tasks({ email }) {
   }
 
   if (viewTask !== -1 && indivTask !== -1) {
-    return (<ViewTask email={email} tasks={tasks[viewTask][indivTask]} />);
+    return (<ViewTask tasks={tasks[viewTask][indivTask]} />);
   }
+
   return (
     <div>
       <table className="table table-hover table-bordered table-danger">
