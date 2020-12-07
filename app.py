@@ -57,6 +57,7 @@ def emit_user_list(channel, sid):
 
 # Emits list of projects from projects
 def emit_proj_list(channel, sid, user_gc=["abc"]):
+    print("here")
     projs = []
 
     for gc in user_gc:
@@ -260,10 +261,9 @@ def on_create_task(data):
     gc = ""
     user_gc = [
         db_par.group_code
-        for db_par in db.session.query(models.Participants).filter(
-            models.Participants.email == email
-        )
+        for db_par in db.session.query(models.Participants).filter(models.Participants.email == email)
     ]
+    
     for code in user_gc:
         exists = (
             db.session.query(models.Projects)
@@ -271,17 +271,22 @@ def on_create_task(data):
             .filter(models.Projects.proj_name == proj_name)
             .scalar()
         )
+        print(exists)
         if exists:
+            print("in exists")
+            for db_proj in db.session.query(models.Projects):
+                print()
             gc = [
                 db_proj.group_code
                 for db_proj in db.session.query(models.Projects)
                 .filter(models.Projects.group_code == code)
                 .filter(models.Projects.proj_name == proj_name)
             ]
+            
             break
 
     owner = ""
-
+    
     db.session.add(
         models.Tasks(title, description, deadline, gc[0], owner, complete_status)
     )

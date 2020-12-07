@@ -161,29 +161,16 @@ class Unit_TestCase_Mock(unittest.TestCase):
     def test_emit_user_list(self, mocked_socket):
         session = UnifiedAlchemyMagicMock()
         with mock.patch("app.db.session", session):
-            app.emit_user_list(CHANNEL)
+            app.emit_user_list(CHANNEL, "sid")
             self.assertEqual(mocked_socket.emit.call_count, 1)
 
     @mock.patch("app.socketio")
     def test_emit_task_list(self, mocked_socket):
         session = UnifiedAlchemyMagicMock()
         with mock.patch("app.db.session", session):
-            app.emit_task_list(CHANNEL)
+            app.emit_task_list(CHANNEL,"sid")
             self.assertEqual(mocked_socket.emit.call_count, 1)
-    """
-    def test_on_create_task_success(self):
-        with mock.patch("app.db.session", SessionObject2()):
-            with mock.patch("app.smtplib", smtplibObj()):
-                app.on_create_task(
-                    {
-                        "email": "testEmail.edu",
-                        "title": "Create HomePage",
-                        "description": "Create HomePage using React, HTML, and CSS",
-                        "deadline": "2020-11-06",
-                        "project" : "testProj"
-                    }
-             )
-    """
+    
     @mock.patch("app.create_and_send_email")
     def test_on_forgot_password(self,send_email):
         session = UnifiedAlchemyMagicMock()
@@ -191,6 +178,24 @@ class Unit_TestCase_Mock(unittest.TestCase):
         with mock.patch("app.db.session", SessionObject2()):
             app.on_forgot_password({"email":"jake@gmail.com"})
             app.create_and_send_email.assert_called_once_with('jake@gmail.com', '\n    Hello {},\n    This is your password: a.')
+            
+    @mock.patch("app.create_and_send_email")        
+    def test_on_create_task_success(self, send_email):
+        session = UnifiedAlchemyMagicMock()
+        session.add(models.Participants("testEmail.edu", "gc"))
+        session.add(models.Projects("gc","testProj","Create HomePage using React, HTML, and CSS"))    
+        with mock.patch("app.db.session", session):
+            with mock.patch("app.ssl", sslObj()):
+                with mock.patch("app.smtplib", smtplibObj()):
+                    app.on_create_task(
+                        {
+                            "email": "testEmail.edu",
+                            "title": "Create HomePage",
+                            "description": "Create HomePage using React, HTML, and CSS",
+                            "deadline": "2020-11-06",
+                            "project" : "testProj"
+                        })
+                    app.create_and_send_email.assert_called_once_with('testEmail.edu', '\n    Hello {},\n    \n    You have created a task on the Project Manager app!\n    ')
     
     def test_on_send_email(self):  
         with mock.patch("app.db.session", SessionObject()):
@@ -198,7 +203,7 @@ class Unit_TestCase_Mock(unittest.TestCase):
                 with mock.patch("app.smtplib", smtplibObj()):
                     app.create_and_send_email("testEmail", "testmessage")
 
-  
+    
     def test_on_create_project_success(self):
         session = UnifiedAlchemyMagicMock()
         session.add(models.Users("Jake", "jake@gmail.com", "password", "img", "xyzabc"))
@@ -223,7 +228,6 @@ class Unit_TestCase_Mock(unittest.TestCase):
         }
         with mock.patch("app.db.session", session):
             app.on_select_task(data)
-
             session.query.assert_called_once()
 
     def test_on_complete_task(self):
@@ -247,26 +251,11 @@ class Unit_TestCase_Mock(unittest.TestCase):
         )
         data = {
             "email": "jake",
-            "completed": "true",
+            "t": "true",
         }
-
         with mock.patch("app.db.session", session):
             app.on_complete_task(data)
-
-    @mock.patch("app.emit_user_list")
-    @mock.patch("app.emit_task_list")
-    def test_on_emit(self, emit_task_list, emit_user_list):
-        session = UnifiedAlchemyMagicMock()
-        session.add(models.Users("Jake", "jake@gmail.com", "password", "img", "gc"))
-        with mock.patch("app.db.session", session):
-            app.emit(
-                {
-                    "email": "jake@gmail.com",
-                }
-            )
-            #emit_task_list.assert_called_once_with("task list", session)
-            #emit_user_list.assert_called_once_with("get user list")
-
+    
     @mock.patch("app.emit_task_list")
     def test_emit_proj(self, emit_task_list):
         app.emit_proj({"gc": "345gbfdsfa"})
@@ -293,7 +282,8 @@ class Unit_TestCase_Mock(unittest.TestCase):
         session.add(models.Projects("gc","testName","testDescription"))
         session.add(models.Tasks("testTitle","testDescription","date","gc","owner","done"))
         with mock.patch("app.db.session", session):
-            app.on_data({"email":"email@email"})    
+            with mock.patch("app.request", RequestObj()):
+                app.on_data({"email":"email@email"})    
 
     def test_on_update_pic(self):
         session = UnifiedAlchemyMagicMock()
@@ -306,6 +296,12 @@ class Unit_TestCase_Mock(unittest.TestCase):
         session.add(models.Users("Jake", "email@email", "password", "role", "img"))
         with mock.patch("app.db.session", session):
             app.on_update_role({"email":"email@email", "role":"role"})    
-
+    
+    def emit_proj_list(self):
+        session = UnifiedAlchemyMagicMock()
+        session.add(models.Projects("gc","testProj","Create HomePage using React, HTML, and CSS"))
+        with mock.patch("app.db.session", session):
+            app.emit_proj_list(CHANNEL, "sid",["gc"])
+        
 if __name__ == "__main__":
     unittest.main()
