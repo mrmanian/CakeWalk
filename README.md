@@ -1,11 +1,11 @@
-# [CakeWalk](https://taskmanager490.herokuapp.com/)
-This web app is a project management dashboard that allows team members to assign work to others with set deadlines and the ability to check off completed tasks.
+# [CakeWalk](https://cakewalk.herokuapp.com/)
+A project management dashboard that allows team members to assign work to others with set deadlines and the ability to check off completed tasks.
 
-## Table of Contents 
+## Table of Contents
 
 1. [Installation](#installation)
 2. [Contributions](#contributions)
-3. [Pending Work](#pending-work)
+3. [Improvement](#improvement)
 4. [Linting Errors](#linting-errors)
 5. [Final Remarks](#final-remarks)
 
@@ -117,6 +117,18 @@ Follow the following link after where you put the url and select External.
 
 Navigate to the Oauth consent screen and add your link's TLD to the Authorized Domains.
 
+Make note of your clientid. Input your unique ID in the `GoogleLoginButton.jsx` where it says clientId=[your_client_id].
+
+#### **Facebook Login functionality**
+
+Go to https://developers.facebook.com/apps and sign up for a developer account or login to your existing personal account. 
+
+Click "CREATE APP" then when prompted select "FOR EVERYTHING ELSE". Enter your app name and contact email address. 
+
+Click enter and scroll down to where it says products and select Facebook Login. Click on "Settings" and then where it says "Valid OAuth Redirect URI" enter the name of your website/local environment. 
+
+Make note of your appid. Input your unique ID in the `FacebookLoginButton.jsx` where it says appId=[your_app_id].
+
 #### **Run the app**
 
 That is all for the initial setup! We will not have to re-run all of those commands anymore! Now, every time you want to run the application, you only have to do the following. Open up 3 terminals and run one line per terminal. Make sure you are in the root-level directory of the project.
@@ -160,12 +172,11 @@ It should ask for your password after this. This password should be the same pas
         select * from tasks;
         \q
 
+Go to your heroku [dashboard](https://dashboard.heroku.com/apps) and click on your newly created app and go to settings. Under buildpacks, add 'heroku/python' and 'heroku/nodejs'.
 
 Now we can push the code to Heroku so that it can be deployed. The following command will do precisely that.
 
         git push heroku main
-
-Also, go to your heroku [dashboard](https://dashboard.heroku.com/apps) and click on your newly created app and go to settings. Under buildpacks, add 'heroku/nodejs' and 'heroku/python' if they are not there already.
 
 If all went correctly, the website should be up and running!! In case it does not load properly, you can debug it by running the following command on your console.
 
@@ -177,7 +188,7 @@ If all went correctly, the website should be up and running!! In case it does no
 
 #### Michael Manian
 
-Added Create Project functionality to the application, which allows the user to create a project. I  parsed data from the input form and emitted to the server and then stored it in a database.  Project creators can also select which users to add to the project. The page is then reloaded back to the dashboard where the project will be visible to the creator and all participants the creator added. Coded a function which will generate a random unique group code to identify who is part of which project. I styled this page and also restyled the create task page such that when a user shrinks their screen, nothing gets cut off and everything resized proportionally. Throughout development I linted as I wrote code and helped debug a ton of issues my teammates were having. I implemented a feature where the create button is disabled until the user inputs name/description and selects a user, but ended up removing it as it caused issues elsewhere despite it working fine. I also mocked the create project, emit, on connect/disconnect, and the index render template functions. In the end I successfully pushed and deployed to Heroku.
+Added Create Project functionality to the application, which allows the user to create a project. I  parsed data from the input form and emitted to the server and then stored it in a database.  Project creators can also select which users to add to the project. The page is then reloaded back to the dashboard where the project will be visible to the creator and all participants the creator added. Coded a function which will generate a random unique group code to identify who is part of which project. I styled this page and also restyled the create task page such that when a user shrinks their screen, nothing gets cut off and everything resized proportionally. Throughout development I linted as I wrote code and helped debug a ton of issues my teammates were having. I implemented a feature where the create button is disabled until the user inputs name/description and selects a user, but ended up removing it as it caused issues elsewhere despite it working fine. I also mocked the create project, emit, on connect/disconnect, and the index render template functions. In the end I successfully pushed and deployed to Heroku. For Sprint 2, I added Facebook OAuth to the login page and created a login/register form so users have multiple ways to login. A forgot password button was also implemented where the user will get an email containing their password. I revamped the styling of the page using CSS. I created a user profile page which is displayed using a sliding pane animation. Queryed various data sets from the database to display in the profile page. Also implemented feature to allow the user to change their profile picture and password. Added a new 'role' attribute to the users table so now users can assign themselves a role and change it in the profile page. I also helped Jacob and Devin with re-styling the dashboard. Lastly, I made sure the app is linted and all app elements follow a consistent theme across all pages. 
 
 #### Devin Romanoff
 
@@ -193,17 +204,15 @@ Added Google Oauth functionality and created methods to emit user data back to t
 
 **[Back to top](#Project-Management-Dashboard)**
 
-## Pending Work
-- When a user adds a project, the project changes for all users, but when a user logs back in, it is corrected. So it is correct in the database, we just have to fix the UI
-- Add a cancel button to Create Task and Create Project page if user changes their mind and make every input of the form required so that we don't have null values
-- Allow users to be a part of multiple projects rather than just one
+## Improvement
+- Add a view project button to view project description as well as the users who are part of the project.
+- Add a delete project button to delete completed projects or an archive functionality to store the completed items without erasing the contents.
 
 **[Back to top](#Project-Management-Dashboard)**
 
 ## Linting Errors
-- 'useState' is defined but never used  no-unused-vars error, which happens but the script actually does use useState so it is inaccurate
-- Dependency cycle detected, which we needed for our app to refresh to a page where users can decide if they want to create another task or project
-- import/prefer-default-export, which happens in Socket.jsx which was given to us from a lecture so we didn't change it
+- Dependency cycle detected, which we needed for our app to refresh to a page where users can decide if they want to create another task or project.
+- import/prefer-default-export, which happens in Socket.jsx which was given to us from a lecture so we didn't change it.
 
 **[Back to top](#Project-Management-Dashboard)**
 
