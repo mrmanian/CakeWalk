@@ -53,10 +53,11 @@ Accept the default options for eslint or configure it to your liking.
 Let us also add some additional packages for more complex functionality.
 
         npm install --save react-social-login-buttons
-        npm i react-facebook-login
-        npm i react-social-login-buttons
-        npm i react-bootstrap
-        npm i react-sliding-pane
+        npm i react-facebook-login --save
+        npm i react-social-login-buttons --save
+        npm i react-bootstrap --save
+        npm i react-sliding-pane --save
+        npm install react-linkify --save
         
 Note: if you see any error messages, make sure you use `sudo pip` or `sudo npm`. If it says 'pip cannot be found', run `which pip` and use `sudo [path to pip from which pip] install` .
 
@@ -196,7 +197,7 @@ Created the Projects and Tasks tables in the database. I wrote methods to send t
 
 #### Aarati Srikumar
 
-Added Create Task functionality to the application, which allows the user to create a task and emit data to the server, and reload to the Dash page. I chose the style colors for the entire application, and styled this page as well. Wrote code on the server to send email to users when a task or project is created using db calls to get the username as well as python’s smtp library. Created and managed access to the email for our application, that sends emails to users when Tasks or Projects are created. Wrote code to call google calendar api but it needed our app to be verified so we did not use it. Wrote mock tests for my method and other methods, as well as checked and re-checked eslint and pylint for all files made. Tested overall coverage for our application and wrote 5 mock db methods to mock db calls which greatly increased our coverage.
+Added Create Task functionality to the application, which allows the user to create a task and emit data to the server, and reload to the Dash page. I chose the style colors for the entire application, and styled this page as well. Wrote code on the server to send email to users when a task or project is created using db calls to get the username as well as python’s smtp library. Created and managed access to the email for our application, that sends emails to users when Tasks or Projects are created. Wrote code to call google calendar api but it needed our app to be verified so we did not use it. Wrote mock tests for my method and other methods, as well as checked and re-checked eslint and pylint for all files made. Tested overall coverage for our application and wrote 5 mock db methods to mock db calls which greatly increased our coverage. For Sprint 2 I added a ViewTask component which allows users to view a task and its details anyone has submitted in that project. The ViewTask component was styled so that it could display in the page under another page from which it was being called. I tried again to get the Google Calendar React component working, with some success, but still lacked user permission and app verification. I wrote all the tests for our Sprint 2 code, and linted both python and JSX files. I figured out the CircleCI configurations and fixed it to work with our tests. I also helped make styling and UI suggestions such as having a rotating icon.
 
 #### Jacob Karpman
 
@@ -204,15 +205,17 @@ For Sprint 2 I created the process for setting Tasks as complete also creating t
 
 **[Back to top](#Project-Management-Dashboard)**
 
-## Improvement
-- Add a view project button to view project description as well as the users who are part of the project.
-- Add a delete project button to delete completed projects or an archive functionality to store the completed items without erasing the contents.
-
-**[Back to top](#Project-Management-Dashboard)**
-
 ## Linting Errors
 - Dependency cycle detected, which we needed for our app to refresh to a page where users can decide if they want to create another task or project.
 - import/prefer-default-export, which happens in Socket.jsx which was given to us from a lecture so we didn't change it.
+
+**[Back to top](#Project-Management-Dashboard)**
+
+## Future Improvements
+- Integrate application to include Google Calendar where it creates an event for each task the user owns.
+- Add Google contacts in order to allow users to easily add people they know
+- Add a Milestones feature to encourage app usage
+- Add a delete project button to delete completed projects or an archive functionality to store the completed items without erasing the contents.
 
 **[Back to top](#Project-Management-Dashboard)**
 
