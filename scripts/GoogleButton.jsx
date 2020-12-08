@@ -19,7 +19,7 @@ export default function GoogleButton() {
 
   return (
     <GoogleLogin
-      clientId="996903865463-g40t530m1jb7bvqq2evel1dcjej6td8d.apps.googleusercontent.com"
+      clientId="589283421664-6kvonrml8a1lod7mhtmucru816l5bv20.apps.googleusercontent.com"
       render={(renderProps) => (
         <GoogleLoginButton onClick={renderProps.onClick} disabled={renderProps.disabled} />
       )}
