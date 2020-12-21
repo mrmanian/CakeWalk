@@ -1,13 +1,12 @@
 # [CakeWalk](https://cakewalk.herokuapp.com/)
-A project management dashboard that allows team members to assign work to others with set deadlines and the ability to check off completed tasks.
+A project management dashboard where users can login using OAuth or a traditional login form and view, complete, and assign projects and task with one another. Useful for team collaboration in the real world. App was designed and created as a team of 4 indivduals (Michael Manian, Devin Romanoff, Aarati Srikumar, Jacob Karpman) and with guidance from an engineer at Facebook and an engineer at Uber.
 
 ## Table of Contents
 
 1. [Installation](#installation)
 2. [Contributions](#contributions)
-3. [Improvement](#improvement)
-4. [Linting Errors](#linting-errors)
-5. [Final Remarks](#final-remarks)
+3. [Future Improvement](#future-improvements)
+4. [Final Remarks](#final-remarks)
 
 ## Installation
 Prerequisites: 
@@ -98,6 +97,7 @@ Close out of vim and then restart psql. Ensure that `sql.env` has the correct us
 We also need to change the owner of the postgres database to the username that you created. This is required for heroku deployment which will be covered in the later steps. Go into psql by typing `psql` and run the following. The username should be the same username that you have in your `sql.env` file!
 
         ALTER DATABASE postgres OWNER TO [your_username]
+
 #### **Email functionality**
 
 The email functionality of the app is made possible using SMTP SSL and Port 465.  In order for this to work in your `sql.env` file, write the following and fill in the variable with your own email password.
@@ -139,7 +139,6 @@ That is all for the initial setup! We will not have to re-run all of those comma
         python app.py
         
 If prompted to install webpack-cli, type 'yes'. If you are using AWS Cloud9, preview the application by clicking 'preview running application'. This should successfully render the HTML!
-
 
 #### **Run the Unit Tests**
 
@@ -183,44 +182,39 @@ If all went correctly, the website should be up and running!! In case it does no
 
         heroku logs --tail
 
-**[Back to top](#Project-Management-Dashboard)**
+**[Back to top](#CakeWalk)**
 
 ## Contributions
 
 #### Michael Manian
 
-For Sprint 2, I added Facebook OAuth to the login page and created a login/register form so users have multiple ways to login. A forgot password button was also implemented where the user will get an email containing their password. I revamped the styling of the page using CSS. I created a user profile page which is displayed using a sliding pane animation. Queryed various data sets from the database to display in the profile page. Also implemented feature to allow the user to change their profile picture and password. Added a new 'role' attribute to the users table so now users can assign themselves a role and change it in the profile page. I also helped Jacob and Devin with re-styling the dashboard. Lastly, I made sure the app is linted and all app elements follow a consistent theme across all pages. 
+For the MVP, I added Create Project functionality to the application, which allows the user to create a project. I parsed data from the input form and emitted to the server and then stored it in a database. Project creators can also select which users to add to the project. The page is then reloaded back to the dashboard where the project will be visible to the creator and all participants the creator added. Coded a function which will generate a random unique group code to identify who is part of which project. I styled this page and also restyled the create task page such that when a user shrinks their screen, nothing gets cut off and everything resized proportionally. Throughout development I linted as I wrote code and helped debug a ton of issues my teammates were having. I implemented a feature where the create button is disabled until the user inputs name/description and selects a user, but ended up removing it as it caused issues elsewhere despite it working fine. I also mocked the create project, emit, on connect/disconnect, and the index render template functions. In the end I successfully pushed and deployed to Heroku. For Sprint 2, I added Facebook OAuth to the login page and created a login/register form so users have multiple ways to login. A forgot password button was also implemented where the user will get an email containing their password. I revamped the styling of the page using CSS. I created a user profile page which is displayed using a sliding pane animation. Queryed various data sets from the database to display in the profile page. Also implemented feature to allow the user to change their profile picture and password. Added a new 'role' attribute to the users table so now users can assign themselves a role and change it in the profile page. I also helped Jacob and Devin with re-styling the dashboard. Lastly, I made sure the app is linted and all app elements follow a consistent theme across all pages and redeployed the app to Heroku. 
 
 #### Devin Romanoff
 
-For sprint 2 I added the ability for a user to be a part of multiple projects. I edited the Users, Projects, and Tasks tables to create a link between projects and tasks, and added a new Participants table to link users to their projects. I also edited every backend database query so it would support the new database structure and gather the proper information. This information was then used in the frontend, where I edited the dashboard to support the new data and the view task screen to properly display task information. I also modified the create task functionality to link tasks to their projects on creation. I did this by adding a dropdown with a list of the user's projects to choose from, and then query the necessary project data on the backend to link the two. I added the ability for multiple users to log in to the app at once by specifying session id's across different data emission events. Lastly, I helped Jacob and Michael redesign the dashboard on the main page to look more polished and have less redundant information.
+For the MVP, I created the Projects and Tasks tables in the database. I wrote methods to send the user, project, and task data to be displayed on the dashboard. This included querying the database based on unique identifiers to get the proper tasks and projects. This data is displayed on task and project creation as well as on login for all users involved in the project. I styled the dashboard and task display components of the UI. Throughout development I helped lint the backend python and frontend jsx files. Helped integrate project and task creation screens into the dashboard, as well as the transition to the dashboard after a user logs in. For Sprint 2 I added the ability for a user to be a part of multiple projects. I edited the Users, Projects, and Tasks tables to create a link between projects and tasks, and added a new Participants table to link users to their projects. I also edited every backend database query so it would support the new database structure and gather the proper information. This information was then used in the frontend, where I edited the dashboard to support the new data and the view task screen to properly display task information. I also modified the create task functionality to link tasks to their projects on creation. I did this by adding a dropdown with a list of the user's projects to choose from, and then query the necessary project data on the backend to link the two. I added the ability for multiple users to log in to the app at once by specifying session id's across different data emission events. Lastly, I helped Jacob and Michael redesign the dashboard on the main page to look more polished and have less redundant information.
 
 #### Aarati Srikumar
 
-For Sprint 2 I added a ViewTask component which allows users to view a task and its details anyone has submitted in that project. The ViewTask component was styled so that it could display in the page under another page from which it was being called. I implemented the Linkify package to display links inline in the components. I tried again to get the Google Calendar React component working, with some success, but still lacked user permission and app verification. I wrote all the mocked tests for our new Sprint 2 code, and linted everyone's Python and JSX files. I figured out the CircleCI configurations and fixed it to work with our tests. I changed the font of the main Cakewalk heading that the user views after login, and I also helped make styling and UI suggestions such as having a rotating icon. 
+For the MVP, I added Create Task functionality to the application, which allows the user to create a task and emit data to the server, and reload to the Dash page. I chose the style colors for the entire application, and styled this page as well. Wrote code on the server to send email to users when a task or project is created using db calls to get the username as well as python’s smtp library. Created and managed access to the email for our application, that sends emails to users when Tasks or Projects are created. Wrote code to call google calendar api but it needed our app to be verified so we did not use it. Wrote mock tests for my method and other methods, as well as checked and re-checked eslint and pylint for all files made. Tested overall coverage for our application and wrote 5 mock db methods to mock db calls which greatly increased our coverage. For Sprint 2 I added a ViewTask component which allows users to view a task and its details anyone has submitted in that project. The ViewTask component was styled so that it could display in the page under another page from which it was being called. I implemented the Linkify package to display links inline in the components. I tried again to get the Google Calendar React component working, with some success, but still lacked user permission and app verification. I wrote all the mocked tests for our new Sprint 2 code, and linted everyone's Python and JSX files. I figured out the CircleCI configurations and fixed it to work with our tests. I changed the font of the main Cakewalk heading that the user views after login, and I also helped make styling and UI suggestions such as having a rotating icon. 
 
 #### Jacob Karpman
 
-For Sprint 2 I created the process for setting Tasks as complete also creating the front end button and layout for task selection and completion as well as change the styling to green when a task is set as complete. I created the Cancel buttons for the CreateTask and CreateProjects page that allows you to return to the Dashboard without logging the information. I also used bootstrap to style the Dashboard view with gridlines, hovering, and color. I created the Landing Page, writing the information as well as designing the landing page. I created all CakeWalk logos from scratch and implemented the spinning animation. I later added the bootstrap card styling for task display and moved the "VIEW Task" button inside the card. 
+For the MVP, I Added Google Oauth functionality and created methods to emit user data back to the server. In the server I created the Users Table and made methods to enter user data into Users Table on first login. I styled the Login Page and created the Google Button and Login Javascript files. I added the task_owner attribute to the Tasks table then made the methods display the task owner attribute next to each task in the Task Javascript file. I also created the method that logs the task owner into the Task table on selection of the Task. Along with creating the mock test for all of the methods which I created. Along with being a resource and helping other members when I could. For Sprint 2 I created the process for setting Tasks as complete also creating the front end button and layout for task selection and completion as well as change the styling to green when a task is set as complete. I created the Cancel buttons for the CreateTask and CreateProjects page that allows you to return to the Dashboard without logging the information. I also used bootstrap to style the Dashboard view with gridlines, hovering, and color. I created the Landing Page, writing the information as well as designing the landing page. I created all CakeWalk logos from scratch and implemented the spinning animation. I later added the bootstrap card styling for task display and moved the "VIEW Task" button inside the card. 
 
-**[Back to top](#Project-Management-Dashboard)**
-
-## Linting Errors
-- Dependency cycle detected, which we needed for our app to refresh to a page where users can decide if they want to create another task or project.
-- import/prefer-default-export, which happens in Socket.jsx which was given to us from a lecture so we didn't change it.
-
-**[Back to top](#Project-Management-Dashboard)**
+**[Back to top](#CakeWalk)**
 
 ## Future Improvements
 - Integrate application to include Google Calendar where it creates an event for each task the user owns.
 - Add Google contacts in order to allow users to easily add people they know
 - Add a Milestones feature to encourage app usage
 - Add a delete project button to delete completed projects or an archive functionality to store the completed items without erasing the contents.
+- Add a view project button to see project description and users who are a part of the project
 
-**[Back to top](#Project-Management-Dashboard)**
+**[Back to top](#CakeWalk)**
 
 ## Final Remarks
 
 Please feel free to let us know if any issues arise via the issues tab on Github. If there is a big feature that would be beneficial to add, feel free to fork the repo and try to implement it or let us know so we can also attempt to add it and update the repository!
 
-**[Back to top](#Project-Management-Dashboard)**
+**[Back to top](#CakeWalk)**
