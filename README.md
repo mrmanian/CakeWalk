@@ -1,5 +1,5 @@
 # [CakeWalk](https://cakewalk.herokuapp.com/)
-A project management dashboard where users can login using OAuth or a traditional login form and view, complete, and assign projects and task with one another. Useful for team collaboration in the real world. App was designed and created as a team of 4 indivduals (Michael Manian, Devin Romanoff, Aarati Srikumar, Jacob Karpman) and with guidance from an engineer at Facebook and an engineer at Uber.
+A project management dashboard where users can login using OAuth or a traditional login form and view, complete, and assign projects and task with one another. Useful for team collaboration in the real world. Designed to make project collaboration a "cake walk." App was designed and created as a team of 4 indivduals (Michael Manian, Devin Romanoff, Aarati Srikumar, Jacob Karpman) and with guidance from an engineer at Facebook and an engineer at Uber.
 
 ## Table of Contents
 
@@ -19,8 +19,8 @@ Prerequisites:
 
 To run this app, you first need to clone my repo to your local machine and then cd into it by typing the following commands on your terminal.
 
-        git clone https://github.com/NJIT-CS490/project-taskmanager-sprint2.git
-        cd project3-taskmanager
+        git clone https://github.com/mrmanian/CakeWalk.git
+        cd CakeWalk
 
 Now let us install the packages required to run the app! First step is to upgrade node to version 10, yum to the latest version, and pip to the latest version. Enter yes to any and all prompt, if given.
 
